@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Http\Response;
+use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -28,7 +30,7 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception  $e
+     * @param  \Exception $e
      * @return void
      */
     public function report(Exception $e)
@@ -39,12 +41,70 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $e
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Exception $e
      * @return \Illuminate\Http\Response
      */
     public function render($request, Exception $e)
     {
+        if ($e instanceof UnauthorizedException) {
+            $response = [
+                'error' => [
+                    'message' => $e->getMessage(),
+                    'code' => Response::HTTP_UNAUTHORIZED,
+                ]
+            ];
+        }
+
+        if ($e instanceof HttpException) {
+            $response = [
+                'error' => [
+                    'message' => $e->getMessage(),
+                    'code' => $e->getStatusCode(),
+                ]
+            ];
+        }
+
+        if ($e instanceof ModelNotFoundException) {
+            $response = [
+                'error' => [
+                    'message' => $e->getMessage(),
+                    'code' => Response::HTTP_NOT_FOUND,
+                ]
+            ];
+        }
+
+        if ($e instanceof ValidationException) {
+            $response = [
+                'error' => [
+                    'message' => $e->getMessage(),
+                    'code' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'errors' => ($e->getResponse())->original,
+                ]
+            ];
+        }
+
+        if ($e instanceof ProJetZionException) {
+            $response = [
+                'error' => [
+                    'message' => $e->getMessage(),
+                    'code' => $e->getCode() ?: 500,
+                ]
+            ];
+        }
+
+        if (isset($response)) {
+            if (isDevelopment()) {
+                $response = array_merge($response['error'], [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+//                    'trace' => $e->getTraceAsString(),
+                ]);
+            }
+
+            return response()->json($response, $response['code']);
+        }
+
         return parent::render($request, $e);
     }
 }
