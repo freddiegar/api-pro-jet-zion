@@ -29,7 +29,31 @@ abstract class ManagerContract
     }
 
     /**
-     * @return UserRepository
+     * @return array
+     */
+    protected function requestToArray()
+    {
+        return $this->request()->toArray();
+    }
+
+    /**
+     * @return string
+     */
+    protected function requestMethod()
+    {
+        return $this->request()->method();
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function requestInput($name)
+    {
+        return $this->request()->input($name);
+    }
+
+    /**
+     * @return mixed
      */
     protected function repository()
     {

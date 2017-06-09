@@ -4,10 +4,14 @@ namespace App\Contracts\Commons;
 
 use App\Contracts\Interfaces\BlameInterface;
 use App\Traits\BlameColumnsTrait;
+use App\Traits\LoaderTrait;
+use App\Traits\ToArrayTrait;
 
 abstract class EntityContract implements BlameInterface
 {
     use BlameColumnsTrait;
+    use LoaderTrait;
+    use ToArrayTrait;
 
     /**
      * @return array
@@ -15,14 +19,20 @@ abstract class EntityContract implements BlameInterface
     abstract protected function fields();
 
     /**
-     * @param array $data
-     * @param array $fields
-     * @return mixed
+     * @param $name
+     * @param $value
      */
-    abstract protected function load(array $data, array $fields);
+    public function __set($name, $value)
+    {
+        $this->{$name} = $value;
+    }
 
     /**
-     * @return array
+     * @param $name
+     * @return mixed
      */
-    abstract public function toArray();
+    public function __get($name)
+    {
+        return $this->{$name} = null;
+    }
 }

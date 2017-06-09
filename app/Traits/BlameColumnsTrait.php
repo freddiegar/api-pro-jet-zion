@@ -43,7 +43,7 @@ trait BlameColumnsTrait
      */
     public function updatedAt()
     {
-        return $this->$this->{BlameColumns::UPDATED_AT};
+        return $this->{BlameColumns::UPDATED_AT};
     }
 
     /**
@@ -51,6 +51,6 @@ trait BlameColumnsTrait
      */
     public function deletedAt()
     {
-        return $this->$this->{BlameColumns::DELETED_AT};
+        return $this->{BlameColumns::DELETED_AT};
     }
 }

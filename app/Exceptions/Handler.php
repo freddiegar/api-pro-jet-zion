@@ -51,45 +51,45 @@ class Handler extends ExceptionHandler
     {
         if ($e instanceof UnauthorizedException) {
             $response = [
+                'code' => Response::HTTP_UNAUTHORIZED,
                 'error' => [
                     'message' => $e->getMessage(),
-                    'code' => Response::HTTP_UNAUTHORIZED,
                 ]
             ];
         }
 
         if ($e instanceof HttpException) {
             $response = [
+                'code' => $e->getStatusCode(),
                 'error' => [
                     'message' => $e->getMessage(),
-                    'code' => $e->getStatusCode(),
-                ]
+                ],
             ];
         }
 
         if ($e instanceof NotFoundHttpException) {
             $response = [
+                'code' => Response::HTTP_NOT_FOUND,
                 'error' => [
-                    'message' => $e->getMessage()?: 'Location not valid.',
-                    'code' => Response::HTTP_NOT_FOUND,
+                    'message' => $e->getMessage() ?: 'Location not valid.',
                 ]
             ];
         }
 
         if ($e instanceof ModelNotFoundException) {
             $response = [
+                'code' => Response::HTTP_NOT_FOUND,
                 'error' => [
-                    'message' => $e->getModel(),
-                    'code' => Response::HTTP_NOT_FOUND,
+                    'message' => $e->getMessage(),
                 ]
             ];
         }
 
         if ($e instanceof ValidationException) {
             $response = [
+                'code' => Response::HTTP_UNPROCESSABLE_ENTITY,
                 'error' => [
                     'message' => $e->getMessage(),
-                    'code' => Response::HTTP_UNPROCESSABLE_ENTITY,
                     'errors' => ($e->getResponse())->original,
                 ]
             ];
@@ -97,18 +97,18 @@ class Handler extends ExceptionHandler
 
         if ($e instanceof QueryException) {
             $response = [
+                'code' => Response::HTTP_CONFLICT,
                 'error' => [
                     'message' => $e->errorInfo,
-                    'code' => Response::HTTP_CONFLICT,
                 ]
             ];
         }
 
         if ($e instanceof ProJetZionException) {
             $response = [
+                'code' => $e->getCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR,
                 'error' => [
                     'message' => $e->getMessage(),
-                    'code' => $e->getCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR,
                 ]
             ];
         }
@@ -123,10 +123,8 @@ class Handler extends ExceptionHandler
                 ]);
             }
 
-            return response()->json($response, $response['code']);
+            return response()->json($response['error'], $response['code']);
         }
-
-//        dd('Exception not controller', get_class($e));
 
         return parent::render($request, $e);
     }

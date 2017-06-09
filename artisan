@@ -32,4 +32,5 @@ $kernel = $app->make(
     'Illuminate\Contracts\Console\Kernel'
 );
 
+/** @noinspection PhpUndefinedMethodInspection */
 exit($kernel->handle(new ArgvInput, new ConsoleOutput));
