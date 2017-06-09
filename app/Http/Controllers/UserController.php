@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-class ExampleController extends Controller
+use App\Entities\UserEntity;
+use App\Managers\UserManager;
+
+class UserController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
+     * @return UserEntity
      */
-    public function __construct()
+    public function create()
     {
-        //
+        return app(UserManager::class)->applyRules()->create()->toArray();
     }
-
-    //
 }

@@ -14,3 +14,12 @@
 $app->get('/', function () use ($app) {
     return $app->version();
 });
+
+$app->post('login', 'LoginController@login');
+
+$app->group([
+//    'middleware' => 'auth',
+    'prefix' => 'api/v1',
+], function () use ($app) {
+    $app->post('user/create', 'UserController@create');
+});
