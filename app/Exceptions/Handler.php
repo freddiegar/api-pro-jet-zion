@@ -115,7 +115,7 @@ class Handler extends ExceptionHandler
 
         if (isset($response)) {
             if (isDevelopment()) {
-                $response = array_merge($response['error'], [
+                $response['error'] = array_merge($response['error'], [
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
                     'exception' => get_class($e),
