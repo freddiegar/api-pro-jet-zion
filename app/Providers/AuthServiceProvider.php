@@ -33,11 +33,11 @@ class AuthServiceProvider extends ServiceProvider
         /** @noinspection PhpUndefinedMethodInspection */
         $this->app['auth']->viaRequest('api',
             function ($request) {
-//                if ($request->input('api_token')) {
+                if ($request->input('api_token')) {
                     /** @noinspection PhpUndefinedMethodInspection */
 //                    return UserRepository::getByApiToken($request->input('api_token'));
-                    return User::where('api_token', $request->input('api_token'))->first();
-//                }
+                    return User::where('api_token', base64_decode($request->input('api_token')))->first();
+                }
 
                 return null;
             }
