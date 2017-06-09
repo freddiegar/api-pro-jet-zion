@@ -71,7 +71,7 @@ class Handler extends ExceptionHandler
             $response = [
                 'code' => Response::HTTP_NOT_FOUND,
                 'error' => [
-                    'message' => $e->getMessage() ?: 'Location not valid.',
+                    'message' => $e->getMessage() ?: trans('login.error.uri_not_found'),
                 ]
             ];
         }
@@ -99,7 +99,7 @@ class Handler extends ExceptionHandler
             $response = [
                 'code' => Response::HTTP_CONFLICT,
                 'error' => [
-                    'message' => $e->errorInfo,
+                    'message' => is_array($e->errorInfo) ? implode(' ', $e->errorInfo) : $e->errorInfo,
                 ]
             ];
         }

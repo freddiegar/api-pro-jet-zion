@@ -24,8 +24,8 @@ $app->group([
 });
 
 $app->group([
-    'middleware' => ['auth:api'],
     'prefix' => $prefix,
+    'middleware' => ['auth:api'],
 ], function () use ($app) {
     $app->post('user/create', 'UserController@create');
 });
