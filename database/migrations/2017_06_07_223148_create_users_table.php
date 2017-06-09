@@ -25,7 +25,7 @@ class CreateUsersTable extends Migration
             $table->string('username')->index();
             $table->string('password');
             $table->string('type')->index();
-            $table->string('api_token')->nullable()->index();
+            $table->string('api_token')->nullable()->index()->unique();
             $table->timestamp('last_login_at')->nullable();
             $table->ipAddress('last_ip_address')->nullable();
             $table->unsignedInteger('created_by')->nullable();

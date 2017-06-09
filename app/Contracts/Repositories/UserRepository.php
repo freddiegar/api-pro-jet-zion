@@ -7,34 +7,28 @@ use App\Entities\UserEntity;
 interface UserRepository
 {
     /**
-     * @param UserEntity $user
-     * @return UserEntity
+     * @param array $user
+     * @return mixed|UserEntity
      */
-    static public function create(UserEntity $user);
+    static public function create($user);
 
     /**
      * @param int $id
-     * @return UserEntity
+     * @return mixed|UserEntity
      */
 //    static public function getById($id);
 
     /**
-     * @param string $status
-     * @return UserEntity
-     */
-//    static public function getByStatus($status);
-
-    /**
      * @param string $username
-     * @return UserEntity
+     * @return mixed|UserEntity
      */
 //    static public function getByUsername($username);
 
     /**
      * @param string $apiToken
-     * @return UserEntity
+     * @return mixed|UserEntity
      */
-//    static public function getByApiToken($apiToken);
+    static public function getByApiToken($apiToken);
 
     /**
      * @return bool

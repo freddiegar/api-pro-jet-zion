@@ -14,9 +14,9 @@ class EloquentUserRepository implements UserRepository
     /**
      * @inheritdoc
      */
-    static public function create(UserEntity $user)
+    static public function create($user)
     {
-        return new UserEntity(User::create($user->toArray())->attributesToArray());
+        return User::create($user)->attributesToArray();
     }
 
     /**
@@ -46,10 +46,10 @@ class EloquentUserRepository implements UserRepository
     /**
      * @inheritdoc
      */
-//    static public function getByApiToken($apiToken)
-//    {
-        // TODO: Implement getByApiToken() method.
-//    }
+    static public function getByApiToken($apiToken)
+    {
+        return User::where('api_token', $apiToken)->firstOrFail();
+    }
 
     /**
      * @inheritdoc

@@ -3,16 +3,15 @@
 namespace App\Contracts\Repositories;
 
 use App\Entities\UserEntity;
-use Illuminate\Http\Request;
 
 interface LoginRepository
 {
     /**
-     * @param UserEntity $user
-     * @param Request $request
+     * @param int $id
+     * @param array $user
      * @return bool
      */
-    static public function updateUserLastLogin(UserEntity $user, Request $request);
+    static public function updateUserLastLogin($id, $user);
 
     /**
      * @param string $username

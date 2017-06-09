@@ -2,6 +2,7 @@
 
 namespace App\Managers;
 
+use App\Constants\HttpMethod;
 use App\Contracts\Commons\ManagerContract;
 use App\Contracts\Repositories\LoginRepository;
 use App\Entities\UserEntity;
@@ -35,15 +36,21 @@ class LoginManager extends ManagerContract
      */
     public function login()
     {
-        $user = UserEntity::load($this->repository()->getUserPasswordByUsername($this->requestInput('username')));
-        if (!Hash::check($this->requestInput('password'), $user->password())) {
+        $userRepository = UserEntity::load($this->repository()->getUserPasswordByUsername($this->requestInput('username')));
+
+        if (!Hash::check($this->requestInput('password'), $userRepository->password())) {
             throw new UnauthorizedException(trans('login.error.credentials'));
         }
-        $this->repository()->updateUserLastLogin($user, $this->request());
-        $user = UserEntity::load($this->repository()->getUserApiToken($user->id()));
+
+        $user = new UserEntity();
+        $user->lastIpAddress($this->requestIp());
+        $user->lastLoginAt(now());
+        $user->apiToken(randomHashing());
+
+        $this->repository()->updateUserLastLogin($userRepository->id(), $user->toArray());
 
         return [
-            'token' => $user->apiToken()
+            'api_token' => UserEntity::load($this->repository()->getUserApiToken($userRepository->id()))->apiToken()
         ];
     }
 
@@ -54,10 +61,10 @@ class LoginManager extends ManagerContract
     {
         $rules = [];
 
-        if ($this->requestMethod() == 'POST') {
+        if ($this->requestMethodIs(HttpMethod::POST)) {
             $rules = [
-                'username' => 'required|max:255',
-                'password' => 'required|max:255',
+                'username' => 'required',
+                'password' => 'required',
             ];
         }
 

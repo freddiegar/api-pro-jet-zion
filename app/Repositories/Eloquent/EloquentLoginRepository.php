@@ -3,22 +3,20 @@
 namespace App\Repositories\Eloquent;
 
 use App\Contracts\Repositories\LoginRepository;
-use App\Entities\UserEntity;
 use App\Models\User;
-use Illuminate\Http\Request;
 
+/**
+ * Class EloquentLoginRepository
+ * @package App\Repositories\Eloquent
+ */
 class EloquentLoginRepository implements LoginRepository
 {
     /**
      * @inheritdoc
      */
-    static public function updateUserLastLogin(UserEntity $user, Request $request)
+    static public function updateUserLastLogin($id, $user)
     {
-        $user->lastLoginAt(now());
-        $user->lastIpAddress($request->ip());
-        $user->apiToken(randomHashing());
-
-        return User::findOrFail($user->id())->update($user->toArray());
+        return User::findOrFail($id)->update($user);
     }
 
     /**
