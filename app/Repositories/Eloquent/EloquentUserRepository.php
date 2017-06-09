@@ -48,7 +48,7 @@ class EloquentUserRepository implements UserRepository
      */
     static public function getByApiToken($apiToken)
     {
-        return User::where('api_token', $apiToken)->firstOrFail();
+        return User::where('api_token', base64_decode($apiToken))->firstOrFail();
     }
 
     /**

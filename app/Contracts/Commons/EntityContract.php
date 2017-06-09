@@ -19,6 +19,14 @@ abstract class EntityContract implements BlameInterface
     abstract protected function fields();
 
     /**
+     * This fields are exclude from toArray method
+     * return array
+     */
+    protected function hiddens() {
+        return [];
+    }
+
+    /**
      * @param $name
      * @param $value
      */

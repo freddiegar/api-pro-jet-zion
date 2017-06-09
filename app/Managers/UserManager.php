@@ -3,6 +3,7 @@
 namespace App\Managers;
 
 use App\Constants\HttpMethod;
+use App\Constants\UserStatus;
 use App\Contracts\Commons\ManagerContract;
 use App\Contracts\Commons\SCRUDContract;
 use App\Contracts\Repositories\UserRepository;
@@ -35,8 +36,16 @@ class UserManager extends ManagerContract implements SCRUDContract
      */
     public function create()
     {
-        $user = UserEntity::load($this->request()->toArray());
-        return UserEntity::load($this->repository()->create($user->toArray())->toArray())->toArray();
+        $user = new UserEntity();
+        $user->status(UserStatus::ACTIVE);
+        $user->username($this->requestInput('username'));
+        $user->setPassword($this->requestInput('password'));
+
+        return UserEntity::load(
+            $this->repository()->create(
+                $user->toArray()
+            )
+        )->toArray();
     }
 
     /**

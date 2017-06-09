@@ -43,6 +43,16 @@ class UserEntity extends EntityContract
     }
 
     /**
+     * @return array
+     */
+    protected function hiddens()
+    {
+        return [
+            'password',
+        ];
+    }
+
+    /**
      * @param null $id
      * @return string
      */
