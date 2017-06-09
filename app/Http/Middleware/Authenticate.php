@@ -37,7 +37,7 @@ class Authenticate
     public function handle($request, Closure $next, $guard = null)
     {
         if ($this->auth->guard($guard)->guest()) {
-            throw new UnauthorizedException('Unauthorized', 401);
+            throw new UnauthorizedException(trans('login.error.api_token'), 401);
         }
 
         return $next($request);

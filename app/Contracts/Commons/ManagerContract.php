@@ -37,14 +37,24 @@ abstract class ManagerContract
     }
 
     /**
+     * @param string $method
      * @return string
      */
-    protected function requestMethod()
+    protected function requestMethodIs($method)
     {
-        return $this->request()->method();
+        return $this->request()->isMethod($method);
     }
 
     /**
+     * @return string
+     */
+    protected function requestIp()
+    {
+        return $this->request()->ip();
+    }
+
+    /**
+     * @param $name
      * @return mixed
      */
     protected function requestInput($name)
