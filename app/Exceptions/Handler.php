@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Response;
 use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
@@ -10,6 +11,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -65,10 +67,19 @@ class Handler extends ExceptionHandler
             ];
         }
 
+        if ($e instanceof NotFoundHttpException) {
+            $response = [
+                'error' => [
+                    'message' => $e->getMessage()?: 'Location not valid.',
+                    'code' => Response::HTTP_NOT_FOUND,
+                ]
+            ];
+        }
+
         if ($e instanceof ModelNotFoundException) {
             $response = [
                 'error' => [
-                    'message' => $e->getMessage(),
+                    'message' => $e->getModel(),
                     'code' => Response::HTTP_NOT_FOUND,
                 ]
             ];
@@ -84,11 +95,20 @@ class Handler extends ExceptionHandler
             ];
         }
 
+        if ($e instanceof QueryException) {
+            $response = [
+                'error' => [
+                    'message' => $e->errorInfo,
+                    'code' => Response::HTTP_CONFLICT,
+                ]
+            ];
+        }
+
         if ($e instanceof ProJetZionException) {
             $response = [
                 'error' => [
                     'message' => $e->getMessage(),
-                    'code' => $e->getCode() ?: 500,
+                    'code' => $e->getCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR,
                 ]
             ];
         }
@@ -98,12 +118,15 @@ class Handler extends ExceptionHandler
                 $response = array_merge($response['error'], [
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
+                    'exception' => get_class($e),
 //                    'trace' => $e->getTraceAsString(),
                 ]);
             }
 
             return response()->json($response, $response['code']);
         }
+
+//        dd('Exception not controller', get_class($e));
 
         return parent::render($request, $e);
     }
