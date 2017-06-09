@@ -1,6 +1,5 @@
 <?php
-file_put_contents('/var/www/log/log.log','');
-file_put_contents('/var/www/log/query.log','');
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 try {
