@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 
 class UserManager extends ManagerContract implements SCRUDContract
 {
-
     /**
      * UserManager constructor.
      * @param Request $request
@@ -20,6 +19,14 @@ class UserManager extends ManagerContract implements SCRUDContract
     {
         $this->request = $request;
         $this->repository = $repository;
+    }
+
+    /**
+     * @return UserRepository
+     */
+    protected function repository()
+    {
+        return parent::repository();
     }
 
     /**

@@ -13,37 +13,31 @@ interface UserRepository
     static public function create(UserEntity $user);
 
     /**
-     * @param UserEntity $user
+     * @param int $id
      * @return UserEntity
      */
-    static public function updateLastLogin($user);
+//    static public function getById($id);
 
     /**
-     * @param $id
+     * @param string $status
      * @return UserEntity
      */
-    static public function getById($id);
+//    static public function getByStatus($status);
 
     /**
-     * @param $status
+     * @param string $username
      * @return UserEntity
      */
-    static public function getByStatus($status);
+//    static public function getByUsername($username);
 
     /**
-     * @param $username
+     * @param string $apiToken
      * @return UserEntity
      */
-    static public function getByUsername($username);
+//    static public function getByApiToken($apiToken);
 
     /**
-     * @param $apiToken
-     * @return UserEntity
+     * @return bool
      */
-    static public function getByApiToken($apiToken);
-
-    /**
-     * @return UserEntity
-     */
-    static public function isActive();
+//    static public function isActive();
 }

@@ -12,8 +12,7 @@ class EloquentUserRepository implements UserRepository
     use BlameTrait;
 
     /**
-     * @param UserEntity $user
-     * @return UserEntity
+     * @inheritdoc
      */
     static public function create(UserEntity $user)
     {
@@ -21,55 +20,42 @@ class EloquentUserRepository implements UserRepository
     }
 
     /**
-     * @param UserEntity $user
-     * @return UserEntity
+     * @inheritdoc
      */
-    static public function updateLastLogin($user)
-    {
-        // TODO: Implement updateLastLogin() method.
-    }
-
-    /**
-     * @param $id
-     * @return UserEntity
-     */
-    static public function getById($id)
-    {
+//    static public function getById($id)
+//    {
         // TODO: Implement getById() method.
-    }
+//    }
 
     /**
-     * @param $status
-     * @return UserEntity
+     * @inheritdoc
      */
-    static public function getByStatus($status)
-    {
+//    static public function getByStatus($status)
+//    {
         // TODO: Implement getByStatus() method.
-    }
+//    }
 
     /**
-     * @param $username
-     * @return UserEntity
+     * @inheritdoc
      */
-    static public function getByUsername($username)
-    {
+//    static public function getByUsername($username)
+//    {
         // TODO: Implement getByUsername() method.
-    }
+//    }
 
     /**
-     * @param $apiToken
-     * @return UserEntity
+     * @inheritdoc
      */
-    static public function getByApiToken($apiToken)
-    {
+//    static public function getByApiToken($apiToken)
+//    {
         // TODO: Implement getByApiToken() method.
-    }
+//    }
 
     /**
-     * @return UserEntity
+     * @inheritdoc
      */
-    static public function isActive()
-    {
+//    static public function isActive()
+//    {
         // TODO: Implement isActive() method.
-    }
+//    }
 }
