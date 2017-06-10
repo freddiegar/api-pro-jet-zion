@@ -7,6 +7,10 @@ use App\Traits\BlameColumnsTrait;
 use App\Traits\LoaderTrait;
 use App\Traits\ToArrayTrait;
 
+/**
+ * Class EntityContract
+ * @package App\Contracts\Commons
+ */
 abstract class EntityContract implements BlameInterface
 {
     use BlameColumnsTrait;
@@ -14,6 +18,7 @@ abstract class EntityContract implements BlameInterface
     use ToArrayTrait;
 
     /**
+     * Properties load in entity
      * @return array
      */
     abstract protected function fields();

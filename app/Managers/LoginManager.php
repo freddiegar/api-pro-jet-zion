@@ -50,7 +50,7 @@ class LoginManager extends ManagerContract
         $this->repository()->updateUserLastLogin($userRepository->id(), $user->toArray());
 
         return [
-            'api_token' => UserEntity::load($this->repository()->getUserApiToken($userRepository->id()))->apiToken()
+            UserEntity::KEY_API_TOKEN => UserEntity::load($this->repository()->getUserApiToken($userRepository->id()))->apiToken()
         ];
     }
 

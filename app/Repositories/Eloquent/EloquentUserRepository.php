@@ -3,7 +3,6 @@
 namespace App\Repositories\Eloquent;
 
 use App\Contracts\Repositories\UserRepository;
-use App\Entities\UserEntity;
 use App\Models\User;
 use App\Traits\BlameTrait;
 

@@ -5,23 +5,17 @@ namespace App\Traits;
 trait LoaderTrait
 {
     /**
-     * @param array $data
+     * @param array $properties
      * @return static
      */
-    public static function load(array $data)
+    public static function load(array $properties)
     {
         $entity = new static();
 
-        foreach ($data as $field => $value) {
-            if (in_array($field, $entity->fields())) {
-                $method = (strpos($field, '_') !== false) ? camel_case($field) : $field;
-                if (method_exists($entity, $method)) {
-                    // Set property within method
-                    $entity->{$method}($value);
-                } else {
-                    // Set property derectly
-                    $entity->{$field} = $value;
-                }
+        foreach ($properties as $property => $value) {
+            if (in_array($property, $entity->fields())) {
+                $setter = setter($property);
+                method_exists($entity, $setter) ? $entity->{$setter}($value) : $entity->{$property} = $value;
             }
         }
 

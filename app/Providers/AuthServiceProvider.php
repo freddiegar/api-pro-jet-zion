@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Contracts\Repositories\UserRepository;
-use App\Models\User;
+use App\Entities\UserEntity;
 use Illuminate\Support\ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -33,10 +33,10 @@ class AuthServiceProvider extends ServiceProvider
         /** @noinspection PhpUndefinedMethodInspection */
         $this->app['auth']->viaRequest('api',
             function ($request) {
-                if ($request->input('api_token')) {
+                $keyApiToken = UserEntity::KEY_API_TOKEN;
+                if ($request->input($keyApiToken)) {
                     /** @noinspection PhpUndefinedMethodInspection */
-//                    return UserRepository::getByApiToken($request->input('api_token'));
-                    return User::where('api_token', base64_decode($request->input('api_token')))->first();
+                    return UserRepository::getByApiToken($request->input($keyApiToken));
                 }
 
                 return null;

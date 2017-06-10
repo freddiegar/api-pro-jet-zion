@@ -52,3 +52,36 @@ if (!function_exists('now')) {
         return (new \Carbon\Carbon())->toDateTimeString();
     }
 }
+
+if (!function_exists('method')) {
+    /**
+     * @param string $property
+     * @return string
+     */
+    function method($property)
+    {
+        return (strpos($property, '_') !== false) ? camel_case($property) : $property;
+    }
+}
+
+if (!function_exists('setter')) {
+    /**
+     * @param string $property
+     * @return string
+     */
+    function setter($property)
+    {
+        return method($property);
+    }
+}
+
+if (!function_exists('getter')) {
+    /**
+     * @param string $property
+     * @return string
+     */
+    function getter($property)
+    {
+        return method($property);
+    }
+}
