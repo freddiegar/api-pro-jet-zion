@@ -1,5 +1,5 @@
 <?php
-
+// @codeCoverageIgnoreStart
 namespace App\Listeners;
 
 use App\Events\ExampleEvent;
@@ -27,3 +27,4 @@ class ExampleListener
         //
     }
 }
+// @codeCoverageIgnoreEnd

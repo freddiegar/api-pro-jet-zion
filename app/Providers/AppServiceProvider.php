@@ -18,8 +18,8 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $repositories = [
-            UserRepository::class => EloquentUserRepository::class,
             LoginRepository::class => EloquentLoginRepository::class,
+            UserRepository::class => EloquentUserRepository::class,
         ];
 
         foreach ($repositories as $interface => $concrete) {

@@ -58,23 +58,23 @@ class Handler extends ExceptionHandler
             ];
         }
 
-        if ($e instanceof HttpException) {
-            $response = [
-                'code' => $e->getStatusCode(),
-                'error' => [
-                    'message' => $e->getMessage(),
-                ],
-            ];
-        }
+//        if ($e instanceof HttpException) {
+//            $response = [
+//                'code' => $e->getStatusCode(),
+//                'error' => [
+//                    'message' => $e->getMessage(),
+//                ],
+//            ];
+//        }
 
-        if ($e instanceof NotFoundHttpException) {
-            $response = [
-                'code' => Response::HTTP_NOT_FOUND,
-                'error' => [
-                    'message' => $e->getMessage() ?: trans('login.error.uri_not_found'),
-                ]
-            ];
-        }
+//        if ($e instanceof NotFoundHttpException) {
+//            $response = [
+//                'code' => Response::HTTP_NOT_FOUND,
+//                'error' => [
+//                    'message' => $e->getMessage() ?: trans('login.error.uri_not_found'),
+//                ]
+//            ];
+//        }
 
         if ($e instanceof ModelNotFoundException) {
             $response = [
@@ -89,7 +89,7 @@ class Handler extends ExceptionHandler
             $response = [
                 'code' => Response::HTTP_UNPROCESSABLE_ENTITY,
                 'error' => [
-                    'message' => $e->getMessage(),
+                    'message' => trans('login.error.validation'),
                     'errors' => ($e->getResponse())->original,
                 ]
             ];
@@ -126,6 +126,8 @@ class Handler extends ExceptionHandler
             return response()->json($response['error'], $response['code']);
         }
 
+        // @codeCoverageIgnoreStart
         return parent::render($request, $e);
+        // @codeCoverageIgnoreEnd
     }
 }

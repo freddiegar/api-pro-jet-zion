@@ -85,3 +85,18 @@ if (!function_exists('getter')) {
         return method($property);
     }
 }
+
+if (!function_exists('logger')) {
+    /**
+     * @param mixed $log
+     * @return boolean
+     */
+    function logger($log)
+    {
+        if (isDevelopment()) {
+            return \Log::info(print_r($log, 1));
+        }
+
+        return true;
+    }
+}

@@ -17,7 +17,8 @@ class UserAdminSeeder extends Seeder
             'status' => UserStatus::ACTIVE,
             'username' => 'jon@doe.com',
             'password' => hashing('Admin1234/'),
-            'type' => User::class
+            'type' => User::class,
+            'api_token' => base64_decode('SkRKNUpERXdKRlZ1Ykc5RlNrazRRakpTUTNCaFF6ZGtjR3hKTUhWbGJUQmpiRTVITjFwb05WSTJZblU0TVM1RGIzUTBkMGRUYldkT1kzQng='),
         ]);
     }
 }

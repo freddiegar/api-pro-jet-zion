@@ -20,12 +20,12 @@ $app->get('/', function () use ($app) {
 $app->group([
     'prefix' => $prefix,
 ], function () use ($app) {
-    $app->post('login', 'LoginController@login');
+    $app->post('login', ['as' => 'api.login', 'uses' => 'LoginController@login']);
 });
 
 $app->group([
     'prefix' => $prefix,
     'middleware' => ['auth:api'],
 ], function () use ($app) {
-    $app->post('user/create', 'UserController@create');
+    $app->post('user/create', ['as' => 'api.user.create', 'uses' => 'UserController@create']);
 });

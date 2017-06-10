@@ -5,8 +5,8 @@
     "type": "project",
     "authors": [
         {
-            "name": "Fredy Mendivelso",
-            "email": "fredy.mendivelso@hotmail.com"
+            "name": "Freddie Gar",
+            "email": "freddie.gar@outlook.com"
         }
     ],
     "require": {
@@ -32,7 +32,8 @@
     },
     "autoload-dev": {
         "classmap": [
-            "tests/",
+            "tests/TestCase.php",
+            "tests/DBTestCase.php",
             "database/"
         ]
     },

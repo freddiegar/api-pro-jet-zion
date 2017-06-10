@@ -40,12 +40,13 @@ class UserManager extends ManagerContract implements SCRUDContract
         $user->status(UserStatus::ACTIVE);
         $user->username($this->requestInput('username'));
         $user->setPassword($this->requestInput('password'));
+        $user->type($this->requestInput('type'));
 
         return UserEntity::load(
             $this->repository()->create(
                 $user->toArray()
             )
-        )->toArray();
+        )->toArray(true);
     }
 
     /**
@@ -65,6 +66,7 @@ class UserManager extends ManagerContract implements SCRUDContract
 //                    ]),
                 'username' => 'required|max:255',
                 'password' => 'required|max:255',
+                'type' => 'required',
             ];
         }
 

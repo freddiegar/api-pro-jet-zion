@@ -51,6 +51,7 @@ class UserEntity extends EntityContract
     {
         return [
             'password',
+            'api_token',
         ];
     }
 

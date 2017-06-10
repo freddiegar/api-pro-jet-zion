@@ -31,10 +31,10 @@ abstract class ManagerContract
     /**
      * @return array
      */
-    protected function requestToArray()
-    {
-        return $this->request()->toArray();
-    }
+//    protected function requestToArray()
+//    {
+//        return $this->request()->toArray();
+//    }
 
     /**
      * @param string $method
@@ -75,7 +75,9 @@ abstract class ManagerContract
      */
     protected function rules()
     {
+        // @codeCoverageIgnoreStart
         return [];
+        // @codeCoverageIgnoreEnd
     }
 
     /**

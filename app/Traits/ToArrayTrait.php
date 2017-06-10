@@ -4,10 +4,14 @@ namespace App\Traits;
 
 trait ToArrayTrait
 {
-    public function toArray()
+    /**
+     * @param bool $excludeHiddens
+     * @return array
+     */
+    public function toArray($excludeHiddens = false)
     {
         $toArray = [];
-        $properties = array_diff($this->fields(), $this->hiddens());
+        $properties = ($excludeHiddens) ? array_diff($this->fields(), $this->hiddens()) : $this->fields();
 
         foreach ($properties as $property) {
             if (isset($this->{$property})) {

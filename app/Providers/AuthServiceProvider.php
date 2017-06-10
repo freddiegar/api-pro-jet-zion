@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use App\Contracts\Repositories\UserRepository;
 use App\Entities\UserEntity;
+use App\Models\User;
 use Illuminate\Support\ServiceProvider;
+use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -36,7 +38,8 @@ class AuthServiceProvider extends ServiceProvider
                 $keyApiToken = UserEntity::KEY_API_TOKEN;
                 if ($request->input($keyApiToken)) {
                     /** @noinspection PhpUndefinedMethodInspection */
-                    return UserRepository::getByApiToken($request->input($keyApiToken));
+//                    return UserRepository::getByApiToken($request->input($keyApiToken));
+                    return User::where('api_token', base64_decode($request->input($keyApiToken)))->firstOrFail();
                 }
 
                 return null;
