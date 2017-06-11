@@ -8,6 +8,7 @@ use App\Contracts\Commons\ManagerContract;
 use App\Contracts\Commons\SCRUDContract;
 use App\Contracts\Repositories\UserRepository;
 use App\Entities\UserEntity;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserManager extends ManagerContract implements SCRUDContract
@@ -40,7 +41,7 @@ class UserManager extends ManagerContract implements SCRUDContract
         $user->status(UserStatus::ACTIVE);
         $user->username($this->requestInput('username'));
         $user->setPassword($this->requestInput('password'));
-        $user->type($this->requestInput('type'));
+        $user->type(User::class);
 
         return UserEntity::load(
             $this->repository()->create(
@@ -66,7 +67,6 @@ class UserManager extends ManagerContract implements SCRUDContract
 //                    ]),
                 'username' => 'required|max:255',
                 'password' => 'required|max:255',
-                'type' => 'required',
             ];
         }
 

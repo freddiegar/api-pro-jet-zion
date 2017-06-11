@@ -4,12 +4,9 @@ namespace App\Repositories\Eloquent;
 
 use App\Contracts\Repositories\UserRepository;
 use App\Models\User;
-use App\Traits\BlameTrait;
 
 class EloquentUserRepository implements UserRepository
 {
-    use BlameTrait;
-
     /**
      * @inheritdoc
      */

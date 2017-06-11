@@ -2,11 +2,9 @@
 
 namespace App\Providers;
 
-use App\Contracts\Repositories\UserRepository;
 use App\Entities\UserEntity;
-use App\Models\User;
+use App\Repositories\Eloquent\EloquentUserRepository;
 use Illuminate\Support\ServiceProvider;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -35,11 +33,10 @@ class AuthServiceProvider extends ServiceProvider
         /** @noinspection PhpUndefinedMethodInspection */
         $this->app['auth']->viaRequest('api',
             function ($request) {
-                $keyApiToken = UserEntity::KEY_API_TOKEN;
-                if ($request->input($keyApiToken)) {
+                if ($apiToken = $request->input(UserEntity::KEY_API_TOKEN)) {
+                    // TODO: Revise this funcionality, let interface UserRepository, not concrete
                     /** @noinspection PhpUndefinedMethodInspection */
-//                    return UserRepository::getByApiToken($request->input($keyApiToken));
-                    return User::where('api_token', base64_decode($request->input($keyApiToken)))->firstOrFail();
+                    return EloquentUserRepository::getByApiToken($apiToken);
                 }
 
                 return null;

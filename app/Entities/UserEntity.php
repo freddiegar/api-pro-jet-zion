@@ -26,7 +26,7 @@ class UserEntity extends EntityContract
      */
     protected function fields()
     {
-        return [
+        return array_merge([
             'id',
             'status',
             'username',
@@ -35,13 +35,7 @@ class UserEntity extends EntityContract
             'api_token',
             'last_login_at',
             'last_ip_address',
-            'created_by',
-            'updated_by',
-            'deleted_by',
-            'created_at',
-            'updated_at',
-            'deleted_at',
-        ];
+        ], $this->blames());
     }
 
     /**
@@ -49,10 +43,11 @@ class UserEntity extends EntityContract
      */
     protected function hiddens()
     {
-        return [
+        return array_merge([
             'password',
             'api_token',
-        ];
+            'type',
+        ], $this->blames());
     }
 
     /**
