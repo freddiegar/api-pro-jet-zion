@@ -2,7 +2,7 @@
 
 namespace App\Constants;
 
-interface BlameColumns
+interface BlameColumn
 {
     // By
     const CREATED_BY = 'created_by';

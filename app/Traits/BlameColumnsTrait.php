@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-use App\Constants\BlameColumns;
+use App\Constants\BlameColumn;
 
 trait BlameColumnsTrait
 {
@@ -13,10 +13,10 @@ trait BlameColumnsTrait
     public function createdBy($created_by = null)
     {
         if (!is_null($created_by)) {
-            $this->{BlameColumns::CREATED_BY} = $created_by;
+            $this->{BlameColumn::CREATED_BY} = $created_by;
             return $this;
         }
-        return $this->{BlameColumns::CREATED_BY};
+        return $this->{BlameColumn::CREATED_BY};
     }
 
     /**
@@ -26,10 +26,10 @@ trait BlameColumnsTrait
     public function updatedBy($updated_by = null)
     {
         if (!is_null($updated_by)) {
-            $this->{BlameColumns::UPDATED_BY} = $updated_by;
+            $this->{BlameColumn::UPDATED_BY} = $updated_by;
             return $this;
         }
-        return $this->{BlameColumns::UPDATED_BY};
+        return $this->{BlameColumn::UPDATED_BY};
     }
 
     /**
@@ -39,10 +39,10 @@ trait BlameColumnsTrait
     public function deletedBy($deleted_by = null)
     {
         if (!is_null($deleted_by)) {
-            $this->{BlameColumns::DELETED_BY} = $deleted_by;
+            $this->{BlameColumn::DELETED_BY} = $deleted_by;
             return $this;
         }
-        return $this->{BlameColumns::DELETED_BY};
+        return $this->{BlameColumn::DELETED_BY};
     }
 
     /**
@@ -52,10 +52,10 @@ trait BlameColumnsTrait
     public function createdAt($created_at = null)
     {
         if (!is_null($created_at)) {
-            $this->{BlameColumns::CREATED_AT} = $created_at;
+            $this->{BlameColumn::CREATED_AT} = $created_at;
             return $this;
         }
-        return $this->{BlameColumns::CREATED_AT};
+        return $this->{BlameColumn::CREATED_AT};
     }
 
     /**
@@ -65,10 +65,10 @@ trait BlameColumnsTrait
     public function updatedAt($updated_at = null)
     {
         if (!is_null($updated_at)) {
-            $this->{BlameColumns::UPDATED_AT} = $updated_at;
+            $this->{BlameColumn::UPDATED_AT} = $updated_at;
             return $this;
         }
-        return $this->{BlameColumns::UPDATED_AT};
+        return $this->{BlameColumn::UPDATED_AT};
     }
 
     /**
@@ -78,9 +78,9 @@ trait BlameColumnsTrait
     public function deletedAt($deleted_at = null)
     {
         if (!is_null($deleted_at)) {
-            $this->{BlameColumns::DELETED_AT} = $deleted_at;
+            $this->{BlameColumn::DELETED_AT} = $deleted_at;
             return $this;
         }
-        return $this->{BlameColumns::DELETED_AT};
+        return $this->{BlameColumn::DELETED_AT};
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Traits;
 
-use App\Constants\BlameColumns;
-use App\Constants\Events;
+use App\Constants\BlameColumn;
+use App\Constants\BlameEvent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\UnauthorizedException;
@@ -14,19 +14,19 @@ trait BlameTrait
      * The name of the "created by" column.
      * @var string
      */
-    static private $CREATED_BY = BlameColumns::CREATED_BY;
+    static private $CREATED_BY = BlameColumn::CREATED_BY;
 
     /**
      * The name of the "updated by" column.
      * @var string
      */
-    static private $UPDATED_BY = BlameColumns::UPDATED_BY;
+    static private $UPDATED_BY = BlameColumn::UPDATED_BY;
 
     /**
      * The name of the "deleted by" column.
      * @var string
      */
-    static private $DELETED_BY = BlameColumns::DELETED_BY;
+    static private $DELETED_BY = BlameColumn::DELETED_BY;
 
     /**
      * By default is that user guard logged
@@ -47,7 +47,7 @@ trait BlameTrait
     static protected function bootBlameTrait()
     {
         foreach (static::blameEvents() as $event) {
-            if ($event === Events::SAVED) {
+            if ($event === BlameEvent::SAVED) {
                 static::{$event}(function (Model $model) {
                     // When model was saved enabled blame columns for anothers statements
                     $model::enableBlame();
@@ -77,10 +77,10 @@ trait BlameTrait
     static private function blameEvents()
     {
         return [
-            Events::CREATING,
-            Events::UPDATING,
-            Events::DELETING,
-            Events::SAVED,
+            BlameEvent::CREATING,
+            BlameEvent::UPDATING,
+            BlameEvent::DELETING,
+            BlameEvent::SAVED,
         ];
     }
 
@@ -93,14 +93,14 @@ trait BlameTrait
         $columnByEvent = [
             // Event created set created by and updated by, this equals to Lumen
             // If this change please going see disableCreatedBy method
-            Events::CREATING => [
+            BlameEvent::CREATING => [
                 static::$CREATED_BY,
                 static::$UPDATED_BY,
             ],
-            Events::UPDATING => [
+            BlameEvent::UPDATING => [
                 static::$UPDATED_BY,
             ],
-            Events::DELETING => [
+            BlameEvent::DELETING => [
                 static::$DELETED_BY,
             ],
         ];
@@ -165,7 +165,7 @@ trait BlameTrait
      */
     static public function enableCreatedBy()
     {
-        static::$CREATED_BY = BlameColumns::CREATED_BY;
+        static::$CREATED_BY = BlameColumn::CREATED_BY;
     }
 
     /**
@@ -174,7 +174,7 @@ trait BlameTrait
      */
     static public function enableUpdatedBy()
     {
-        static::$UPDATED_BY = BlameColumns::UPDATED_BY;
+        static::$UPDATED_BY = BlameColumn::UPDATED_BY;
     }
 
     /**
@@ -183,7 +183,7 @@ trait BlameTrait
      */
     static public function enableDeletedBy()
     {
-        static::$DELETED_BY = BlameColumns::DELETED_BY;
+        static::$DELETED_BY = BlameColumn::DELETED_BY;
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace App\Constants;
 
-interface Events
+interface BlameEvent
 {
     const CREATING = 'creating';
     const UPDATING = 'updating';

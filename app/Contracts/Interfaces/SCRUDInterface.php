@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Contracts\Commons;
+namespace App\Contracts\Interfaces;
 
-interface SCRUDContract
+interface SCRUDInterface
 {
     /**
      * Show all models

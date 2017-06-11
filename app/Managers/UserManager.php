@@ -5,13 +5,13 @@ namespace App\Managers;
 use App\Constants\HttpMethod;
 use App\Constants\UserStatus;
 use App\Contracts\Commons\ManagerContract;
-use App\Contracts\Commons\SCRUDContract;
+use App\Contracts\Interfaces\SCRUDInterface;
 use App\Contracts\Repositories\UserRepository;
 use App\Entities\UserEntity;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserManager extends ManagerContract implements SCRUDContract
+class UserManager extends ManagerContract implements SCRUDInterface
 {
     /**
      * UserManager constructor.
