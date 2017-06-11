@@ -13,7 +13,7 @@ class UserAdminSeeder extends Seeder
      */
     public function run()
     {
-        User::setCurrentUserAuthenticated(1);
+        User::disableBlame();
         User::create([
             'status' => UserStatus::ACTIVE,
             'username' => 'jon@doe.com',

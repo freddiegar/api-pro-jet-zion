@@ -65,4 +65,12 @@ abstract class EntityContract implements BlameInterface
     {
         return $this->{$name} = null;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return json_encode($this->toArray(), 0);
+    }
 }
