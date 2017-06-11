@@ -8,7 +8,7 @@ trait LoaderTrait
      * @param array $properties
      * @return static
      */
-    public static function load(array $properties)
+    static public function load(array $properties)
     {
         $entity = new static();
 

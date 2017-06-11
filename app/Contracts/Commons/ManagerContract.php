@@ -29,14 +29,6 @@ abstract class ManagerContract
     }
 
     /**
-     * @return array
-     */
-//    protected function requestToArray()
-//    {
-//        return $this->request()->toArray();
-//    }
-
-    /**
      * @param string $method
      * @return string
      */
@@ -57,7 +49,7 @@ abstract class ManagerContract
      * @param $name
      * @return mixed
      */
-    protected function requestInput($name)
+    protected function requestInput($name = null)
     {
         return $this->request()->input($name);
     }

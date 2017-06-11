@@ -3,15 +3,14 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Response;
 use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -100,15 +99,6 @@ class Handler extends ExceptionHandler
                 'code' => Response::HTTP_CONFLICT,
                 'error' => [
                     'message' => is_array($e->errorInfo) ? implode(' ', $e->errorInfo) : $e->errorInfo,
-                ]
-            ];
-        }
-
-        if ($e instanceof ProJetZionException) {
-            $response = [
-                'code' => $e->getCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR,
-                'error' => [
-                    'message' => $e->getMessage(),
                 ]
             ];
         }

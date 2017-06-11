@@ -2,8 +2,8 @@
 
 namespace App\Traits;
 
-use App\Exceptions\ProJetZionException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\UnauthorizedException;
 
 trait BlameTrait
 {
@@ -12,118 +12,115 @@ trait BlameTrait
      *
      * @var string
      */
-    protected static $CREATING = 'creating';
+    static private $CREATING = 'creating';
 
     /**
      * The name of the action updating.
      *
      * @var string
      */
-    protected static $UPDATING = 'updating';
+    static private $UPDATING = 'updating';
 
     /**
      * The name of the action deleting.
      *
      * @var string
      */
-    protected static $DELETING = 'deleting';
+    static private $DELETING = 'deleting';
 
     /**
      * The name of the "created by" column.
      *
      * @var string
      */
-    protected static $CREATED_BY = 'created_by';
+    static private $CREATED_BY = 'created_by';
 
     /**
      * The name of the "updated by" column.
      *
      * @var string
      */
-    protected static $UPDATED_BY = 'updated_by';
+    static private $UPDATED_BY = 'updated_by';
 
     /**
      * The name of the "deleted by" column.
      *
      * @var string
      */
-    protected static $DELETED_BY = 'deleted_by';
+    static private $DELETED_BY = 'deleted_by';
 
     /**
      * By default is that user guard logged
      * @var string
      */
-    protected static $GUARD_NAME = null;
+    static private $GUARD_NAME = null;
 
     /**
      * By default is that user id logged
      * @var string
      */
-    protected static $CURRENT_USER_AUTHENTICATED = null;
-
-    /**
-     * Indicates if the model can blade columns
-     * @var bool
-     */
-    protected static $BLAME_ENABLE = true;
-
+    static private $CURRENT_USER_AUTHENTICATED = null;
 
     /**
      * The "booting" method of the model.
      *
      * @return void
      */
-    protected static function bootBlameTrait()
+    static protected function bootBlameTrait()
     {
-        foreach (static::blameActionByColumn() as $column => $action) {
-            $column = static::blameColumnByAction($action);
-            if (is_string($column)) {
-                static::{$action}(function ($model) use ($column, $action) {
-                    if (!static::$BLAME_ENABLE) {
-                        return true;
+        foreach (static::blameActions() as $action) {
+            $columns = static::blameColumnsByAction($action);
+            static::{$action}(function ($model) use ($columns, $action) {
+                foreach ($columns as $column) {
+                    if (!$column) {
+                        continue;
                     }
 
                     if (!Auth::guard(static::$GUARD_NAME)->check() && !self::$CURRENT_USER_AUTHENTICATED) {
-                        throw new ProJetZionException('User not authenticated to ' . $action . ' in ' . self::class);
+                        throw new UnauthorizedException('User not authenticated to ' . $action . ' in ' . self::class);
                     }
 
                     $model->{$column} = self::$CURRENT_USER_AUTHENTICATED
                         ? self::$CURRENT_USER_AUTHENTICATED
                         : Auth::guard(static::$GUARD_NAME)->id();
+                }
 
-                    return true;
-                });
-            }
+                return true;
+            });
         }
     }
 
     /**
-     * @param null $column
-     * @return array|string
+     * @return array
      */
-    private static function blameActionByColumn($column = null)
+    static private function blameActions()
     {
-        $actionByColumn = [
-            static::$CREATED_BY => static::$CREATING,
-            static::$UPDATED_BY => static::$UPDATING,
-            static::$DELETED_BY => static::$DELETING,
+        return [
+            static::$CREATING,
+            static::$UPDATING,
+            static::$DELETING,
         ];
-
-        return isset($actionByColumn[$column])
-            ? $actionByColumn[$column]
-            : $actionByColumn;
     }
 
     /**
      * @param null $action
      * @return array|string
      */
-    private static function blameColumnByAction($action = null)
+    static private function blameColumnsByAction($action = null)
     {
         $columnByAction = [
-            static::$CREATING => static::$CREATED_BY,
-            static::$UPDATING => static::$UPDATED_BY,
-            static::$DELETING => static::$DELETED_BY,
+            // Action created set created by and updated by, this equals to Lumen
+            // Vien disableCreatedBy
+            static::$CREATING => [
+                static::$CREATED_BY,
+                static::$UPDATED_BY
+            ],
+            static::$UPDATING => [
+                static::$UPDATED_BY
+            ],
+            static::$DELETING => [
+                static::$DELETED_BY
+            ],
         ];
 
         return isset($columnByAction[$action])
@@ -132,65 +129,64 @@ trait BlameTrait
     }
 
     /**
-     * Disable actions for columns blame
+     * Disable actions for columns by blame
      */
-    public static function disableBlame()
+    static public function disableBlame()
     {
-        static::$BLAME_ENABLE = false;
+        static::disableCreatedBy();
+        static::disableUpdatedBy();
+        static::disableDeletedBy();
     }
 
     /**
-     * Disable set for created_by column
+     * Disable created_by column
      */
-    public static function disableCreatedBy()
+    static public function disableCreatedBy()
     {
+        // TODO: Improve this functionality using blameColumnsByAction() to determine columns dynamic
         static::$CREATED_BY = false;
-    }
-
-    /**
-     * Disable set for updated_by column
-     */
-    public static function disableUpdatedBy()
-    {
         static::$UPDATED_BY = false;
     }
 
     /**
-     * Disable set for updated_by column
+     * Disable updated_by column
      */
-    public static function disableDeletedBy()
+    static public function disableUpdatedBy()
     {
-        static::$DELETED_BY = false;
+        static::$UPDATED_BY = null;
     }
 
     /**
-     * Set guard to use in register
-     *
+     * Disable deleted_by column
+     */
+    static public function disableDeletedBy()
+    {
+        static::$DELETED_BY = null;
+    }
+
+    /**
+     * Set guard to use blame
      * @param $guard
      */
-    public static function setGuard($guard)
+    static public function setGuard($guard)
     {
         static::$GUARD_NAME = $guard;
     }
 
     /**
-     * Set guard to use in register
-     *
+     * Set user to use in blame columns
      * @param $user_id
-     *
-     * @internal param $guard
      */
-    public static function setCurrentUserAuthenticated($user_id)
+    static public function setCurrentUserAuthenticated($user_id)
     {
         static::$CURRENT_USER_AUTHENTICATED = $user_id;
     }
 
     /**
-     * Set guard to use in register
+     * Get guard used in blame
      * @return string
-     * @internal param $guard
      */
-    public static function getCurrentUserAuthenticated()
+    static public function getCurrentUserAuthenticated()
     {
         return static::$CURRENT_USER_AUTHENTICATED;
     }
