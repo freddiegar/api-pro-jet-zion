@@ -35,21 +35,20 @@ class LoginManager extends ManagerContract
      */
     public function login()
     {
-        $userRepository = UserEntity::load($this->repository()->getUserPasswordByUsername($this->requestInput('username')));
+        $user = UserEntity::load($this->repository()->getUserPasswordByUsername($this->requestInput('username')));
 
-        if (!passwordIsValid($this->requestInput('password'), $userRepository->password())) {
+        if (!passwordIsValid($this->requestInput('password'), $user->password())) {
             throw new UnauthorizedException(trans('login.error.credentials'));
         }
 
-        $user = new UserEntity();
         $user->lastIpAddress($this->requestIp());
         $user->lastLoginAt(now());
         $user->apiToken(randomHashing());
 
-        $this->repository()->updateUserLastLogin($userRepository->id(), $user->toArray());
+        $this->repository()->updateUserLastLogin($user->id(), $user->toArray());
 
         return [
-            UserEntity::KEY_API_TOKEN => UserEntity::load($this->repository()->getUserApiToken($userRepository->id()))->apiToken()
+            UserEntity::KEY_API_TOKEN => $user->apiToken()
         ];
     }
 

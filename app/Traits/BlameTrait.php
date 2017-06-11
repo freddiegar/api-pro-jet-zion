@@ -144,8 +144,8 @@ trait BlameTrait
     static public function disableCreatedBy()
     {
         // TODO: Improve this functionality using blameColumnsByAction() to determine columns dynamic
-        static::$CREATED_BY = false;
-        static::$UPDATED_BY = false;
+        static::$CREATED_BY = null;
+        static::$UPDATED_BY = null;
     }
 
     /**
@@ -175,11 +175,11 @@ trait BlameTrait
 
     /**
      * Set user to use in blame columns
-     * @param $user_id
+     * @param $id
      */
-    static public function setCurrentUserAuthenticated($user_id)
+    static public function setCurrentUserAuthenticated($id)
     {
-        static::$CURRENT_USER_AUTHENTICATED = $user_id;
+        static::$CURRENT_USER_AUTHENTICATED = $id;
     }
 
     /**

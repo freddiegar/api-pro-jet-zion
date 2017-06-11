@@ -14,14 +14,6 @@ class EloquentLoginRepository implements LoginRepository
     /**
      * @inheritdoc
      */
-    static public function updateUserLastLogin($id, $user)
-    {
-        return User::findOrFail($id)->update($user);
-    }
-
-    /**
-     * @inheritdoc
-     */
     static public function getUserPasswordByUsername($username)
     {
         return User::where(compact('username'))->select(['id', 'password'])->firstOrFail()->toArray();
@@ -30,8 +22,9 @@ class EloquentLoginRepository implements LoginRepository
     /**
      * @inheritdoc
      */
-    static public function getUserApiToken($id)
+    static public function updateUserLastLogin($id, $user)
     {
-        return User::select('api_token')->findOrFail($id)->toArray();
+        User::setCurrentUserAuthenticated($id);
+        return User::findOrFail($id)->update($user);
     }
 }
