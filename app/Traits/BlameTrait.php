@@ -48,26 +48,25 @@ trait BlameTrait
     {
         foreach (static::blameEvents() as $event) {
             if ($event === BlameEvent::SAVED) {
-                static::{$event}(function (Model $model) {
+                static::{$event}(function () {
                     // When model was saved enabled blame columns for anothers statements
-                    $model::enableBlame();
+                    self::enableBlame();
+                    // Unregister and reload previuous events
+                    self::flushEventListeners();
+                    self::clearBootedModels();
                 });
                 continue;
             }
 
-            $columns = static::blameColumnsByEvent($event);
-            static::{$event}(function (Model $model) use ($columns, $event) {
-                foreach ($columns as $column) {
-                    if (!$column) {
-                        logger("Cancel set columns in event [{$event}] to " . get_class($model));
-                        continue;
+            if ($columns = static::blameColumnsByEvent($event)) {
+                static::{$event}(function (Model $model) use ($columns, $event) {
+                    foreach ($columns as $column) {
+                        $model->{$column} = self::getCurrentUserAuthenticated($event, class_basename($model));
                     }
 
-                    $model->{$column} = self::getCurrentUserAuthenticated($event);
-                }
-
-                return true;
-            });
+                    return true;
+                });
+            }
         }
     }
 
@@ -86,7 +85,7 @@ trait BlameTrait
 
     /**
      * @param string $event
-     * @return array
+     * @return array|null
      */
     static private function blameColumnsByEvent($event)
     {
@@ -105,7 +104,10 @@ trait BlameTrait
             ],
         ];
 
-        return $columnByEvent[$event];
+        // Events without columns are eliminate
+        $columnByEvent = filterArray($columnByEvent);
+
+        return isset($columnByEvent[$event]) ? $columnByEvent[$event] : null;
     }
 
     /**
@@ -209,9 +211,10 @@ trait BlameTrait
     /**
      * Get guard used in blame
      * @param string $event
+     * @param string $model
      * @return int
      */
-    static public function getCurrentUserAuthenticated($event)
+    static public function getCurrentUserAuthenticated($event, $model)
     {
         if (self::$CURRENT_USER_AUTHENTICATED) {
             return self::$CURRENT_USER_AUTHENTICATED;
@@ -219,9 +222,9 @@ trait BlameTrait
 
         if (Auth::guard(static::$GUARD_NAME)->check()) {
             self::setCurrentUserAuthenticated(Auth::guard(static::$GUARD_NAME)->id());
-            return self::getCurrentUserAuthenticated($event);
+            return self::getCurrentUserAuthenticated($event, $model);
         }
 
-        throw new UnauthorizedException('User not authenticated to ' . $event . ' in ' . self::class);
+        throw new UnauthorizedException(trans('login.error.not_authenticated', compact('event', 'model')));
     }
 }

@@ -88,13 +88,16 @@ if (!function_exists('getter')) {
 
 if (!function_exists('logger')) {
     /**
-     * @param mixed $log
-     * @return boolean
+     * @param array ...$logs
+     * @return bool
      */
-    function logger($log)
+    function logger(...$logs)
     {
         if (isDevelopment()) {
-            return Illuminate\Support\Facades\Log::info(print_r($log, true));
+            foreach ($logs as $log){
+                Illuminate\Support\Facades\Log::info(print_r($log, true));
+            }
+            return true;
         }
 
         return true;
@@ -110,5 +113,24 @@ if (!function_exists('passwordIsValid')) {
     function passwordIsValid($actual, $expected)
     {
         return Illuminate\Support\Facades\Hash::check($actual, $expected);
+    }
+}
+
+if (!function_exists('filterArray')) {
+    /**
+     * @param $array
+     * @return array
+     */
+    function filterArray($array)
+    {
+        foreach ($array as &$value) {
+            if (is_array($value)) {
+                $value = filterArray($value);
+            }
+        }
+
+        return array_filter($array, function ($item) {
+            return !empty($item) || $item === false || $item === 0;
+        });
     }
 }

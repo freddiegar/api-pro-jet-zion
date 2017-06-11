@@ -13,7 +13,7 @@ class UserAdminSeeder extends Seeder
      */
     public function run()
     {
-        User::disableBlame();
+        User::disableCreatedBy();
         User::create([
             'status' => UserStatus::ACTIVE,
             'username' => 'jon@doe.com',
