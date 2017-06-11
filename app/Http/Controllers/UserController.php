@@ -7,10 +7,17 @@ use App\Managers\UserManager;
 class UserController extends Controller
 {
     /**
+     * @return UserManager
+     */
+    protected function manager()
+    {
+        return app(UserManager::class);
+    }
+    /**
      * @return array
      */
     public function create()
     {
-        return app(UserManager::class)->applyRules()->create();
+        return $this->manager()->requestValidate()->create();
     }
 }

@@ -1,10 +1,8 @@
 <?php
 
-use App\Constants\HttpMethod;
 use App\Constants\UserStatus;
 use App\Entities\UserEntity;
 use App\Models\User;
-use Illuminate\Http\Response;
 
 abstract class TestCase extends Laravel\Lumen\Testing\TestCase
 {

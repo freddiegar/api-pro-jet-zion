@@ -7,7 +7,6 @@ use App\Contracts\Commons\ManagerContract;
 use App\Contracts\Repositories\LoginRepository;
 use App\Entities\UserEntity;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\UnauthorizedException;
 
 class LoginManager extends ManagerContract
@@ -38,7 +37,7 @@ class LoginManager extends ManagerContract
     {
         $userRepository = UserEntity::load($this->repository()->getUserPasswordByUsername($this->requestInput('username')));
 
-        if (!Hash::check($this->requestInput('password'), $userRepository->password())) {
+        if (!passwordIsValid($this->requestInput('password'), $userRepository->password())) {
             throw new UnauthorizedException(trans('login.error.credentials'));
         }
 

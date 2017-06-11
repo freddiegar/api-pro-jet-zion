@@ -94,9 +94,21 @@ if (!function_exists('logger')) {
     function logger($log)
     {
         if (isDevelopment()) {
-            return \Log::info(print_r($log, 1));
+            return Illuminate\Support\Facades\Log::info(print_r($log, 1));
         }
 
         return true;
+    }
+}
+
+if (!function_exists('passwordIsValid')) {
+    /**
+     * @param $actual
+     * @param $expected
+     * @return boolean
+     */
+    function passwordIsValid($actual, $expected)
+    {
+        return Illuminate\Support\Facades\Hash::check($actual, $expected);
     }
 }

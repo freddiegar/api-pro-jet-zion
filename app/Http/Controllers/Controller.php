@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\Commons\ManagerContract;
 use Laravel\Lumen\Routing\Controller as BaseController;
 
-class Controller extends BaseController
+abstract class Controller extends BaseController
 {
-    //
+    /**
+     * @return ManagerContract
+     */
+    abstract protected function manager();
 }

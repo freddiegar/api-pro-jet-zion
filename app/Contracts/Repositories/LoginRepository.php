@@ -2,8 +2,6 @@
 
 namespace App\Contracts\Repositories;
 
-use App\Entities\UserEntity;
-
 interface LoginRepository
 {
     /**
@@ -15,13 +13,13 @@ interface LoginRepository
 
     /**
      * @param string $username
-     * @return mixed|UserEntity
+     * @return array
      */
     static public function getUserPasswordByUsername($username);
 
     /**
      * @param $id
-     * @return mixed|UserEntity
+     * @return array
      */
     static public function getUserApiToken($id);
 }

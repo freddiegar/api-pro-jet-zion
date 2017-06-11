@@ -51,7 +51,17 @@ abstract class ManagerContract
      */
     protected function requestInput($name = null)
     {
-        return $this->request()->input($name);
+        return $name ? $this->request()->input($name) : $this->request()->all();
+    }
+
+    /**
+     * Valid data in request
+     */
+    public function requestValidate()
+    {
+        $this->validate($this->request(), $this->rules(), $this->messages());
+
+        return $this;
     }
 
     /**
@@ -78,15 +88,5 @@ abstract class ManagerContract
     protected function messages()
     {
         return [];
-    }
-
-    /**
-     * Valid data in request
-     */
-    public function applyRules()
-    {
-        $this->validate($this->request(), $this->rules(), $this->messages());
-
-        return $this;
     }
 }
