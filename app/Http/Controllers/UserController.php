@@ -23,11 +23,20 @@ class UserController extends Controller
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return array
      */
     public function read($id)
     {
         return $this->manager()->read($id);
+    }
+
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function update($id)
+    {
+        return $this->manager()->requestValidate()->update($id);
     }
 }

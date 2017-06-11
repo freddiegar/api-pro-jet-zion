@@ -24,6 +24,12 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
         ];
     }
 
+    public function apiToken()
+    {
+        // Jon Doe api_token seeder
+        return 'SkRKNUpERXdKRlZ1Ykc5RlNrazRRakpTUTNCaFF6ZGtjR3hKTUhWbGJUQmpiRTVITjFwb05WSTJZblU0TVM1RGIzUTBkMGRUYldkT1kzQng=';
+    }
+
     public function blame()
     {
         return [
@@ -44,7 +50,7 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
             'username' => 'jon@doe.com',
             'password' => 'Admin1234/',
             'type' => User::class,
-            'api_token' => 'SkRKNUpERXdKRlZ1Ykc5RlNrazRRakpTUTNCaFF6ZGtjR3hKTUhWbGJUQmpiRTVITjFwb05WSTJZblU0TVM1RGIzUTBkMGRUYldkT1kzQng=',
+            'api_token' => $this->apiToken(),
             'last_login_at' => now(),
             'last_ip_address' => '127.0.0.1',
         ], $this->blame());
@@ -55,9 +61,7 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
         return [
             'username' => 'freddie@gar.com',
             'password' => 'Admin1234/',
-            'type' => User::class,
-            // Jon Doe api_token seeder
-            UserEntity::KEY_API_TOKEN => 'SkRKNUpERXdKRlZ1Ykc5RlNrazRRakpTUTNCaFF6ZGtjR3hKTUhWbGJUQmpiRTVITjFwb05WSTJZblU0TVM1RGIzUTBkMGRUYldkT1kzQng=',
+            UserEntity::KEY_API_TOKEN => $this->apiToken(),
         ];
     }
 

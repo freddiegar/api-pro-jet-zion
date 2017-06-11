@@ -43,12 +43,11 @@ class UserManager extends ManagerContract implements SCRUDContract
         $user->setPassword($this->requestInput('password'));
         $user->type(User::class);
 
-        return UserEntity::load(
-            $this->repository()->create($user->toArray())
-        )->toArray(true);
+        return UserEntity::load($this->repository()->create($user->toArray()))->toArray(true);
     }
 
     /**
+     * @param int $id
      * @return array
      */
     public function read($id)
@@ -57,25 +56,35 @@ class UserManager extends ManagerContract implements SCRUDContract
     }
 
     /**
+     * @param int $id
+     * @return array
+     */
+    public function update($id)
+    {
+        $user = UserEntity::load($this->requestInput());
+        if ($this->requestInput('password')) {
+            $user->setPassword($this->requestInput('password'));
+        }
+        $this->repository()->updateById($id, $user->toArray());
+        return $user->id($id)->toArray(true);
+    }
+
+    /**
      * @return array
      */
     protected function rules()
     {
-        $rules = [];
+        $required = $this->requestIsMethod(HttpMethod::POST) ? 'required|' : '';
 
-        if ($this->requestMethodIs(HttpMethod::POST)) {
-            $rules = [
-//                'status' => 'required|in:' . implode(',', [
-//                        UserStatus::ACTIVE,
-//                        UserStatus::INACTIVE,
-//                        UserStatus::SUSPENDED,
-//                        UserStatus::BLOCKED,
-//                    ]),
-                'username' => 'required|max:255',
-                'password' => 'required|max:255',
-            ];
-        }
-
-        return $rules;
+        return [
+            'username' => $required . 'max:255',
+            'password' => $required . 'max:255',
+            'status' => 'in:' . implode(',', [
+                    UserStatus::ACTIVE,
+                    UserStatus::INACTIVE,
+                    UserStatus::SUSPENDED,
+                    UserStatus::BLOCKED,
+                ]),
+        ];
     }
 }

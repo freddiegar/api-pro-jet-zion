@@ -26,9 +26,17 @@ class EloquentUserRepository implements UserRepository
     /**
      * @inheritdoc
      */
+    static public function updateById($id, $user)
+    {
+        return User::findOrFail($id)->update($user);
+    }
+
+    /**
+     * @inheritdoc
+     */
 //    static public function getByStatus($status)
 //    {
-        // TODO: Implement getByStatus() method.
+    // TODO: Implement getByStatus() method.
 //    }
 
     /**
@@ -36,7 +44,7 @@ class EloquentUserRepository implements UserRepository
      */
 //    static public function getByUsername($username)
 //    {
-        // TODO: Implement getByUsername() method.
+    // TODO: Implement getByUsername() method.
 //    }
 
     /**
@@ -52,6 +60,6 @@ class EloquentUserRepository implements UserRepository
      */
 //    static public function isActive()
 //    {
-        // TODO: Implement isActive() method.
+    // TODO: Implement isActive() method.
 //    }
 }

@@ -59,7 +59,7 @@ class LoginManager extends ManagerContract
     {
         $rules = [];
 
-        if ($this->requestMethodIs(HttpMethod::POST)) {
+        if ($this->requestIsMethod(HttpMethod::POST)) {
             $rules = [
                 'username' => 'required',
                 'password' => 'required',

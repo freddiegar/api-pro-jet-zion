@@ -29,10 +29,18 @@ abstract class ManagerContract
     }
 
     /**
+     * @return string
+     */
+    protected function requestMethod()
+    {
+        return $this->request()->method();
+    }
+
+    /**
      * @param string $method
      * @return string
      */
-    protected function requestMethodIs($method)
+    protected function requestIsMethod($method)
     {
         return $this->request()->isMethod($method);
     }
@@ -75,12 +83,7 @@ abstract class ManagerContract
     /**
      * @return array
      */
-    protected function rules()
-    {
-        // @codeCoverageIgnoreStart
-        return [];
-        // @codeCoverageIgnoreEnd
-    }
+    abstract protected function rules();
 
     /**
      * @return array

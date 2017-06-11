@@ -18,19 +18,21 @@ interface SCRUDContract
 
     /**
      * Read model specific
-     * @param $id
+     * @param int $id
      * @return array
      */
     public function read($id);
 
     /**
      * Update model specific
+     * @param int $id
      * @return array
      */
-//    public function update($data, $id);
+    public function update($id);
 
     /**
      * Delete model specific
+     * @param int $id
      * @return array
      */
 //    public function delete($id);

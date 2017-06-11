@@ -12,6 +12,13 @@ interface UserRepository
 
     /**
      * @param int $id
+     * @param array $user
+     * @return bool
+     */
+    static public function updateById($id, $user);
+
+    /**
+     * @param int $id
      * @return array
      */
     static public function getById($id);
