@@ -1,5 +1,6 @@
 <?php
 
+use App\Constants\BlameColumn;
 use App\Entities\UserEntity;
 
 class UserEntityTest extends TestCase
@@ -19,11 +20,11 @@ class UserEntityTest extends TestCase
         $this->assertEquals(base64_encode($properties['api_token']), $user->apiToken());
         $this->assertEquals($properties['last_login_at'], $user->lastLoginAt());
         $this->assertEquals($properties['last_ip_address'], $user->lastIpAddress());
-        $this->assertEquals($properties['created_by'], $user->createdBy(), 'Error text');
-        $this->assertEquals($properties['updated_by'], $user->updatedBy());
-        $this->assertEquals($properties['deleted_by'], $user->deletedBy());
-        $this->assertEquals($properties['created_at'], $user->createdAt());
-        $this->assertEquals($properties['updated_at'], $user->updatedAt());
-        $this->assertEquals($properties['deleted_at'], $user->deletedAt());
+        $this->assertEquals($properties[BlameColumn::CREATED_BY], $user->createdBy());
+        $this->assertEquals($properties[BlameColumn::UPDATED_BY], $user->updatedBy());
+        $this->assertEquals($properties[BlameColumn::DELETED_BY], $user->deletedBy());
+        $this->assertEquals($properties[BlameColumn::CREATED_AT], $user->createdAt());
+        $this->assertEquals($properties[BlameColumn::UPDATED_AT], $user->updatedAt());
+        $this->assertEquals($properties[BlameColumn::DELETED_AT], $user->deletedAt());
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Constants\BlameColumn;
 use App\Constants\UserStatus;
 use App\Entities\UserEntity;
 use App\Models\User;
@@ -33,12 +34,12 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
     public function blame()
     {
         return [
-            'created_by' => 1,
-            'updated_by' => 2,
-            'deleted_by' => 3,
-            'created_at' => '2015-01-01 12:33:24',
-            'updated_at' => '2016-11-02 15:26:00',
-            'deleted_at' => '2017-06-03 09:34:28',
+            BlameColumn::CREATED_BY => 1,
+            BlameColumn::UPDATED_BY => 2,
+            BlameColumn::DELETED_BY => 3,
+            BlameColumn::CREATED_AT => '2015-01-01 12:33:24',
+            BlameColumn::UPDATED_AT => '2016-11-02 15:26:00',
+            BlameColumn::DELETED_AT => '2017-06-03 09:34:28',
         ];
     }
 

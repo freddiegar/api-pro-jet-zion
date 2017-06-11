@@ -2,6 +2,7 @@
 
 namespace App\Contracts\Commons;
 
+use App\Constants\BlameColumn;
 use App\Contracts\Interfaces\BlameInterface;
 use App\Traits\BlameColumnsTrait;
 use App\Traits\LoaderTrait;
@@ -39,12 +40,12 @@ abstract class EntityContract implements BlameInterface
     protected function blames()
     {
         return [
-            'created_by',
-            'updated_by',
-            'deleted_by',
-            'created_at',
-            'updated_at',
-            'deleted_at',
+            BlameColumn::CREATED_BY,
+            BlameColumn::UPDATED_BY,
+            BlameColumn::DELETED_BY,
+            BlameColumn::CREATED_AT,
+            BlameColumn::UPDATED_AT,
+            BlameColumn::DELETED_AT,
         ];
     }
 

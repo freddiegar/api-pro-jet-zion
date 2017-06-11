@@ -131,7 +131,7 @@ trait BlameTrait
     }
 
     /**
-     * Disable save created_by column
+     * Disable save created by column
      * @return void
      */
     static public function disableCreatedBy()
@@ -142,7 +142,7 @@ trait BlameTrait
     }
 
     /**
-     * Disable update updated_by column
+     * Disable update updated by column
      * @return void
      */
     static public function disableUpdatedBy()
@@ -151,7 +151,7 @@ trait BlameTrait
     }
 
     /**
-     * Disable update deleted_by column
+     * Disable update deleted by column
      * @return void
      */
     static public function disableDeletedBy()
@@ -160,7 +160,7 @@ trait BlameTrait
     }
 
     /**
-     * Enable save created_by column
+     * Enable save created by column
      * @return void
      */
     static public function enableCreatedBy()
@@ -169,7 +169,7 @@ trait BlameTrait
     }
 
     /**
-     * Enable update updated_by column
+     * Enable update updated by column
      * @return void
      */
     static public function enableUpdatedBy()
@@ -178,7 +178,7 @@ trait BlameTrait
     }
 
     /**
-     * Enable update deleted_by column
+     * Enable update deleted by column
      * @return void
      */
     static public function enableDeletedBy()

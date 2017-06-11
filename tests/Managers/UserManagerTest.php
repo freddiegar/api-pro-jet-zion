@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Constants\BlameColumn;
 use App\Constants\HttpMethod;
 use App\Constants\UserStatus;
 use App\Entities\UserEntity;
@@ -105,12 +106,12 @@ class UserManagerTest extends DBTestCase
         $this->assertObjectNotHasAttribute('password', $response);
         $this->assertObjectNotHasAttribute('api_token', $response);
         $this->assertObjectNotHasAttribute('type', $response);
-        $this->assertObjectNotHasAttribute('created_by', $response);
-        $this->assertObjectNotHasAttribute('updated_by', $response);
-        $this->assertObjectNotHasAttribute('deleted_by', $response);
-        $this->assertObjectNotHasAttribute('created_at', $response);
-        $this->assertObjectNotHasAttribute('updated_at', $response);
-        $this->assertObjectNotHasAttribute('deleted_at', $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $response);
     }
 
     public function testReadOK()
@@ -130,12 +131,12 @@ class UserManagerTest extends DBTestCase
         $this->assertObjectNotHasAttribute('password', $response);
         $this->assertObjectNotHasAttribute('api_token', $response);
         $this->assertObjectNotHasAttribute('type', $response);
-        $this->assertObjectNotHasAttribute('created_by', $response);
-        $this->assertObjectNotHasAttribute('updated_by', $response);
-        $this->assertObjectNotHasAttribute('deleted_by', $response);
-        $this->assertObjectNotHasAttribute('created_at', $response);
-        $this->assertObjectNotHasAttribute('updated_at', $response);
-        $this->assertObjectNotHasAttribute('deleted_at', $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $response);
     }
 
     public function testUpdateStatusError()
@@ -189,12 +190,12 @@ class UserManagerTest extends DBTestCase
         $this->assertObjectNotHasAttribute('password', $response);
         $this->assertObjectNotHasAttribute('api_token', $response);
         $this->assertObjectNotHasAttribute('type', $response);
-        $this->assertObjectNotHasAttribute('created_by', $response);
-        $this->assertObjectNotHasAttribute('updated_by', $response);
-        $this->assertObjectNotHasAttribute('deleted_by', $response);
-        $this->assertObjectNotHasAttribute('created_at', $response);
-        $this->assertObjectNotHasAttribute('updated_at', $response);
-        $this->assertObjectNotHasAttribute('deleted_at', $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $response);
     }
 
     public function testDeleteOK()
@@ -212,11 +213,11 @@ class UserManagerTest extends DBTestCase
         $this->assertObjectNotHasAttribute('status', $response);
         $this->assertObjectNotHasAttribute('api_token', $response);
         $this->assertObjectNotHasAttribute('type', $response);
-        $this->assertObjectNotHasAttribute('created_by', $response);
-        $this->assertObjectNotHasAttribute('updated_by', $response);
-        $this->assertObjectNotHasAttribute('deleted_by', $response);
-        $this->assertObjectNotHasAttribute('created_at', $response);
-        $this->assertObjectNotHasAttribute('updated_at', $response);
-        $this->assertObjectNotHasAttribute('deleted_at', $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $response);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $response);
     }
 }
