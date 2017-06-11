@@ -12,6 +12,12 @@ interface UserRepository
 
     /**
      * @param int $id
+     * @return array
+     */
+    static public function getById($id);
+
+    /**
+     * @param int $id
      * @param array $user
      * @return bool
      */
@@ -19,24 +25,13 @@ interface UserRepository
 
     /**
      * @param int $id
-     * @return array
+     * @return bool
      */
-    static public function getById($id);
-
-    /**
-     * @param string $username
-     * @return array
-     */
-//    static public function getByUsername($username);
+    static public function deleteById($id);
 
     /**
      * @param string $apiToken
      * @return array
      */
     static public function getByApiToken($apiToken);
-
-    /**
-     * @return bool
-     */
-//    static public function isActive();
 }

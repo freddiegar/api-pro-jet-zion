@@ -30,5 +30,5 @@ $app->group([
     $app->post('user/create', ['as' => 'api.user.create', 'uses' => 'UserController@create']);
     $app->post('user/read/{id}', ['as' => 'api.user.read', 'uses' => 'UserController@read']);
     $app->put('user/update/{id}', ['as' => 'api.user.update', 'uses' => 'UserController@update']);
-    $app->delete('user/update/{id}', ['as' => 'api.user.update', 'uses' => 'UserController@update']);
+    $app->delete('user/delete/{id}', ['as' => 'api.user.delete', 'uses' => 'UserController@delete']);
 });

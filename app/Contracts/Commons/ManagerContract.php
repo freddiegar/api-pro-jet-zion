@@ -29,14 +29,6 @@ abstract class ManagerContract
     }
 
     /**
-     * @return string
-     */
-    protected function requestMethod()
-    {
-        return $this->request()->method();
-    }
-
-    /**
      * @param string $method
      * @return string
      */

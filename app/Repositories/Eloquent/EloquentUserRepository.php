@@ -34,18 +34,10 @@ class EloquentUserRepository implements UserRepository
     /**
      * @inheritdoc
      */
-//    static public function getByStatus($status)
-//    {
-    // TODO: Implement getByStatus() method.
-//    }
-
-    /**
-     * @inheritdoc
-     */
-//    static public function getByUsername($username)
-//    {
-    // TODO: Implement getByUsername() method.
-//    }
+    static public function deleteById($id)
+    {
+        return User::findOrFail($id)->delete();
+    }
 
     /**
      * @inheritdoc
@@ -54,12 +46,4 @@ class EloquentUserRepository implements UserRepository
     {
         return User::where('api_token', base64_decode($apiToken))->firstOrFail();
     }
-
-    /**
-     * @inheritdoc
-     */
-//    static public function isActive()
-//    {
-    // TODO: Implement isActive() method.
-//    }
 }

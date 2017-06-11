@@ -39,4 +39,13 @@ class UserController extends Controller
     {
         return $this->manager()->requestValidate()->update($id);
     }
+
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function delete($id)
+    {
+        return $this->manager()->requestValidate()->delete($id);
+    }
 }

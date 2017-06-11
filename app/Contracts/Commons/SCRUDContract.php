@@ -35,5 +35,5 @@ interface SCRUDContract
      * @param int $id
      * @return array
      */
-//    public function delete($id);
+    public function delete($id);
 }

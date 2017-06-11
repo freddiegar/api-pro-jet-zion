@@ -70,6 +70,16 @@ class UserManager extends ManagerContract implements SCRUDContract
     }
 
     /**
+     * @param int $id
+     * @return array
+     */
+    public function delete($id)
+    {
+        $this->repository()->deleteById($id);
+        return (new UserEntity())->id($id)->toArray(true);
+    }
+
+    /**
      * @return array
      */
     protected function rules()

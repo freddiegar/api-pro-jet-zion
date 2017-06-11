@@ -197,19 +197,19 @@ class UserManagerTest extends DBTestCase
         $this->assertObjectNotHasAttribute('deleted_at', $response);
     }
 
-    public function xtestDeleteOK()
+    public function testDeleteOK()
     {
         $this->json(HttpMethod::DELETE, 'http://localhost/api/v1/user/delete/1', $this->request(), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure([
             'id',
-            'status',
-            'username',
         ]);
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, 1);
+        $this->assertObjectNotHasAttribute('username', $response);
         $this->assertObjectNotHasAttribute('password', $response);
+        $this->assertObjectNotHasAttribute('status', $response);
         $this->assertObjectNotHasAttribute('api_token', $response);
         $this->assertObjectNotHasAttribute('type', $response);
         $this->assertObjectNotHasAttribute('created_by', $response);
