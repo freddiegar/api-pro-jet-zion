@@ -12,10 +12,10 @@ class UserManagerTest extends DBTestCase
         return $this->applyKeys($this->userToCreate(), $excludeKeys, $includeKeys);
     }
 
-    public function testUserManagerError()
+    public function testCreateError()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', [], $this->headers());
-        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->response->getStatusCode());
+        $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
         ]);
@@ -24,10 +24,10 @@ class UserManagerTest extends DBTestCase
         $this->assertNotEmpty($response->message, 2);
     }
 
-    public function testUserManagerTokenError()
+    public function testCreateTokenError()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', $this->request([UserEntity::KEY_API_TOKEN]), $this->headers());
-        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->response->getStatusCode());
+        $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
         ]);
@@ -36,10 +36,10 @@ class UserManagerTest extends DBTestCase
         $this->assertNotEmpty($response->message, 2);
     }
 
-    public function testUserManagerTokenNotValidError()
+    public function testCreateTokenNotValidError()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', $this->request([], [UserEntity::KEY_API_TOKEN => 'token no_valido']), $this->headers());
-        $this->assertEquals(Response::HTTP_NOT_FOUND, $this->response->getStatusCode());
+        $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
         $this->seeJsonStructure([
             'message',
         ]);
@@ -48,10 +48,10 @@ class UserManagerTest extends DBTestCase
         $this->assertNotEmpty($response->message, 2);
     }
 
-    public function testUserManagerUsernameError()
+    public function testCreateUsernameError()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', $this->request(['username']), $this->headers());
-        $this->assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $this->response->getStatusCode());
+        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->seeJsonStructure([
             'message',
             'errors',
@@ -62,11 +62,11 @@ class UserManagerTest extends DBTestCase
         $this->assertNotEmpty($response->errors);
     }
 
-    public function testUserManagerUsernameRepeatedError()
+    public function testCreateUsernameRepeatedError()
     {
         $user = $this->user();
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', $this->request([], ['username' => $user['username']]), $this->headers());
-        $this->assertEquals(Response::HTTP_CONFLICT, $this->response->getStatusCode());
+        $this->assertResponseStatus(Response::HTTP_CONFLICT);
         $this->seeJsonStructure([
             'message',
         ]);
@@ -75,10 +75,10 @@ class UserManagerTest extends DBTestCase
         $this->assertNotEmpty($response->message);
     }
 
-    public function testUserManagerPasswordError()
+    public function testCreatePasswordError()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', $this->request(['password']), $this->headers());
-        $this->assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $this->response->getStatusCode());
+        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->seeJsonStructure([
             'message',
             'errors',
@@ -89,24 +89,10 @@ class UserManagerTest extends DBTestCase
         $this->assertNotEmpty($response->errors);
     }
 
-    public function testUserManagerTypeError()
-    {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', $this->request(['type']), $this->headers());
-        $this->assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $this->response->getStatusCode());
-        $this->seeJsonStructure([
-            'message',
-            'errors',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertNotEmpty($response->message);
-        $this->assertNotEmpty($response->errors);
-    }
-
-    public function testUserManagerOK()
+    public function testCreateOK()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', $this->request(), $this->headers());
-        $this->assertEquals(Response::HTTP_OK, $this->response->getStatusCode());
+        $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure([
             'id',
             'username',
@@ -117,5 +103,12 @@ class UserManagerTest extends DBTestCase
         $this->assertEquals($response->username, 'freddie@gar.com');
         $this->assertObjectNotHasAttribute('password', $response);
         $this->assertObjectNotHasAttribute('api_token', $response);
+        $this->assertObjectNotHasAttribute('type', $response);
+        $this->assertObjectNotHasAttribute('created_by', $response);
+        $this->assertObjectNotHasAttribute('updated_by', $response);
+        $this->assertObjectNotHasAttribute('deleted_by', $response);
+        $this->assertObjectNotHasAttribute('created_at', $response);
+        $this->assertObjectNotHasAttribute('updated_at', $response);
+        $this->assertObjectNotHasAttribute('deleted_at', $response);
     }
 }

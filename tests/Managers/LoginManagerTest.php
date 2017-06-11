@@ -11,10 +11,10 @@ class LoginManagerTest extends DBTestCase
         return $this->applyKeys($this->login(), $excludeKeys, $includeKeys);
     }
 
-    public function testLoginManagerError()
+    public function testLoginError()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/login', [], $this->headers());
-        $this->assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $this->response->getStatusCode());
+        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->seeJsonStructure([
             'message',
             'errors',
@@ -25,10 +25,10 @@ class LoginManagerTest extends DBTestCase
         $this->assertNotEmpty($response->errors);
     }
 
-    public function testLoginManagerUsernameError()
+    public function testLoginUsernameError()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/login', $this->request([], ['username' => 'freddie@gar.com']), $this->headers());
-        $this->assertEquals(Response::HTTP_NOT_FOUND, $this->response->getStatusCode());
+        $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
         $this->seeJsonStructure([
             'message',
         ]);
@@ -37,10 +37,10 @@ class LoginManagerTest extends DBTestCase
         $this->assertNotEmpty($response->message);
     }
 
-    public function testLoginManagerPasswordError()
+    public function testLoginPasswordError()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/login', $this->request([], ['password' => 'Abcde7890!']), $this->headers());
-        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->response->getStatusCode());
+        $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
         ]);
@@ -49,10 +49,10 @@ class LoginManagerTest extends DBTestCase
         $this->assertNotEmpty($response->message);
     }
 
-    public function testLoginManagerOK()
+    public function testLoginOK()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/login', $this->request(), $this->headers());
-        $this->assertEquals(Response::HTTP_OK, $this->response->getStatusCode());
+        $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure([
             UserEntity::KEY_API_TOKEN,
         ]);
