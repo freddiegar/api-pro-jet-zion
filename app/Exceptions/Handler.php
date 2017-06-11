@@ -11,6 +11,8 @@ use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -66,14 +68,23 @@ class Handler extends ExceptionHandler
 //            ];
 //        }
 
-//        if ($e instanceof NotFoundHttpException) {
-//            $response = [
-//                'code' => Response::HTTP_NOT_FOUND,
-//                'error' => [
-//                    'message' => $e->getMessage() ?: trans('login.error.uri_not_found'),
-//                ]
-//            ];
-//        }
+        if ($e instanceof NotFoundHttpException) {
+            $response = [
+                'code' => Response::HTTP_NOT_FOUND,
+                'error' => [
+                    'message' => $e->getMessage() ?: trans('login.error.uri_not_found'),
+                ]
+            ];
+        }
+
+        if ($e instanceof MethodNotAllowedHttpException) {
+            $response = [
+                'code' => Response::HTTP_METHOD_NOT_ALLOWED,
+                'error' => [
+                    'message' => $e->getMessage() ?: trans('login.error.method_not_allowed'),
+                ]
+            ];
+        }
 
         if ($e instanceof ModelNotFoundException) {
             $response = [
