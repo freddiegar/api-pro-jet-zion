@@ -33,7 +33,7 @@ class UserManager extends ManagerContract implements SCRUDContract
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function create()
     {
@@ -44,10 +44,16 @@ class UserManager extends ManagerContract implements SCRUDContract
         $user->type(User::class);
 
         return UserEntity::load(
-            $this->repository()->create(
-                $user->toArray()
-            )
+            $this->repository()->create($user->toArray())
         )->toArray(true);
+    }
+
+    /**
+     * @return array
+     */
+    public function read($id)
+    {
+        return UserEntity::load($this->repository()->getById($id))->toArray(true);
     }
 
     /**

@@ -28,4 +28,5 @@ $app->group([
     'middleware' => ['auth:api'],
 ], function () use ($app) {
     $app->post('user/create', ['as' => 'api.user.create', 'uses' => 'UserController@create']);
+    $app->post('user/read/{id}', ['as' => 'api.user.read', 'uses' => 'UserController@read']);
 });

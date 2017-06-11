@@ -13,11 +13,21 @@ class UserController extends Controller
     {
         return app(UserManager::class);
     }
+
     /**
      * @return array
      */
     public function create()
     {
         return $this->manager()->requestValidate()->create();
+    }
+
+    /**
+     * @param $id
+     * @return array
+     */
+    public function read($id)
+    {
+        return $this->manager()->read($id);
     }
 }

@@ -18,10 +18,10 @@ class EloquentUserRepository implements UserRepository
     /**
      * @inheritdoc
      */
-//    static public function getById($id)
-//    {
-        // TODO: Implement getById() method.
-//    }
+    static public function getById($id)
+    {
+        return User::findOrFail($id)->attributesToArray();
+    }
 
     /**
      * @inheritdoc

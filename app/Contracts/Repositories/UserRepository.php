@@ -2,31 +2,29 @@
 
 namespace App\Contracts\Repositories;
 
-use App\Entities\UserEntity;
-
 interface UserRepository
 {
     /**
      * @param array $user
-     * @return mixed|UserEntity
+     * @return array
      */
     static public function create($user);
 
     /**
      * @param int $id
-     * @return mixed|UserEntity
+     * @return array
      */
-//    static public function getById($id);
+    static public function getById($id);
 
     /**
      * @param string $username
-     * @return mixed|UserEntity
+     * @return array
      */
 //    static public function getByUsername($username);
 
     /**
      * @param string $apiToken
-     * @return mixed|UserEntity
+     * @return array
      */
     static public function getByApiToken($apiToken);
 
