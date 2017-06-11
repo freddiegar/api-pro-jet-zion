@@ -36,9 +36,9 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
             'created_by' => 1,
             'updated_by' => 2,
             'deleted_by' => 3,
-            'created_at' => '2017-01-01 12:33:24',
-            'updated_at' => '2017-01-02 15:26:00',
-            'deleted_at' => null,
+            'created_at' => '2015-01-01 12:33:24',
+            'updated_at' => '2016-11-02 15:26:00',
+            'deleted_at' => '2017-06-03 09:34:28',
         ];
     }
 

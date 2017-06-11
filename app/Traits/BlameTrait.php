@@ -2,27 +2,28 @@
 
 namespace App\Traits;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\UnauthorizedException;
 
 trait BlameTrait
 {
     /**
-     * The name of the action creating.
+     * The name of the event creating.
      *
      * @var string
      */
     static private $CREATING = 'creating';
 
     /**
-     * The name of the action updating.
+     * The name of the event updating.
      *
      * @var string
      */
     static private $UPDATING = 'updating';
 
     /**
-     * The name of the action deleting.
+     * The name of the event deleting.
      *
      * @var string
      */
@@ -68,22 +69,23 @@ trait BlameTrait
      */
     static protected function bootBlameTrait()
     {
-        foreach (static::blameActions() as $action) {
-            $columns = static::blameColumnsByAction($action);
-            static::{$action}(function ($model) use ($columns, $action) {
+        foreach (static::blameEvents() as $event) {
+            $columns = static::blameColumnsByEvent($event);
+            static::{$event}(function (Model $model) use ($columns, $event) {
                 foreach ($columns as $column) {
                     if (!$column) {
+                        logger('Cancel set column in ' . $event);
                         continue;
                     }
 
                     if (!Auth::guard(static::$GUARD_NAME)->check() && !self::$CURRENT_USER_AUTHENTICATED) {
-                        throw new UnauthorizedException('User not authenticated to ' . $action . ' in ' . self::class);
+                        throw new UnauthorizedException('User not authenticated to ' . $event . ' in ' . self::class);
                     }
 
-                    $model->{$column} = self::$CURRENT_USER_AUTHENTICATED
-                        ? self::$CURRENT_USER_AUTHENTICATED
-                        : Auth::guard(static::$GUARD_NAME)->id();
+                    $model->{$column} = self::getCurrentUserAuthenticated();
                 }
+
+                $model::enableBlame();
 
                 return true;
             });
@@ -93,7 +95,7 @@ trait BlameTrait
     /**
      * @return array
      */
-    static private function blameActions()
+    static private function blameEvents()
     {
         return [
             static::$CREATING,
@@ -103,33 +105,43 @@ trait BlameTrait
     }
 
     /**
-     * @param null $action
+     * @param null $event
      * @return array|string
      */
-    static private function blameColumnsByAction($action = null)
+    static private function blameColumnsByEvent($event = null)
     {
-        $columnByAction = [
-            // Action created set created by and updated by, this equals to Lumen
+        $columnByEvent = [
+            // Event created set created by and updated by, this equals to Lumen
             // Vien disableCreatedBy
             static::$CREATING => [
                 static::$CREATED_BY,
-                static::$UPDATED_BY
+                static::$UPDATED_BY,
             ],
             static::$UPDATING => [
-                static::$UPDATED_BY
+                static::$UPDATED_BY,
             ],
             static::$DELETING => [
-                static::$DELETED_BY
+                static::$DELETED_BY,
             ],
         ];
 
-        return isset($columnByAction[$action])
-            ? $columnByAction[$action]
-            : $columnByAction;
+        return isset($columnByEvent[$event])
+            ? $columnByEvent[$event]
+            : $columnByEvent;
     }
 
     /**
-     * Disable actions for columns by blame
+     * Enable blame to all columns
+     */
+    static public function enableBlame()
+    {
+        static::enableCreatedBy();
+        static::enableUpdatedBy();
+        static::enableDeletedBy();
+    }
+
+    /**
+     * Disable blame to all columns
      */
     static public function disableBlame()
     {
@@ -139,17 +151,17 @@ trait BlameTrait
     }
 
     /**
-     * Disable created_by column
+     * Disable save created_by column
      */
     static public function disableCreatedBy()
     {
-        // TODO: Improve this functionality using blameColumnsByAction() to determine columns dynamic
+        // TODO: Improve this functionality using blameColumnsByEvent() to determine columns dynamic
         static::$CREATED_BY = null;
         static::$UPDATED_BY = null;
     }
 
     /**
-     * Disable updated_by column
+     * Disable update updated_by column
      */
     static public function disableUpdatedBy()
     {
@@ -157,7 +169,7 @@ trait BlameTrait
     }
 
     /**
-     * Disable deleted_by column
+     * Disable update deleted_by column
      */
     static public function disableDeletedBy()
     {
@@ -165,8 +177,32 @@ trait BlameTrait
     }
 
     /**
+     * Enable save created_by column
+     */
+    static public function enableCreatedBy()
+    {
+        static::$DELETED_BY = 'created_by';
+    }
+
+    /**
+     * Enable update updated_by column
+     */
+    static public function enableUpdatedBy()
+    {
+        static::$DELETED_BY = 'updated_by';
+    }
+
+    /**
+     * Enable update deleted_by column
+     */
+    static public function enableDeletedBy()
+    {
+        static::$DELETED_BY = 'deleted_by';
+    }
+
+    /**
      * Set guard to use blame
-     * @param $guard
+     * @param string $guard
      */
     static public function setGuard($guard)
     {
@@ -175,7 +211,7 @@ trait BlameTrait
 
     /**
      * Set user to use in blame columns
-     * @param $id
+     * @param int $id
      */
     static public function setCurrentUserAuthenticated($id)
     {
@@ -188,6 +224,8 @@ trait BlameTrait
      */
     static public function getCurrentUserAuthenticated()
     {
-        return static::$CURRENT_USER_AUTHENTICATED;
+        return self::$CURRENT_USER_AUTHENTICATED
+            ? self::$CURRENT_USER_AUTHENTICATED
+            : Auth::guard(static::$GUARD_NAME)->id();
     }
 }

@@ -17,7 +17,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use SoftDeletes;
     use BlameTrait;
 
-
     protected $fillable = [
         'status',
         'username',

@@ -94,7 +94,7 @@ if (!function_exists('logger')) {
     function logger($log)
     {
         if (isDevelopment()) {
-            return Illuminate\Support\Facades\Log::info(print_r($log, 1));
+            return Illuminate\Support\Facades\Log::info(print_r($log, true));
         }
 
         return true;
