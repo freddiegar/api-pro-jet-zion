@@ -2,7 +2,6 @@
 
 namespace App\Managers;
 
-use App\Constants\HttpMethod;
 use App\Constants\UserStatus;
 use App\Contracts\Commons\ManagerContract;
 use App\Contracts\Interfaces\SCRUDInterface;
