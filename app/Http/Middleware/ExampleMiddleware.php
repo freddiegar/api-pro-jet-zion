@@ -1,9 +1,12 @@
 <?php
-// @codeCoverageIgnoreStart
+
 namespace App\Http\Middleware;
 
 use Closure;
 
+/**
+ * @codeCoverageIgnore
+ */
 class ExampleMiddleware
 {
     /**
@@ -18,4 +21,3 @@ class ExampleMiddleware
         return $next($request);
     }
 }
-// @codeCoverageIgnoreEnd

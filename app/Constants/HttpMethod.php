@@ -2,6 +2,10 @@
 
 namespace App\Constants;
 
+/**
+ * Interface HttpMethod
+ * @package App\Constants
+ */
 interface HttpMethod
 {
     const GET = 'GET';

@@ -5,6 +5,12 @@ namespace App\Contracts\Repositories;
 interface LoginRepository
 {
     /**
+     * Model used in blame
+     * @return mixed
+     */
+    static public function model();
+
+    /**
      * @param string $username
      * @return array
      */

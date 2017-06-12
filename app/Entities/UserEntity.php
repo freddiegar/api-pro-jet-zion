@@ -22,7 +22,7 @@ class UserEntity extends EntityContract
     protected $last_ip_address;
 
     /**
-     * @return array
+     * @inheritdoc
      */
     protected function fields()
     {
@@ -39,7 +39,7 @@ class UserEntity extends EntityContract
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     protected function hiddens()
     {

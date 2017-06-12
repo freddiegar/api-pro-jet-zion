@@ -2,6 +2,10 @@
 
 namespace App\Constants;
 
+/**
+ * Interface UserStatus
+ * @package App\Constants
+ */
 interface UserStatus
 {
     const ACTIVE = 'ACTIVE';

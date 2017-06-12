@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Managers\LoginManager;
 
+/**
+ * Class LoginController
+ * @package App\Http\Controllers
+ */
 class LoginController extends Controller
 {
     /**

@@ -1,7 +1,10 @@
 <?php
-// @codeCoverageIgnoreStart
+
 namespace App\Jobs;
 
+/**
+ * @codeCoverageIgnore
+ */
 class ExampleJob extends Job
 {
     /**
@@ -22,4 +25,3 @@ class ExampleJob extends Job
         //
     }
 }
-// @codeCoverageIgnoreEnd

@@ -1,11 +1,14 @@
 <?php
-// @codeCoverageIgnoreStart
+
 namespace App\Listeners;
 
 use App\Events\ExampleEvent;
 //use Illuminate\Queue\InteractsWithQueue;
 //use Illuminate\Contracts\Queue\ShouldQueue;
 
+/**
+ * @codeCoverageIgnore
+ */
 class ExampleListener
 {
     /**
@@ -27,4 +30,3 @@ class ExampleListener
         //
     }
 }
-// @codeCoverageIgnoreEnd

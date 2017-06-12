@@ -2,6 +2,10 @@
 
 namespace App\Constants;
 
+/**
+ * Interface BlameColumn
+ * @package App\Constants
+ */
 interface BlameColumn
 {
     // By

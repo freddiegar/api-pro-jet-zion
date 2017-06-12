@@ -2,10 +2,15 @@
 
 namespace App\Contracts\Commons;
 
+use App\Constants\HttpMethod;
 use App\Contracts\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\ProvidesConvenienceMethods;
 
+/**
+ * Class ManagerContract
+ * @package App\Contracts\Commons
+ */
 abstract class ManagerContract
 {
     use ProvidesConvenienceMethods;
@@ -23,7 +28,7 @@ abstract class ManagerContract
     /**
      * @return Request
      */
-    protected function request()
+    final protected function request()
     {
         return $this->request;
     }
@@ -32,7 +37,7 @@ abstract class ManagerContract
      * @param string $method
      * @return string
      */
-    protected function requestIsMethod($method)
+    final protected function requestIsMethod($method)
     {
         return $this->request()->isMethod($method);
     }
@@ -40,7 +45,7 @@ abstract class ManagerContract
     /**
      * @return string
      */
-    protected function requestIp()
+    final protected function requestIp()
     {
         return $this->request()->ip();
     }
@@ -49,25 +54,44 @@ abstract class ManagerContract
      * @param $name
      * @return mixed
      */
-    protected function requestInput($name = null)
+    final protected function requestInput($name = null)
     {
         return $name ? $this->request()->input($name) : $this->request()->all();
     }
 
     /**
      * Valid data in request
+     * return $this
      */
-    public function requestValidate()
+    final public function requestValidate()
     {
-        $this->validate($this->request(), $this->rules(), $this->messages());
+        $this->validate($this->request(), $this->removeRulesThatNotApply($this->rules()), $this->messages());
 
         return $this;
     }
 
     /**
+     * Remove rules to fieds that are not in request
+     * @param $rules
      * @return mixed
      */
-    protected function repository()
+    final private function removeRulesThatNotApply($rules)
+    {
+        if ($this->requestIsMethod(HttpMethod::PUT)) {
+            foreach ($rules as $field => $_rules) {
+                if (!$this->requestInput($field)) {
+                    unset($rules[$field]);
+                }
+            }
+        }
+
+        return $rules;
+    }
+
+    /**
+     * @return mixed
+     */
+    final protected function repository()
     {
         return $this->repository;
     }

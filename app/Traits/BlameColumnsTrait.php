@@ -4,11 +4,14 @@ namespace App\Traits;
 
 use App\Constants\BlameColumn;
 
+/**
+ * Trait BlameColumnsTrait
+ * @package App\Traits
+ */
 trait BlameColumnsTrait
 {
     /**
-     * @param int $created_by
-     * @return string
+     * @inheritdoc
      */
     public function createdBy($created_by = null)
     {
@@ -20,8 +23,7 @@ trait BlameColumnsTrait
     }
 
     /**
-     * @param int $updated_by
-     * @return string
+     * @inheritdoc
      */
     public function updatedBy($updated_by = null)
     {
@@ -33,8 +35,7 @@ trait BlameColumnsTrait
     }
 
     /**
-     * @param int $deleted_by
-     * @return string
+     * @inheritdoc
      */
     public function deletedBy($deleted_by = null)
     {
@@ -46,8 +47,7 @@ trait BlameColumnsTrait
     }
 
     /**
-     * @param string $created_at
-     * @return string
+     * @inheritdoc
      */
     public function createdAt($created_at = null)
     {
@@ -59,8 +59,7 @@ trait BlameColumnsTrait
     }
 
     /**
-     * @param string $updated_at
-     * @return string
+     * @inheritdoc
      */
     public function updatedAt($updated_at = null)
     {
@@ -72,8 +71,7 @@ trait BlameColumnsTrait
     }
 
     /**
-     * @param string $deleted_at
-     * @return string
+     * @inheritdoc
      */
     public function deletedAt($deleted_at = null)
     {

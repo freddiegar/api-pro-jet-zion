@@ -3,7 +3,7 @@
 namespace App\Contracts\Commons;
 
 use App\Constants\BlameColumn;
-use App\Contracts\Interfaces\BlameInterface;
+use App\Contracts\Interfaces\BlameColumnInterface;
 use App\Traits\BlameColumnsTrait;
 use App\Traits\LoaderTrait;
 use App\Traits\ToArrayTrait;
@@ -12,7 +12,7 @@ use App\Traits\ToArrayTrait;
  * Class EntityContract
  * @package App\Contracts\Commons
  */
-abstract class EntityContract implements BlameInterface
+abstract class EntityContract implements BlameColumnInterface
 {
     use BlameColumnsTrait;
     use LoaderTrait;
@@ -68,6 +68,7 @@ abstract class EntityContract implements BlameInterface
     }
 
     /**
+     * Entity to json string
      * @return string
      */
     public function __toString()

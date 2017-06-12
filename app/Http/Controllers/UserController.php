@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Managers\UserManager;
 
+/**
+ * Class UserController
+ * @package App\Http\Controllers
+ */
 class UserController extends Controller
 {
     /**

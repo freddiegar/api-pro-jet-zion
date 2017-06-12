@@ -2,6 +2,8 @@
 
 namespace App\Contracts\Repositories;
 
+use App\Models\User;
+
 interface UserRepository
 {
     /**
@@ -31,7 +33,7 @@ interface UserRepository
 
     /**
      * @param string $apiToken
-     * @return array
+     * @return null|User
      */
     static public function getByApiToken($apiToken);
 }
