@@ -11,12 +11,21 @@ use App\Models\User;
  */
 class EloquentLoginRepository implements LoginRepository
 {
+
+    /**
+     * @return User
+     */
+    static public function model()
+    {
+        return new User();
+    }
+
     /**
      * @inheritdoc
      */
     static public function getUserPasswordByUsername($username)
     {
-        return User::where(compact('username'))->select(['id', 'password'])->firstOrFail()->toArray();
+        return self::model()->where(compact('username'))->select(['id', 'password'])->firstOrFail()->toArray();
     }
 
     /**
@@ -24,7 +33,7 @@ class EloquentLoginRepository implements LoginRepository
      */
     static public function updateUserLastLogin($id, $user)
     {
-        User::setCurrentUserAuthenticated($id);
-        return User::findOrFail($id)->update($user);
+//        self::model()->setCurrentUserAuthenticated($id);
+        return self::model()->findOrFail($id)->update($user);
     }
 }

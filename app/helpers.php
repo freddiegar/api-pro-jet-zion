@@ -86,16 +86,16 @@ if (!function_exists('getter')) {
     }
 }
 
-if (!function_exists('logger')) {
+if (!function_exists('ll')) {
     /**
-     * @param array ...$logs
+     * @param array ...$args
      * @return bool
      */
-    function logger(...$logs)
+    function ll(...$args)
     {
         if (isDevelopment()) {
-            foreach ($logs as $log){
-                Illuminate\Support\Facades\Log::info(print_r($log, true));
+            foreach ($args as $arg){
+                Illuminate\Support\Facades\Log::info(print_r($arg, true));
             }
             return true;
         }

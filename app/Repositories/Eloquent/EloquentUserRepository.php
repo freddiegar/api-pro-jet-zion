@@ -5,14 +5,27 @@ namespace App\Repositories\Eloquent;
 use App\Contracts\Repositories\UserRepository;
 use App\Models\User;
 
+/**
+ * Class EloquentUserRepository
+ * @package App\Repositories\Eloquent
+ */
 class EloquentUserRepository implements UserRepository
 {
+    /**
+     * @return User
+     */
+    static public function model()
+    {
+        static $model;
+        return $model = (is_null($model) ? new User() : $model);
+    }
+
     /**
      * @inheritdoc
      */
     static public function create($user)
     {
-        return User::create($user)->attributesToArray();
+        return self::model()->create($user)->attributesToArray();
     }
 
     /**
@@ -20,7 +33,7 @@ class EloquentUserRepository implements UserRepository
      */
     static public function getById($id)
     {
-        return User::findOrFail($id)->attributesToArray();
+        return self::model()->findOrFail($id)->attributesToArray();
     }
 
     /**
@@ -28,7 +41,7 @@ class EloquentUserRepository implements UserRepository
      */
     static public function updateById($id, $user)
     {
-        return User::findOrFail($id)->update($user);
+        return self::model()->findOrFail($id)->update($user);
     }
 
     /**
@@ -36,7 +49,7 @@ class EloquentUserRepository implements UserRepository
      */
     static public function deleteById($id)
     {
-        return User::findOrFail($id)->delete();
+        return self::model()->findOrFail($id)->delete();
     }
 
     /**
@@ -44,6 +57,6 @@ class EloquentUserRepository implements UserRepository
      */
     static public function getByApiToken($apiToken)
     {
-        return User::where('api_token', base64_decode($apiToken))->firstOrFail();
+        return self::model()->where('api_token', base64_decode($apiToken))->first();
     }
 }

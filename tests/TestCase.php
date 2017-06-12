@@ -27,7 +27,7 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
 
     public function apiToken()
     {
-        // Jon Doe api_token seeder
+        // api_token to TestUser (Jon Doe)
         return 'SkRKNUpERXdKRlZ1Ykc5RlNrazRRakpTUTNCaFF6ZGtjR3hKTUhWbGJUQmpiRTVITjFwb05WSTJZblU0TVM1RGIzUTBkMGRUYldkT1kzQng=';
     }
 

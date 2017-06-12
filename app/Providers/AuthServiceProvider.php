@@ -4,8 +4,15 @@ namespace App\Providers;
 
 use App\Entities\UserEntity;
 use App\Repositories\Eloquent\EloquentUserRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\UnauthorizedException;
 
+/**
+ * Class AuthServiceProvider
+ * @package App\Providers
+ */
 class AuthServiceProvider extends ServiceProvider
 {
     /**
@@ -21,7 +28,7 @@ class AuthServiceProvider extends ServiceProvider
     /**
      * Boot the authentication services for the application.
      *
-     * @return bool
+     * @return void
      */
     public function boot()
     {
@@ -30,19 +37,20 @@ class AuthServiceProvider extends ServiceProvider
         // should return either a User instance or null. You're free to obtain
         // the User instance via an API token or any other method necessary.
 
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->app['auth']->viaRequest('api',
-            function ($request) {
+        Auth::viaRequest('api',
+            function (Request $request) {
                 if ($apiToken = $request->input(UserEntity::KEY_API_TOKEN)) {
-                    // TODO: Revise this funcionality, let interface UserRepository, not concrete
+                    // TODO: Revise this funcionality, let interface UserRepository, not concrete EloquentUserRepository
                     /** @noinspection PhpUndefinedMethodInspection */
-                    return EloquentUserRepository::getByApiToken($apiToken);
+                    if ($user = EloquentUserRepository::getByApiToken($apiToken)) {
+                        return $user;
+                    }
+
+                    throw new UnauthorizedException(trans('login.error.api_token'));
                 }
 
                 return null;
             }
         );
-
-        return true;
     }
 }

@@ -11,6 +11,10 @@ use App\Entities\UserEntity;
 use App\Models\User;
 use Illuminate\Http\Request;
 
+/**
+ * Class UserManager
+ * @package App\Managers
+ */
 class UserManager extends ManagerContract implements SCRUDInterface
 {
     /**
@@ -27,7 +31,7 @@ class UserManager extends ManagerContract implements SCRUDInterface
     /**
      * @return UserRepository
      */
-    protected function repository()
+    protected function userRepository()
     {
         return parent::repository();
     }
@@ -37,13 +41,13 @@ class UserManager extends ManagerContract implements SCRUDInterface
      */
     public function create()
     {
-        $user = new UserEntity();
-        $user->status(UserStatus::ACTIVE);
-        $user->username($this->requestInput('username'));
-        $user->setPassword($this->requestInput('password'));
-        $user->type(User::class);
+        $userEntity = new UserEntity();
+        $userEntity->username($this->requestInput('username'));
+        $userEntity->setPassword($this->requestInput('password'));
+        $userEntity->status(UserStatus::ACTIVE);
+        $userEntity->type(User::class);
 
-        return UserEntity::load($this->repository()->create($user->toArray()))->toArray(true);
+        return $userEntity->reload($this->userRepository()->create($userEntity->toArray()))->toArray(true);
     }
 
     /**
@@ -52,7 +56,7 @@ class UserManager extends ManagerContract implements SCRUDInterface
      */
     public function read($id)
     {
-        return UserEntity::load($this->repository()->getById($id))->toArray(true);
+        return UserEntity::load($this->userRepository()->getById($id))->toArray(true);
     }
 
     /**
@@ -61,12 +65,12 @@ class UserManager extends ManagerContract implements SCRUDInterface
      */
     public function update($id)
     {
-        $user = UserEntity::load($this->requestInput());
+        $userEntity = UserEntity::load($this->requestInput());
         if ($this->requestInput('password')) {
-            $user->setPassword($this->requestInput('password'));
+            $userEntity->setPassword($this->requestInput('password'));
         }
-        $this->repository()->updateById($id, $user->toArray());
-        return $user->id($id)->toArray(true);
+        $this->userRepository()->updateById($id, $userEntity->toArray());
+        return $userEntity->id($id)->toArray(true);
     }
 
     /**
@@ -75,7 +79,7 @@ class UserManager extends ManagerContract implements SCRUDInterface
      */
     public function delete($id)
     {
-        $this->repository()->deleteById($id);
+        $this->userRepository()->deleteById($id);
         return (new UserEntity())->id($id)->toArray(true);
     }
 
@@ -84,11 +88,9 @@ class UserManager extends ManagerContract implements SCRUDInterface
      */
     protected function rules()
     {
-        $required = $this->requestIsMethod(HttpMethod::POST) ? 'required|' : '';
-
         return [
-            'username' => $required . 'max:255',
-            'password' => $required . 'max:255',
+            'username' => 'required|max:255',
+            'password' => 'required|max:255',
             'status' => 'in:' . implode(',', [
                     UserStatus::ACTIVE,
                     UserStatus::INACTIVE,

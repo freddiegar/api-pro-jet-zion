@@ -14,7 +14,7 @@ class UserManagerTest extends DBTestCase
         return $this->applyKeys($this->userToCreate(), $excludeKeys, $includeKeys);
     }
 
-    public function testCreateError()
+    public function testUserManagerCreateError()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
@@ -26,7 +26,7 @@ class UserManagerTest extends DBTestCase
         $this->assertNotEmpty($response->message, 2);
     }
 
-    public function testCreateTokenError()
+    public function testUserManagerCreateTokenError()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', $this->request([UserEntity::KEY_API_TOKEN]), $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
@@ -38,10 +38,10 @@ class UserManagerTest extends DBTestCase
         $this->assertNotEmpty($response->message, 2);
     }
 
-    public function testCreateTokenNotValidError()
+    public function testUserManagerCreateTokenNotValidError()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', $this->request([], [UserEntity::KEY_API_TOKEN => 'token no_valido']), $this->headers());
-        $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
+        $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
         ]);
@@ -50,7 +50,7 @@ class UserManagerTest extends DBTestCase
         $this->assertNotEmpty($response->message, 2);
     }
 
-    public function testCreateUsernameError()
+    public function testUserManagerCreateUsernameError()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', $this->request(['username']), $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -64,7 +64,7 @@ class UserManagerTest extends DBTestCase
         $this->assertNotEmpty($response->errors);
     }
 
-    public function testCreateUsernameRepeatedError()
+    public function testUserManagerCreateUsernameRepeatedError()
     {
         $user = $this->user();
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', $this->request([], ['username' => $user['username']]), $this->headers());
@@ -77,7 +77,7 @@ class UserManagerTest extends DBTestCase
         $this->assertNotEmpty($response->message);
     }
 
-    public function testCreatePasswordError()
+    public function testUserManagerCreatePasswordError()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', $this->request(['password']), $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -91,7 +91,7 @@ class UserManagerTest extends DBTestCase
         $this->assertNotEmpty($response->errors);
     }
 
-    public function testCreateOK()
+    public function testUserManagerCreateOK()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', $this->request(), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
@@ -114,7 +114,7 @@ class UserManagerTest extends DBTestCase
         $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $response);
     }
 
-    public function testReadOK()
+    public function testUserManagerReadOK()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/read/1', $this->request(), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
@@ -139,7 +139,7 @@ class UserManagerTest extends DBTestCase
         $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $response);
     }
 
-    public function testUpdateStatusError()
+    public function testUserManagerUpdateStatusError()
     {
         $data = [
             'status' => 'ERROR',
@@ -157,7 +157,7 @@ class UserManagerTest extends DBTestCase
         $this->assertNotEmpty($response->errors);
     }
 
-    public function testUpdateEmptyOk()
+    public function testUserManagerUpdateEmptyOk()
     {
         $this->json(HttpMethod::PUT, 'http://localhost/api/v1/user/update/1', $this->request(['username', 'password', 'status']), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
@@ -169,7 +169,7 @@ class UserManagerTest extends DBTestCase
         $this->assertEquals($response->id, 1);
     }
 
-    public function testUpdateOK()
+    public function testUserManagerUpdateOK()
     {
         $data = [
             'status' => UserStatus::INACTIVE,
@@ -198,7 +198,7 @@ class UserManagerTest extends DBTestCase
         $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $response);
     }
 
-    public function testDeleteOK()
+    public function testUserManagerDeleteOK()
     {
         $this->json(HttpMethod::DELETE, 'http://localhost/api/v1/user/delete/1', $this->request(), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);

@@ -9,6 +9,10 @@ use App\Entities\UserEntity;
 use Illuminate\Http\Request;
 use Illuminate\Validation\UnauthorizedException;
 
+/**
+ * Class LoginManager
+ * @package App\Managers
+ */
 class LoginManager extends ManagerContract
 {
     /**
@@ -25,7 +29,7 @@ class LoginManager extends ManagerContract
     /**
      * @return LoginRepository
      */
-    protected function repository()
+    protected function loginRepository()
     {
         return parent::repository();
     }
@@ -35,20 +39,20 @@ class LoginManager extends ManagerContract
      */
     public function login()
     {
-        $user = UserEntity::load($this->repository()->getUserPasswordByUsername($this->requestInput('username')));
+        $userEntity = UserEntity::load($this->loginRepository()->getUserPasswordByUsername($this->requestInput('username')));
 
-        if (!passwordIsValid($this->requestInput('password'), $user->password())) {
+        if (!passwordIsValid($this->requestInput('password'), $userEntity->password())) {
             throw new UnauthorizedException(trans('login.error.credentials'));
         }
 
-        $user->lastIpAddress($this->requestIp());
-        $user->lastLoginAt(now());
-        $user->apiToken(randomHashing());
+        $userEntity->lastIpAddress($this->requestIp());
+        $userEntity->lastLoginAt(now());
+        $userEntity->apiToken(randomHashing());
 
-        $this->repository()->updateUserLastLogin($user->id(), $user->toArray());
+        $this->loginRepository()->updateUserLastLogin($userEntity->id(), $userEntity->toArray());
 
         return [
-            UserEntity::KEY_API_TOKEN => $user->apiToken()
+            UserEntity::KEY_API_TOKEN => $userEntity->apiToken()
         ];
     }
 
