@@ -52,4 +52,12 @@ class UserController extends Controller
     {
         return $this->manager()->requestValidate()->delete($id);
     }
+
+    /**
+     * @return array
+     */
+    public function search()
+    {
+        return $this->manager()->applyFilters()->search();
+    }
 }

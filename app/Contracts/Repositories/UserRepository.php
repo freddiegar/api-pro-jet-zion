@@ -4,6 +4,10 @@ namespace App\Contracts\Repositories;
 
 use App\Models\User;
 
+/**
+ * Interface UserRepository
+ * @package App\Contracts\Repositories
+ */
 interface UserRepository
 {
     /**
@@ -36,4 +40,10 @@ interface UserRepository
      * @return null|User
      */
     static public function getByApiToken($apiToken);
+
+    /**
+     * @param array $filters
+     * @return array
+     */
+    static public function where($filters);
 }

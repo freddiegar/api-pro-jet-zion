@@ -11,6 +11,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-         $this->call('UserAdminSeeder');
+        // Create user admin
+        $this->call('UserAdminSeeder');
+        // Test fakers
+        $this->call('FakerUserSeeder');
     }
 }

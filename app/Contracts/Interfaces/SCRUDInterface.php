@@ -5,12 +5,6 @@ namespace App\Contracts\Interfaces;
 interface SCRUDInterface
 {
     /**
-     * Show all models
-     * @return array
-     */
-//    public function show();
-
-    /**
      * Model create
      * @return array
      */
@@ -36,4 +30,10 @@ interface SCRUDInterface
      * @return array
      */
     public function delete($id);
+
+    /**
+     * Search in models
+     * @return array
+     */
+    public function search();
 }
