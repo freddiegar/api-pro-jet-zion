@@ -2,12 +2,14 @@
 
 namespace App\Managers;
 
+use App\Constants\FilterType;
 use App\Constants\UserStatus;
 use App\Contracts\Commons\ManagerContract;
 use App\Contracts\Interfaces\SCRUDInterface;
 use App\Contracts\Repositories\UserRepository;
 use App\Entities\UserEntity;
 use App\Models\User;
+use App\Traits\FilterTrait;
 use Illuminate\Http\Request;
 
 /**
@@ -16,6 +18,7 @@ use Illuminate\Http\Request;
  */
 class UserManager extends ManagerContract implements SCRUDInterface
 {
+    use FilterTrait;
     /**
      * UserManager constructor.
      * @param Request $request
@@ -46,7 +49,7 @@ class UserManager extends ManagerContract implements SCRUDInterface
         $userEntity->status(UserStatus::ACTIVE);
         $userEntity->type(User::class);
 
-        return $userEntity->reload($this->userRepository()->create($userEntity->toArray()))->toArray(true);
+        return $userEntity->merge($this->userRepository()->create($userEntity->toArray(true)))->toArray();
     }
 
     /**
@@ -55,7 +58,7 @@ class UserManager extends ManagerContract implements SCRUDInterface
      */
     public function read($id)
     {
-        return UserEntity::load($this->userRepository()->getById($id))->toArray(true);
+        return UserEntity::load($this->userRepository()->getById($id))->toArray();
     }
 
     /**
@@ -68,8 +71,8 @@ class UserManager extends ManagerContract implements SCRUDInterface
         if ($this->requestInput('password')) {
             $userEntity->setPassword($this->requestInput('password'));
         }
-        $this->userRepository()->updateById($id, $userEntity->toArray());
-        return $userEntity->id($id)->toArray(true);
+        $this->userRepository()->updateById($id, $userEntity->toArray(true));
+        return $userEntity->id($id)->toArray();
     }
 
     /**
@@ -79,7 +82,15 @@ class UserManager extends ManagerContract implements SCRUDInterface
     public function delete($id)
     {
         $this->userRepository()->deleteById($id);
-        return (new UserEntity())->id($id)->toArray(true);
+        return (new UserEntity())->id($id)->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    public function search()
+    {
+        return (new UserEntity())->toArrayMultiple($this->userRepository()->where($this->filterToApply()));
     }
 
     /**
@@ -96,6 +107,21 @@ class UserManager extends ManagerContract implements SCRUDInterface
                     UserStatus::SUSPENDED,
                     UserStatus::BLOCKED,
                 ]),
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function filters()
+    {
+        return [
+            'username' => [
+                'type' => FilterType::TEXT
+            ],
+            'status' => [
+                'type' => FilterType::SELECT
+            ]
         ];
     }
 }

@@ -108,4 +108,12 @@ abstract class ManagerContract
     {
         return [];
     }
+
+    /**
+     * @return array
+     */
+    protected function filters()
+    {
+        return [];
+    }
 }

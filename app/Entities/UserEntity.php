@@ -51,8 +51,8 @@ class UserEntity extends EntityContract
     }
 
     /**
-     * @param null $id
-     * @return string
+     * @param int $id
+     * @return static|int
      */
     public function id($id = null)
     {
@@ -66,7 +66,7 @@ class UserEntity extends EntityContract
 
     /**
      * @param string $status
-     * @return string
+     * @return static|string
      */
     public function status($status = null)
     {
@@ -80,7 +80,7 @@ class UserEntity extends EntityContract
 
     /**
      * @param string $username
-     * @return string
+     * @return static|string
      */
     public function username($username = null)
     {
@@ -94,7 +94,7 @@ class UserEntity extends EntityContract
 
     /**
      * @param string $password
-     * @return $this
+     * @return static|string
      */
     public function password($password = null)
     {
@@ -106,7 +106,7 @@ class UserEntity extends EntityContract
     }
 
     /**
-     * @param $password
+     * @param string $password
      * @return $this
      */
     public function setPassword($password)
@@ -117,7 +117,7 @@ class UserEntity extends EntityContract
 
     /**
      * @param string $type
-     * @return string
+     * @return static|string
      */
     public function type($type = null)
     {
@@ -131,7 +131,7 @@ class UserEntity extends EntityContract
 
     /**
      * @param string $api_token
-     * @return string
+     * @return static|string
      */
     public function apiToken($api_token = null)
     {
@@ -145,7 +145,7 @@ class UserEntity extends EntityContract
 
     /**
      * @param string $last_login_at
-     * @return string
+     * @return static|string
      */
     public function lastLoginAt($last_login_at = null)
     {
@@ -159,7 +159,7 @@ class UserEntity extends EntityContract
 
     /**
      * @param string $last_ip_address
-     * @return string
+     * @return static|string
      */
     public function lastIpAddress($last_ip_address = null)
     {

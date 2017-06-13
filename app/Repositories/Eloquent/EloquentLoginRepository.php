@@ -33,7 +33,6 @@ class EloquentLoginRepository implements LoginRepository
      */
     static public function updateUserLastLogin($id, $user)
     {
-//        self::model()->setCurrentUserAuthenticated($id);
         return self::model()->findOrFail($id)->update($user);
     }
 }

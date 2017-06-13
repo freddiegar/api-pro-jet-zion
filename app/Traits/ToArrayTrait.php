@@ -5,13 +5,13 @@ namespace App\Traits;
 trait ToArrayTrait
 {
     /**
-     * @param bool $excludeHiddens
+     * @param bool $includeHiddens
      * @return array
      */
-    public function toArray($excludeHiddens = false)
+    public function toArray($includeHiddens = false)
     {
         $toArray = [];
-        $properties = ($excludeHiddens) ? array_diff($this->fields(), $this->hiddens()) : $this->fields();
+        $properties = $includeHiddens ? static::fields() : array_diff(static::fields(), static::hiddens());
 
         foreach ($properties as $property) {
             if (isset($this->{$property})) {
@@ -21,5 +21,21 @@ trait ToArrayTrait
         }
 
         return $toArray;
+    }
+
+    /**
+     * @param array $dataSets
+     * @param bool $includeHiddens
+     * @return array
+     */
+    public function toArrayMultiple(array $dataSets, $includeHiddens = false)
+    {
+        $toArrayMultiple = [];
+
+        foreach ($dataSets as $dataSet) {
+            $toArrayMultiple[] = static::load($dataSet)->toArray($includeHiddens);
+        }
+
+        return $toArrayMultiple;
     }
 }

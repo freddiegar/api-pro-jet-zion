@@ -12,7 +12,7 @@ trait LoaderTrait
     static public function load(array $properties, $newEntitiy = true)
     {
         static $entity;
-        $entity = ($newEntitiy) ? new static() : $entity;
+        $entity = ($newEntitiy) ? new static() : $entity ?: new static();
 
         foreach ($properties as $property => $value) {
             if (in_array($property, $entity->fields())) {
@@ -28,7 +28,7 @@ trait LoaderTrait
      * @param array $newProperties
      * @return static
      */
-    public function reload(array $newProperties)
+    public function merge(array $newProperties)
     {
         return static::load($newProperties, false);
     }

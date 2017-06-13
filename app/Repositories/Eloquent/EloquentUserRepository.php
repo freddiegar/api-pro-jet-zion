@@ -9,7 +9,7 @@ use App\Models\User;
  * Class EloquentUserRepository
  * @package App\Repositories\Eloquent
  */
-class EloquentUserRepository implements UserRepository
+class EloquentUserRepository extends EloquentFilterBuilder implements UserRepository
 {
     /**
      * @return User
@@ -58,5 +58,14 @@ class EloquentUserRepository implements UserRepository
     static public function getByApiToken($apiToken)
     {
         return self::model()->where('api_token', base64_decode($apiToken))->first();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    static public function where($filters)
+    {
+        $query = self::builder(self::model()->select(), $filters);
+        return $query->get()->toArray();
     }
 }

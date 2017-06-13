@@ -17,7 +17,7 @@ interface LoginRepository
     static public function getUserPasswordByUsername($username);
 
     /**
-     * @param int $id
+     * @param mixed $id
      * @param array $user
      * @return bool
      */

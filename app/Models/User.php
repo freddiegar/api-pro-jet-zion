@@ -18,6 +18,7 @@ use Laravel\Lumen\Auth\Authorizable;
  * Class User
  *
  * @method static Model create(array $attributes = [])
+ * @method static Model select(array $columns = ['*'])
  * @method static Model|Collection findOrFail($id, $columns = ['*'])
  * @method static Builder where($column, $operator = null, $value = null, $boolean = 'and')
  *

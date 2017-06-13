@@ -5,6 +5,7 @@ use App\Constants\BlameColumn;
 use App\Constants\HttpMethod;
 use App\Constants\UserStatus;
 use App\Entities\UserEntity;
+use App\Models\User;
 use Illuminate\Http\Response;
 
 class UserManagerTest extends DBTestCase
@@ -101,7 +102,7 @@ class UserManagerTest extends DBTestCase
         ]);
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->id, 2);
+        $this->assertEquals($response->id, User::where('username', 'freddie@gar.com')->first()->id);
         $this->assertEquals($response->username, 'freddie@gar.com');
         $this->assertObjectNotHasAttribute('password', $response);
         $this->assertObjectNotHasAttribute('api_token', $response);
