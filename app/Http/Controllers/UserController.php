@@ -24,7 +24,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return response()->json($this->manager()->requestValidate()->create(), Response::HTTP_CREATED);
+        return responseJson($this->manager()->requestValidate()->create(), Response::HTTP_CREATED);
     }
 
     /**

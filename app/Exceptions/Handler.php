@@ -121,15 +121,18 @@ class Handler extends ExceptionHandler
 
         if (isset($response)) {
             if (isDevelopment()) {
-                $response['error'] = array_merge($response['error'], [
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                    'exception' => get_class($e),
-//                    'trace' => $e->getTraceAsString(),
-                ]);
+                $response['error'] = array_merge(
+                    ['status' => $response['code']],
+                    $response['error'],
+                    [
+                        'exception' => get_class($e),
+                        'from' => $e->getFile() . ':' . $e->getLine(),
+                        'trace' => customizeTrace($e->getTrace()),
+                    ]
+                );
             }
 
-            return response()->json($response['error'], $response['code']);
+            return responseJson($response['error'], $response['code']);
         }
 
         // @codeCoverageIgnoreStart

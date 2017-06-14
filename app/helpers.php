@@ -146,7 +146,43 @@ if (!function_exists('resource')) {
         $app->post($route, ['as' => "api.{$route}.create", 'uses' => "{$controller}@create"]);
         $app->get("{$route}/{id}", ['as' => "api.{$route}.read", 'uses' => "{$controller}@read"]);
         $app->put("{$route}/{id}", ['as' => "api.{$route}.update", 'uses' => "{$controller}@update"]);
+        $app->patch("{$route}/{id}", ['as' => "api.{$route}.update", 'uses' => "{$controller}@update"]);
         $app->delete("{$route}/{id}", ['as' => "api.{$route}.delete", 'uses' => "{$controller}@delete"]);
         $app->get($route, ['as' => "api.{$route}.show", 'uses' => "{$controller}@show"]);
+    }
+}
+
+if (!function_exists('responseJson')) {
+    /**
+     * @param string $content
+     * @param int $status
+     * @param array $headers
+     * @return string
+     */
+    function responseJson($content = '', $status = 200, array $headers = [])
+    {
+        $status = empty($content) ? \Illuminate\Http\Response::HTTP_NO_CONTENT : $status;
+        $options = env('APP_JSON_PRETTY_PRINT') == 'true' ? JSON_PRETTY_PRINT : 0;
+
+        return response()->json($content, $status, $headers, $options);
+    }
+}
+
+if (!function_exists('customizeTrace')) {
+    /**
+     * @param array $exceptions
+     * @return array
+     */
+    function customizeTrace(array $exceptions)
+    {
+        $trace = [];
+        foreach ($exceptions as $index => $exception) {
+            if (!isset($exception['file']) || strpos($exception['file'], '/vendor/') !== false) {
+                continue;
+            }
+            $trace[] = $exception['file'] . ':' . $exception['line'];
+        }
+
+        return array_reverse($trace);
     }
 }
