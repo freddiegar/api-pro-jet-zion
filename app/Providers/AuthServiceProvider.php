@@ -39,7 +39,29 @@ class AuthServiceProvider extends ServiceProvider
 
         Auth::viaRequest('api',
             function (Request $request) {
-                if ($apiToken = $request->input(UserEntity::KEY_API_TOKEN)) {
+                $apiToken = null;
+
+                switch (true) {
+                    // In input request
+                    case $apiToken = $request->input(UserEntity::KEY_API_TOKEN):
+                        break;
+                    // In Header
+                    case $apiToken = $request->header(UserEntity::KEY_API_TOKEN_HEADER):
+                        break;
+                    // In Authorization Header
+                    default:
+                        $Auth = explode(' ', $request->header(UserEntity::KEY_AUTHORIZATION_HEADER));
+                        if (isset($Auth[1])) {
+                            // Type Token
+                            $apiToken = $Auth[1];
+                        } elseif (isset($Auth[0])) {
+                            // Token
+                            $apiToken = $Auth[0];
+                        }
+                        break;
+                }
+
+                if ($apiToken) {
                     // TODO: Revise this funcionality, let interface UserRepository, not concrete EloquentUserRepository
                     /** @noinspection PhpUndefinedMethodInspection */
                     if ($user = EloquentUserRepository::getByApiToken($apiToken)) {

@@ -6,61 +6,24 @@ use App\Constants\FilterType;
 use App\Constants\OperatorType;
 use App\Constants\Pattern;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 trait FilterTrait
 {
+    static public $FILTER_SMART_NAME = 'q';
+
     static private $FILTER_METHOD_PREFIX = 'filterBy%s';
 
-//    static private $FILTER_SMART_NAME = 'smart_search_filter';
+    static private $FILTER_SMART_TYPE = 'SmartSearch';
 
-//    static private $SMART_SEARCH_TYPE = 'smart_search';
-
-//    static private $FILTER_SEPARATOR = '.';
-
-//    static private $FILTER_BY_DEFAULT = [
-//        FilterType::TEXT,
-//    ];
-
-//    static private $SMART_SEARCH_INPUT = '__from_smart_search_filter';
-
-    /**
-     * @var Model
-     */
-//    protected $model;
+    static private $FILTER_BY_DEFAULT = [
+        FilterType::TEXT,
+        FilterType::EMAIL,
+    ];
 
     /**
      * @var array
      */
     private $filtersToApply = [];
-
-    /**
-     * @var bool
-     */
-//    protected $smartSearch = true;
-
-    /**
-     * @var object
-     */
-//    protected $filters;
-
-    /**
-     * @param $id
-     * @return mixed
-     */
-//    private function getRequestValue($id)
-//    {
-//        return $this->request->input(str_replace(self::FILTER_SEPARATOR, '_', $id));
-//    }
-
-    /**
-     * @param $id
-     * @param $value
-     */
-//    private function mergeFilterInRequest($id, $value)
-//    {
-//        $this->request->merge([str_replace(self::FILTER_SEPARATOR, '_', $id) => $value]);
-//    }
 
     /**
      * @return array
@@ -135,25 +98,24 @@ trait FilterTrait
     /**
      * @return bool
      */
-//    private function isSmartSearch()
-//    {
-//        return !empty($this->request->input(self::SMART_SEARCH_INPUT));
-//    }
+    private function isSmartSearch()
+    {
+        return !empty(static::requestInput(self::$FILTER_SMART_NAME));
+    }
 
     /**
      * @return $this
      */
     public function applyFilters()
     {
-//        if ($this->smartSearch && $this->isSmartSearch()) {
-//            $filters = new \stdClass();
-//            $filters->{self::SMART_SEARCH_FILTER} = (object)[
-//                'id' => self::SMART_SEARCH_FILTER,
-//                'label' => '',
-//                'type' => self::SMART_SEARCH_TYPE,
-//                'value' => '',
-//            ];
-//        }
+        if (self::isSmartSearch()) {
+            self::applyFilter([
+                'field' => self::$FILTER_SMART_NAME,
+                'type' => self::$FILTER_SMART_TYPE,
+            ]);
+
+            return $this;
+        }
 
         foreach (static::filters() as $field => $filter) {
             self::applyFilter(array_merge(compact('field'), $filter));
@@ -168,7 +130,7 @@ trait FilterTrait
      */
     private function applyFilter($filter, $whereType = 'where')
     {
-        call_user_func([$this, sprintf(self::$FILTER_METHOD_PREFIX, ucfirst(camel_case($filter['type'])))], $filter, $whereType);
+        call_user_func([$this, sprintf(self::$FILTER_METHOD_PREFIX, ucfirst($filter['type']))], $filter, $whereType);
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
@@ -215,7 +177,11 @@ trait FilterTrait
      */
     private function filterByNumber($filter, $whereType = 'where')
     {
-        self::filterByText($filter, $whereType);
+        $value = static::requestInput($filter['field']);
+
+        if (!empty($value)) {
+            self::setFilterToApply($filter, $whereType, $value);
+        }
     }
 
     /**
@@ -233,8 +199,7 @@ trait FilterTrait
                     ->minute(59)
                     ->second(59);
 
-                self::setFilterToApply($filter, $whereType, $valueMinFormatted, OperatorType::MAJOR_EQUALS);
-                self::setFilterToApply($filter, $whereType, $valueMaxFormatted, OperatorType::MINOR_EQUALS);
+                self::doBetween($filter, $whereType, $valueMinFormatted, $valueMaxFormatted);
             }
         }
     }
@@ -255,19 +220,12 @@ trait FilterTrait
             ->minute(59)
             ->second(59);
 
-        if (!empty($valueMin) && !empty($valueMax)) {
-            if ($valueMinFormatted && $valueMaxFormatted) {
-                self::setFilterToApply($filter, $whereType, $valueMinFormatted, OperatorType::MAJOR_EQUALS);
-                self::setFilterToApply($filter, $whereType, $valueMaxFormatted, OperatorType::MINOR_EQUALS);
-            }
-        } elseif (!empty($valueMin)) {
-            if ($valueMinFormatted) {
-                self::setFilterToApply($filter, $whereType, $valueMinFormatted, OperatorType::MAJOR_EQUALS);
-            }
-        } elseif (!empty($valueMax)) {
-            if ($valueMaxFormatted) {
-                self::setFilterToApply($filter, $whereType, $valueMaxFormatted, OperatorType::MINOR_EQUALS);
-            }
+        if (!empty($valueMin) && !empty($valueMax) && $valueMinFormatted && $valueMaxFormatted) {
+            self::doBetween($filter, $whereType, $valueMinFormatted, $valueMaxFormatted);
+        } elseif (!empty($valueMin) && $valueMinFormatted) {
+            self::setFilterToApply($filter, $whereType, $valueMinFormatted, OperatorType::MAJOR_EQUALS);
+        } elseif (!empty($valueMax) && $valueMaxFormatted) {
+            self::setFilterToApply($filter, $whereType, $valueMaxFormatted, OperatorType::MINOR_EQUALS);
         }
 
         self::filterByDate($filter, $whereType);
@@ -275,55 +233,57 @@ trait FilterTrait
 
     /**
      * @param array $filter
+     * @param string $whereType
+     * @param string $min
+     * @param string $max
      */
-//    public function filterBySmartSearch($filter)
-//    {
-//        $smartSearchValue = static::requestInput($filter['field']);
-//
-//        if (empty($smartSearchValue)) {
-//            return;
-//        }
-//
-//        $smartFilterTypes = self::DEFAULT_FILTERS;
-//
-//        if (strtotime($smartSearchValue)) {
-//            $smartFilterTypes = [
-//                FilterType::DATE,
-//                FilterType::BETWEEN
-//            ];
-//        }
-//
-//        if (is_numeric($smartSearchValue)) {
-//            $smartFilterTypes = [
-//                FilterType::NUMBER,
-//            ];
-//
-//            if (!$this->isSmartSearch()) {
-//                array_push($smartFilterTypes, FilterType::SELECT);
-//            }
-//        }
-//
-//        if (strpos($smartSearchValue, '@') !== false) {
-//            $smartFilterTypes = [
-//                FilterType::EMAIL
-//            ];
-//        }
-//
-//        $queryGlobal = clone $this->query;
-//
-//        $this->query->where(function ($query) use ($smartFilterTypes, $smartSearchValue, $queryGlobal) {
-//            $this->query = $query;
-//
-//            foreach ($this->filters as $filter) {
-//                if (!in_array($filter->type, $smartFilterTypes)) {
-//                    continue;
-//                }
-//
-//                $this->mergeFilterInRequest($filter['field'], $smartSearchValue);
-//                $this->applyFilter($filter, 'orWhere');
-//            }
-//
-//            $this->query = $queryGlobal;
-//        });
-//    }
+    private function doBetween($filter, $whereType, $min, $max) {
+        self::setFilterToApply($filter, $whereType, $min, OperatorType::MAJOR_EQUALS);
+        self::setFilterToApply($filter, 'where', $max, OperatorType::MINOR_EQUALS);
+    }
+
+    /**
+     * @param array $filter
+     */
+    public function filterBySmartSearch($filter)
+    {
+        $valueFilterSmart = static::requestInput($filter['field']);
+
+        if (empty($valueFilterSmart)) {
+            return;
+        }
+
+        $smartFilterTypes = self::$FILTER_BY_DEFAULT;
+
+        if (strtotime($valueFilterSmart)) {
+            $smartFilterTypes = [
+                FilterType::DATE,
+                FilterType::BETWEEN
+            ];
+        }
+
+        if (is_numeric($valueFilterSmart)) {
+            $smartFilterTypes = [
+                FilterType::NUMBER,
+            ];
+
+            if (!$this->isSmartSearch()) {
+                array_push($smartFilterTypes, FilterType::SELECT);
+            }
+        }
+
+        if (strpos($valueFilterSmart, '@') !== false) {
+            $smartFilterTypes = [
+                FilterType::EMAIL
+            ];
+        }
+
+        foreach (static::filters() as $field => $filter) {
+            if (!in_array($filter['type'], $smartFilterTypes)) {
+                continue;
+            }
+            static::requestAddInput($field, $valueFilterSmart);
+            self::applyFilter(array_merge(compact('field'), $filter), 'orWhere');
+        }
+    }
 }

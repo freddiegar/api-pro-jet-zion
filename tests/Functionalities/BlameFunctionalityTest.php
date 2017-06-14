@@ -42,7 +42,7 @@ class BlameFunctionalityTest extends DBTestCase
     private function message($event)
     {
         $model = $this->model();
-        return trans('login.error.not_authenticated', compact('event', 'model'));
+        return trans('login.error.unauthorized', compact('event', 'model'));
     }
 
     private function messageOnCreating()

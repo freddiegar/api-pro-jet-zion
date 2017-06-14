@@ -55,6 +55,8 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+        $response = null;
+
         if ($e instanceof UnauthorizedException) {
             $response = [
                 'code' => Response::HTTP_UNAUTHORIZED,
@@ -77,7 +79,7 @@ class Handler extends ExceptionHandler
             $response = [
                 'code' => Response::HTTP_NOT_FOUND,
                 'error' => [
-                    'message' => $e->getMessage() ?: trans('login.error.uri_not_found'),
+                    'message' => $e->getMessage() ?: trans('login.error.not_found'),
                 ]
             ];
         }
@@ -119,24 +121,29 @@ class Handler extends ExceptionHandler
             ];
         }
 
-        if (isset($response)) {
-            if (isDevelopment()) {
-                $response['error'] = array_merge(
-                    ['status' => $response['code']],
-                    $response['error'],
-                    [
-                        'exception' => get_class($e),
-                        'from' => $e->getFile() . ':' . $e->getLine(),
-                        'trace' => customizeTrace($e->getTrace()),
-                    ]
-                );
-            }
-
-            return responseJson($response['error'], $response['code']);
+        if (!$response) {
+            $response = [
+                'code' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'error' => [
+                    'message' => trans('login.error.internal_server_error'),
+                ]
+            ];
         }
 
-        // @codeCoverageIgnoreStart
-        return parent::render($request, $e);
-        // @codeCoverageIgnoreEnd
+        if (isDevelopment()) {
+            $response['error'] = array_merge(
+                ['status' => $response['code']],
+                $response['error'],
+                [
+                    'description' => $e->getMessage(),
+                    'exception' => get_class($e),
+                    'from' => $e->getFile() . ':' . $e->getLine(),
+                    'trace' => customizeTrace($e->getTrace()),
+                ]
+            );
+        }
+
+        return responseJson($response['error'], $response['code']);
+//        return parent::render($request, $e);
     }
 }

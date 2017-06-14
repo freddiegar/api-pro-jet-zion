@@ -7,6 +7,7 @@ use App\Constants\HttpMethod;
 use App\Constants\UserStatus;
 use App\Entities\UserEntity;
 use App\Models\User;
+use App\Traits\FilterTrait;
 use Illuminate\Http\Response;
 
 class UserManagerTest extends DBTestCase
@@ -364,7 +365,7 @@ class UserManagerTest extends DBTestCase
             'status' => UserStatus::SUSPENDED,
             UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
-        $this->assertResponseStatus(Response::HTTP_OK);
+        $this->assertResponseStatus(Response::HTTP_NO_CONTENT);
         $response = json_decode($this->response->getContent());
         $this->assertEquals(0, count($response));
     }
@@ -417,6 +418,54 @@ class UserManagerTest extends DBTestCase
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
         $this->assertEquals(4, count($response));
+        $this->assertSearchUser($response);
+    }
+
+    public function testUserManagerShowSmart1()
+    {
+        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+            FilterTrait::$FILTER_SMART_NAME => 'pica',
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertEquals(2, count($response));
+        $this->assertSearchUser($response);
+    }
+
+    public function testUserManagerShowSmart2()
+    {
+        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+            FilterTrait::$FILTER_SMART_NAME => 'o@marmol',
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertEquals(1, count($response));
+        $this->assertSearchUser($response);
+    }
+
+    public function testUserManagerShowSmart3()
+    {
+        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+            FilterTrait::$FILTER_SMART_NAME => 1,
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertEquals(2, count($response));
+        $this->assertSearchUser($response);
+    }
+
+    public function testUserManagerShowSmart4()
+    {
+        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+            FilterTrait::$FILTER_SMART_NAME => '2015-12-01',
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertEquals(1, count($response));
         $this->assertSearchUser($response);
     }
 }

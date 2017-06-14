@@ -8,10 +8,10 @@ use Illuminate\Http\Response;
 use Illuminate\Validation\UnauthorizedException;
 
 /**
- * Class Authenticate
+ * Class AuthenticateMiddleware
  * @package App\Http\Middleware
  */
-class Authenticate
+class AuthenticateMiddleware
 {
     /**
      * The authentication guard factory instance.

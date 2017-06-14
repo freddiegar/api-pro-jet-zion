@@ -162,7 +162,7 @@ if (!function_exists('responseJson')) {
     function responseJson($content = '', $status = 200, array $headers = [])
     {
         $status = empty($content) ? \Illuminate\Http\Response::HTTP_NO_CONTENT : $status;
-        $options = env('APP_JSON_PRETTY_PRINT') == 'true' ? JSON_PRETTY_PRINT : 0;
+        $options = env('APP_JSON_PRETTY_PRINT') === true ? JSON_PRETTY_PRINT : 0;
 
         return response()->json($content, $status, $headers, $options);
     }
@@ -183,6 +183,6 @@ if (!function_exists('customizeTrace')) {
             $trace[] = $exception['file'] . ':' . $exception['line'];
         }
 
-        return array_reverse($trace);
+        return $trace;
     }
 }

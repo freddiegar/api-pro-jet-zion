@@ -33,7 +33,7 @@ class UserController extends Controller
      */
     public function read($id)
     {
-        return $this->manager()->read($id);
+        return responseJson($this->manager()->read($id));
     }
 
     /**
@@ -42,7 +42,7 @@ class UserController extends Controller
      */
     public function update($id)
     {
-        return $this->manager()->requestValidate()->update($id);
+        return responseJson($this->manager()->requestValidate()->update($id));
     }
 
     /**
@@ -51,7 +51,7 @@ class UserController extends Controller
      */
     public function delete($id)
     {
-        return $this->manager()->delete($id);
+        return responseJson($this->manager()->delete($id));
     }
 
     /**
@@ -59,6 +59,6 @@ class UserController extends Controller
      */
     public function show()
     {
-        return $this->manager()->applyFilters()->show();
+        return responseJson($this->manager()->applyFilters()->show());
     }
 }

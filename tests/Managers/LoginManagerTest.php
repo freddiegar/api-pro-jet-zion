@@ -11,6 +11,45 @@ class LoginManagerTest extends DBTestCase
         return $this->applyKeys($this->login(), $excludeKeys, $includeKeys);
     }
 
+    public function testLoginHeaderError()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', [], [UserEntity::KEY_API_TOKEN_HEADER => 'token_header_error_test']);
+        ll($this->response->getContent());
+        $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function testLoginHeaderOK()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', [], [UserEntity::KEY_API_TOKEN_HEADER => $this->apiToken()]);
+        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    public function testLoginAuthorizarionHeaderError()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', [], [UserEntity::KEY_AUTHORIZATION_HEADER => 'token_authorization_header_error_test']);
+        $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
+
+    }
+
+    public function testLoginAuthorizarionHeaderOK()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', [], [UserEntity::KEY_AUTHORIZATION_HEADER => $this->apiToken()]);
+        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    public function testLoginAuthorizarionBasicHeaderError()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', [], [UserEntity::KEY_AUTHORIZATION_HEADER => 'Basic token_authorization_header_error_test']);
+        $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
+
+    }
+
+    public function testLoginAuthorizarionBasicHeaderOK()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', [], [UserEntity::KEY_AUTHORIZATION_HEADER => 'Basic ' . $this->apiToken()]);
+        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
     public function testLoginError()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/login', [], $this->headers());

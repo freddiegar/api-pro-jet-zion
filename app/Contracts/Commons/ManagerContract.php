@@ -76,6 +76,16 @@ abstract class ManagerContract
     }
 
     /**
+     * @param string $name
+     * @param mixed $value
+     * @return void
+     */
+    final protected function requestAddInput($name, $value = null)
+    {
+        $this->request()->merge([$name => $value]);
+    }
+
+    /**
      * Valid data in request
      * return $this
      */
