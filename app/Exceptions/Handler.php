@@ -79,7 +79,7 @@ class Handler extends ExceptionHandler
             $response = [
                 'code' => Response::HTTP_NOT_FOUND,
                 'error' => [
-                    'message' => $e->getMessage() ?: trans('login.error.not_found'),
+                    'message' => $e->getMessage() ?: trans('exceptions.not_found'),
                 ]
             ];
         }
@@ -88,7 +88,7 @@ class Handler extends ExceptionHandler
             $response = [
                 'code' => Response::HTTP_METHOD_NOT_ALLOWED,
                 'error' => [
-                    'message' => $e->getMessage() ?: trans('login.error.method_not_allowed'),
+                    'message' => $e->getMessage() ?: trans('exceptions.method_not_allowed'),
                 ]
             ];
         }
@@ -106,7 +106,7 @@ class Handler extends ExceptionHandler
             $response = [
                 'code' => Response::HTTP_UNPROCESSABLE_ENTITY,
                 'error' => [
-                    'message' => trans('login.error.validation'),
+                    'message' => trans('exceptions.validation'),
                     'errors' => ($e->getResponse())->original,
                 ]
             ];
@@ -125,7 +125,7 @@ class Handler extends ExceptionHandler
             $response = [
                 'code' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'error' => [
-                    'message' => trans('login.error.internal_server_error'),
+                    'message' => trans('exceptions.internal_server_error'),
                 ]
             ];
         }

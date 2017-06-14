@@ -68,7 +68,7 @@ class AuthServiceProvider extends ServiceProvider
                         return $user;
                     }
 
-                    throw new UnauthorizedException(trans('login.error.api_token'));
+                    throw new UnauthorizedException(trans('exceptions.credentials'));
                 }
 
                 return null;

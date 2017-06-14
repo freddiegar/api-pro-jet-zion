@@ -42,7 +42,7 @@ class LoginManager extends ManagerContract
         $userEntity = UserEntity::load($this->loginRepository()->getUserPasswordByUsername($this->requestInput('username')));
 
         if (!passwordIsValid($this->requestInput('password'), $userEntity->password())) {
-            throw new UnauthorizedException(trans('login.error.credentials'));
+            throw new UnauthorizedException(trans('exceptions.credentials'));
         }
 
         $userEntity->lastIpAddress($this->requestIp());

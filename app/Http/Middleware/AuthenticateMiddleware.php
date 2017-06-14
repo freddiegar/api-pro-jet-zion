@@ -42,7 +42,7 @@ class AuthenticateMiddleware
     public function handle($request, Closure $next, $guard = null)
     {
         if ($this->auth->guard($guard)->guest()) {
-            throw new UnauthorizedException(trans('login.error.api_token'), Response::HTTP_UNAUTHORIZED);
+            throw new UnauthorizedException(trans('exceptions.credentials'), Response::HTTP_UNAUTHORIZED);
         }
 
         return $next($request);

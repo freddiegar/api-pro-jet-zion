@@ -22,7 +22,7 @@ class SupportedMediaTypeMiddleware
     public function handle($request, Closure $next)
     {
         if (strtolower($request->headers->get('Content-Type')) !== ManagerContract::MEDIA_TYPE_SUPPORTED) {
-            throw new UnsupportedMediaTypeHttpException(trans('login.error.unsopported_media_type', ['media_type' => ManagerContract::MEDIA_TYPE_SUPPORTED]));
+            throw new UnsupportedMediaTypeHttpException(trans('exceptions.unsopported_media_type', ['media_type' => ManagerContract::MEDIA_TYPE_SUPPORTED]));
         }
 
         return $next($request);

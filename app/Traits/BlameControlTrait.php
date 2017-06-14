@@ -189,6 +189,6 @@ trait BlameControlTrait
             return static::getCurrentUserAuthenticated($event, $model);
         }
 
-        throw new UnauthorizedException(trans('login.error.unauthorized', compact('event', 'model')));
+        throw new UnauthorizedException(trans('exceptions.unauthorized', compact('event', 'model')));
     }
 }
