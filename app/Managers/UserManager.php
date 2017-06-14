@@ -6,7 +6,7 @@ use App\Constants\BlameColumn;
 use App\Constants\FilterType;
 use App\Constants\UserStatus;
 use App\Contracts\Commons\ManagerContract;
-use App\Contracts\Interfaces\SCRUDInterface;
+use App\Contracts\Interfaces\CRUDSInterface;
 use App\Contracts\Repositories\UserRepository;
 use App\Entities\UserEntity;
 use App\Models\User;
@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
  * Class UserManager
  * @package App\Managers
  */
-class UserManager extends ManagerContract implements SCRUDInterface
+class UserManager extends ManagerContract implements CRUDSInterface
 {
     use FilterTrait;
     /**
@@ -89,7 +89,7 @@ class UserManager extends ManagerContract implements SCRUDInterface
     /**
      * @return array
      */
-    public function search()
+    public function show()
     {
         return (new UserEntity())->toArrayMultiple($this->userRepository()->where($this->filterToApply()));
     }

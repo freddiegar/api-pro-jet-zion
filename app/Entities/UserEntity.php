@@ -10,7 +10,7 @@ use App\Contracts\Commons\EntityContract;
  */
 class UserEntity extends EntityContract
 {
-    const KEY_API_TOKEN = '_token_';
+    const KEY_API_TOKEN = 'access_token';
 
     protected $id;
     protected $status;

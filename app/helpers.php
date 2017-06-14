@@ -94,7 +94,7 @@ if (!function_exists('ll')) {
     function ll(...$args)
     {
         if (isDevelopment()) {
-            foreach ($args as $arg){
+            foreach ($args as $arg) {
                 Illuminate\Support\Facades\Log::info(print_r($arg, true));
             }
             return true;
@@ -132,5 +132,21 @@ if (!function_exists('filterArray')) {
         return array_filter($array, function ($item) {
             return !empty($item) || $item === false || $item === 0;
         });
+    }
+}
+
+if (!function_exists('resource')) {
+    /**
+     * @param mixed $app
+     * @param string $route
+     * @param string $controller
+     */
+    function resource($app, $route, $controller)
+    {
+        $app->post($route, ['as' => "api.{$route}.create", 'uses' => "{$controller}@create"]);
+        $app->get("{$route}/{id}", ['as' => "api.{$route}.read", 'uses' => "{$controller}@read"]);
+        $app->put("{$route}/{id}", ['as' => "api.{$route}.update", 'uses' => "{$controller}@update"]);
+        $app->delete("{$route}/{id}", ['as' => "api.{$route}.delete", 'uses' => "{$controller}@delete"]);
+        $app->get($route, ['as' => "api.{$route}.show", 'uses' => "{$controller}@show"]);
     }
 }

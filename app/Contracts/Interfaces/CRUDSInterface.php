@@ -2,7 +2,7 @@
 
 namespace App\Contracts\Interfaces;
 
-interface SCRUDInterface
+interface CRUDSInterface
 {
     /**
      * Model create
@@ -35,5 +35,5 @@ interface SCRUDInterface
      * Search in models
      * @return array
      */
-    public function search();
+    public function show();
 }

@@ -27,9 +27,5 @@ $app->group([
     'prefix' => $prefix,
     'middleware' => ['auth:api'],
 ], function () use ($app) {
-    $app->post('user/create', ['as' => 'api.user.create', 'uses' => 'UserController@create']);
-    $app->get('user/read/{id}', ['as' => 'api.user.read', 'uses' => 'UserController@read']);
-    $app->put('user/update/{id}', ['as' => 'api.user.update', 'uses' => 'UserController@update']);
-    $app->delete('user/delete/{id}', ['as' => 'api.user.delete', 'uses' => 'UserController@delete']);
-    $app->post('user/search', ['as' => 'api.user.search', 'uses' => 'UserController@search']);
+    resource($app, 'user', 'UserController');
 });

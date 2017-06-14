@@ -45,6 +45,14 @@ abstract class ManagerContract
     /**
      * @return string
      */
+    final protected function requestMethod()
+    {
+        return $this->request()->method();
+    }
+
+    /**
+     * @return string
+     */
     final protected function requestIp()
     {
         return $this->request()->ip();
@@ -78,11 +86,13 @@ abstract class ManagerContract
      */
     final private function removeRulesThatNotApply($rules)
     {
-        if ($this->requestIsMethod(HttpMethod::PUT)) {
-            foreach ($rules as $field => $_rules) {
-                if (!$this->requestInput($field)) {
-                    unset($rules[$field]);
-                }
+        if (!in_array($this->requestMethod(), [HttpMethod::PUT, HttpMethod::PATCH])) {
+            return $rules;
+        }
+
+        foreach ($rules as $field => $_rules) {
+            if (!$this->requestInput($field)) {
+                unset($rules[$field]);
             }
         }
 
