@@ -31,6 +31,11 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
         return 'SkRKNUpERXdKRlZ1Ykc5RlNrazRRakpTUTNCaFF6ZGtjR3hKTUhWbGJUQmpiRTVITjFwb05WSTJZblU0TVM1RGIzUTBkMGRUYldkT1kzQng=';
     }
 
+    public function _route($route, $id = null)
+    {
+        return 'http://localhost/api/v1/' . $route . ($id ? '/' . $id : '');
+    }
+
     public function blame()
     {
         return [

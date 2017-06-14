@@ -141,14 +141,15 @@ if (!function_exists('resource')) {
      * @param string $route
      * @param string $controller
      */
-    function resource($app, $route, $controller)
+    function resource($app, $route, $controller, $alias = null)
     {
-        $app->post($route, ['as' => "api.{$route}.create", 'uses' => "{$controller}@create"]);
-        $app->get("{$route}/{id}", ['as' => "api.{$route}.read", 'uses' => "{$controller}@read"]);
-        $app->put("{$route}/{id}", ['as' => "api.{$route}.update", 'uses' => "{$controller}@update"]);
-        $app->patch("{$route}/{id}", ['as' => "api.{$route}.update", 'uses' => "{$controller}@update"]);
-        $app->delete("{$route}/{id}", ['as' => "api.{$route}.delete", 'uses' => "{$controller}@delete"]);
-        $app->get($route, ['as' => "api.{$route}.show", 'uses' => "{$controller}@show"]);
+        $alias = $alias ?: $route;
+
+        $app->post($route, ['as' => "api.{$alias}.create", 'uses' => "{$controller}@create"]);
+        $app->get("{$route}/{id}", ['as' => "api.{$alias}.read", 'uses' => "{$controller}@read"]);
+        $app->put("{$route}/{id}", ['as' => "api.{$alias}.update", 'uses' => "{$controller}@update"]);
+        $app->delete("{$route}/{id}", ['as' => "api.{$alias}.delete", 'uses' => "{$controller}@delete"]);
+        $app->get($route, ['as' => "api.{$alias}.show", 'uses' => "{$controller}@show"]);
     }
 }
 

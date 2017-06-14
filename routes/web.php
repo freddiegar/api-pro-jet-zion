@@ -27,5 +27,5 @@ $app->group([
     'prefix' => $prefix,
     'middleware' => ['auth:api'],
 ], function () use ($app) {
-    resource($app, 'user', 'UserController');
+    resource($app, 'users', 'UserController');
 });

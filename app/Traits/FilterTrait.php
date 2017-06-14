@@ -96,26 +96,14 @@ trait FilterTrait
     }
 
     /**
-     * @return bool
-     */
-    private function isSmartSearch()
-    {
-        return !empty(static::requestInput(self::$FILTER_SMART_NAME));
-    }
-
-    /**
      * @return $this
      */
     public function applyFilters()
     {
-        if (self::isSmartSearch()) {
-            self::applyFilter([
-                'field' => self::$FILTER_SMART_NAME,
-                'type' => self::$FILTER_SMART_TYPE,
-            ]);
-
-            return $this;
-        }
+        self::applyFilter([
+            'field' => self::$FILTER_SMART_NAME,
+            'type' => self::$FILTER_SMART_TYPE,
+        ]);
 
         foreach (static::filters() as $field => $filter) {
             self::applyFilter(array_merge(compact('field'), $filter));
@@ -237,7 +225,8 @@ trait FilterTrait
      * @param string $min
      * @param string $max
      */
-    private function doBetween($filter, $whereType, $min, $max) {
+    private function doBetween($filter, $whereType, $min, $max)
+    {
         self::setFilterToApply($filter, $whereType, $min, OperatorType::MAJOR_EQUALS);
         self::setFilterToApply($filter, 'where', $max, OperatorType::MINOR_EQUALS);
     }
@@ -247,32 +236,28 @@ trait FilterTrait
      */
     public function filterBySmartSearch($filter)
     {
-        $valueFilterSmart = static::requestInput($filter['field']);
+        $value = static::requestInput($filter['field']);
 
-        if (empty($valueFilterSmart)) {
+        if (empty($value)) {
             return;
         }
 
         $smartFilterTypes = self::$FILTER_BY_DEFAULT;
 
-        if (strtotime($valueFilterSmart)) {
+        if (strtotime($value)) {
             $smartFilterTypes = [
                 FilterType::DATE,
                 FilterType::BETWEEN
             ];
         }
 
-        if (is_numeric($valueFilterSmart)) {
+        if (is_numeric($value)) {
             $smartFilterTypes = [
                 FilterType::NUMBER,
             ];
-
-            if (!$this->isSmartSearch()) {
-                array_push($smartFilterTypes, FilterType::SELECT);
-            }
         }
 
-        if (strpos($valueFilterSmart, '@') !== false) {
+        if (strpos($value, '@') !== false) {
             $smartFilterTypes = [
                 FilterType::EMAIL
             ];
@@ -282,7 +267,7 @@ trait FilterTrait
             if (!in_array($filter['type'], $smartFilterTypes)) {
                 continue;
             }
-            static::requestAddInput($field, $valueFilterSmart);
+            static::requestAddInput($field, $value);
             self::applyFilter(array_merge(compact('field'), $filter), 'orWhere');
         }
     }

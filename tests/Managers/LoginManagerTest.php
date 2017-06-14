@@ -13,46 +13,46 @@ class LoginManagerTest extends DBTestCase
 
     public function testLoginHeaderError()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', [], [UserEntity::KEY_API_TOKEN_HEADER => 'token_header_error_test']);
+        $this->json(HttpMethod::POST, $this->_route('users'), [], [UserEntity::KEY_API_TOKEN_HEADER => 'token_header_error_test']);
         ll($this->response->getContent());
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
     }
 
     public function testLoginHeaderOK()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', [], [UserEntity::KEY_API_TOKEN_HEADER => $this->apiToken()]);
+        $this->json(HttpMethod::POST, $this->_route('users'), [], [UserEntity::KEY_API_TOKEN_HEADER => $this->apiToken()]);
         $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     public function testLoginAuthorizarionHeaderError()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', [], [UserEntity::KEY_AUTHORIZATION_HEADER => 'token_authorization_header_error_test']);
+        $this->json(HttpMethod::POST, $this->_route('users'), [], [UserEntity::KEY_AUTHORIZATION_HEADER => 'token_authorization_header_error_test']);
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
 
     }
 
     public function testLoginAuthorizarionHeaderOK()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', [], [UserEntity::KEY_AUTHORIZATION_HEADER => $this->apiToken()]);
+        $this->json(HttpMethod::POST, $this->_route('users'), [], [UserEntity::KEY_AUTHORIZATION_HEADER => $this->apiToken()]);
         $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     public function testLoginAuthorizarionBasicHeaderError()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', [], [UserEntity::KEY_AUTHORIZATION_HEADER => 'Basic token_authorization_header_error_test']);
+        $this->json(HttpMethod::POST, $this->_route('users'), [], [UserEntity::KEY_AUTHORIZATION_HEADER => 'Basic token_authorization_header_error_test']);
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
 
     }
 
     public function testLoginAuthorizarionBasicHeaderOK()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', [], [UserEntity::KEY_AUTHORIZATION_HEADER => 'Basic ' . $this->apiToken()]);
+        $this->json(HttpMethod::POST, $this->_route('users'), [], [UserEntity::KEY_AUTHORIZATION_HEADER => 'Basic ' . $this->apiToken()]);
         $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     public function testLoginError()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/login', [], $this->headers());
+        $this->json(HttpMethod::POST, $this->_route('login'), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->seeJsonStructure([
             'message',
@@ -66,7 +66,7 @@ class LoginManagerTest extends DBTestCase
 
     public function testLoginUsernameError()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/login', $this->request([], ['username' => 'freddie@gar.com']), $this->headers());
+        $this->json(HttpMethod::POST, $this->_route('login'), $this->request([], ['username' => 'freddie@gar.com']), $this->headers());
         $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
         $this->seeJsonStructure([
             'message',
@@ -78,7 +78,7 @@ class LoginManagerTest extends DBTestCase
 
     public function testLoginPasswordError()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/login', $this->request([], ['password' => 'Abcde7890!']), $this->headers());
+        $this->json(HttpMethod::POST, $this->_route('login'), $this->request([], ['password' => 'Abcde7890!']), $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
@@ -90,7 +90,7 @@ class LoginManagerTest extends DBTestCase
 
     public function testLoginOK()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/login', $this->request(), $this->headers());
+        $this->json(HttpMethod::POST, $this->_route('login'), $this->request(), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure([
             UserEntity::KEY_API_TOKEN,

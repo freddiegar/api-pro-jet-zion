@@ -38,7 +38,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerCreateError()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', [], $this->headers());
+        $this->json(HttpMethod::POST, $this->_route('users'), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
@@ -50,7 +50,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerCreateTokenError()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', $this->request([UserEntity::KEY_API_TOKEN]), $this->headers());
+        $this->json(HttpMethod::POST, $this->_route('users'), $this->request([UserEntity::KEY_API_TOKEN]), $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
@@ -62,7 +62,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerCreateTokenNotValidError()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', $this->request([], [UserEntity::KEY_API_TOKEN => 'token_invalid_test']), $this->headers());
+        $this->json(HttpMethod::POST, $this->_route('users'), $this->request([], [UserEntity::KEY_API_TOKEN => 'token_invalid_test']), $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
@@ -74,7 +74,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerCreateUsernameError()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', $this->request(['username']), $this->headers());
+        $this->json(HttpMethod::POST, $this->_route('users'), $this->request(['username']), $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->seeJsonStructure([
             'message',
@@ -89,7 +89,7 @@ class UserManagerTest extends DBTestCase
     public function testUserManagerCreateUsernameRepeatedError()
     {
         $user = $this->user();
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', $this->request([], ['username' => $user['username']]), $this->headers());
+        $this->json(HttpMethod::POST, $this->_route('users'), $this->request([], ['username' => $user['username']]), $this->headers());
         $this->assertResponseStatus(Response::HTTP_CONFLICT);
         $this->seeJsonStructure([
             'message',
@@ -101,7 +101,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerCreatePasswordError()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', $this->request(['password']), $this->headers());
+        $this->json(HttpMethod::POST, $this->_route('users'), $this->request(['password']), $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->seeJsonStructure([
             'message',
@@ -115,7 +115,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerCreateOK()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', $this->request(), $this->headers());
+        $this->json(HttpMethod::POST, $this->_route('users'), $this->request(), $this->headers());
         $this->assertResponseStatus(Response::HTTP_CREATED);
         $this->seeJsonStructure([
             'id',
@@ -138,7 +138,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerReadOK()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user/1', $this->request(), $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users', 1), $this->request(), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure([
             'id',
@@ -167,7 +167,7 @@ class UserManagerTest extends DBTestCase
             'status' => 'ERROR',
             'username' => 'freddie@gar.com',
         ];
-        $this->json(HttpMethod::PUT, 'http://localhost/api/v1/user/1', $this->request([], $data), $this->headers());
+        $this->json(HttpMethod::PUT, $this->_route('users', 1), $this->request([], $data), $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->seeJsonStructure([
             'message',
@@ -181,7 +181,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerUpdateEmptyOk()
     {
-        $this->json(HttpMethod::PUT, 'http://localhost/api/v1/user/1', $this->request(['username', 'password', 'status']), $this->headers());
+        $this->json(HttpMethod::PUT, $this->_route('users', 1), $this->request(['username', 'password', 'status']), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure([
             'id',
@@ -197,7 +197,7 @@ class UserManagerTest extends DBTestCase
             'status' => UserStatus::INACTIVE,
             'username' => 'freddie@gar.com',
         ];
-        $this->json(HttpMethod::PUT, 'http://localhost/api/v1/user/1', $this->request([], $data), $this->headers());
+        $this->json(HttpMethod::PUT, $this->_route('users', 1), $this->request([], $data), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure([
             'id',
@@ -222,7 +222,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerDeleteOK()
     {
-        $this->json(HttpMethod::DELETE, 'http://localhost/api/v1/user/1', $this->request(), $this->headers());
+        $this->json(HttpMethod::DELETE, $this->_route('users', 1), $this->request(), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure([
             'id',
@@ -245,19 +245,19 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimpleMethodHttpError()
     {
-        $this->json(HttpMethod::PUT, 'http://localhost/api/v1/user', [], $this->headers());
+        $this->json(HttpMethod::PUT, $this->_route('users'), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_METHOD_NOT_ALLOWED);
         $this->seeJsonStructure([
             'message',
         ]);
 
-        $this->json(HttpMethod::PATCH, 'http://localhost/api/v1/user', [], $this->headers());
+        $this->json(HttpMethod::PATCH, $this->_route('users'), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_METHOD_NOT_ALLOWED);
         $this->seeJsonStructure([
             'message',
         ]);
 
-        $this->json(HttpMethod::DELETE, 'http://localhost/api/v1/user', [], $this->headers());
+        $this->json(HttpMethod::DELETE, $this->_route('users'), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_METHOD_NOT_ALLOWED);
         $this->seeJsonStructure([
             'message',
@@ -266,7 +266,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimpleTokenError()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [], $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users'), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
@@ -275,7 +275,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimpleNotValidToken()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             UserEntity::KEY_API_TOKEN => 'token_invalid_test'
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
@@ -286,7 +286,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimpleEmpty()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
@@ -298,7 +298,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimple1()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             'username' => 'pedro',
             UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
@@ -310,7 +310,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimple2()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             'username' => 'pedro',
             'status' => UserStatus::ACTIVE,
             UserEntity::KEY_API_TOKEN => $this->apiToken()
@@ -323,7 +323,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimple3()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             'status' => UserStatus::ACTIVE,
             UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
@@ -335,7 +335,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimple4()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             'status' => UserStatus::ACTIVE,
             BlameColumn::CREATED_BY => 1,
             UserEntity::KEY_API_TOKEN => $this->apiToken()
@@ -348,7 +348,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimple5()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             'status' => UserStatus::ACTIVE,
             BlameColumn::CREATED_AT => '2015-12-01',
             UserEntity::KEY_API_TOKEN => $this->apiToken()
@@ -361,7 +361,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimple6()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             'status' => UserStatus::SUSPENDED,
             UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
@@ -372,7 +372,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimple7()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             'status' => UserStatus::ACTIVE,
             BlameColumn::CREATED_AT. FilterType::BETWEEN_MIN_SUFFIX => '2015-01-01',
             BlameColumn::CREATED_AT. FilterType::BETWEEN_MAX_SUFFIX => '2016-12-31',
@@ -386,7 +386,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimple8()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             BlameColumn::CREATED_AT. FilterType::BETWEEN_MIN_SUFFIX => '2015-01-01',
             BlameColumn::CREATED_AT. FilterType::BETWEEN_MAX_SUFFIX => '2016-12-31',
             UserEntity::KEY_API_TOKEN => $this->apiToken()
@@ -399,7 +399,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimple9()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             BlameColumn::CREATED_AT. FilterType::BETWEEN_MIN_SUFFIX => '2015-01-01',
             UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
@@ -411,7 +411,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimple10()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             BlameColumn::CREATED_AT. FilterType::BETWEEN_MAX_SUFFIX => '2016-12-31',
             UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
@@ -423,7 +423,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSmart1()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             FilterTrait::$FILTER_SMART_NAME => 'pica',
             UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
@@ -435,7 +435,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSmart2()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             FilterTrait::$FILTER_SMART_NAME => 'o@marmol',
             UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
@@ -447,7 +447,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSmart3()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             FilterTrait::$FILTER_SMART_NAME => 1,
             UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
@@ -459,13 +459,25 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSmart4()
     {
-        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user', [
+        $this->json(HttpMethod::GET, $this->_route('users'), [
             FilterTrait::$FILTER_SMART_NAME => '2015-12-01',
             UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
         $this->assertEquals(1, count($response));
+        $this->assertSearchUser($response);
+    }
+
+    public function testUserManagerShowSmart5()
+    {
+        $this->json(HttpMethod::GET, $this->_route('users'), [
+            FilterTrait::$FILTER_SMART_NAME => '',
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertEquals(5, count($response));
         $this->assertSearchUser($response);
     }
 }

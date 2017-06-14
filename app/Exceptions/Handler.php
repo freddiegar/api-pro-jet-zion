@@ -121,6 +121,7 @@ class Handler extends ExceptionHandler
             ];
         }
 
+        // @codeCoverageIgnoreStart
         if (!$response) {
             $response = [
                 'code' => Response::HTTP_INTERNAL_SERVER_ERROR,
@@ -129,6 +130,7 @@ class Handler extends ExceptionHandler
                 ]
             ];
         }
+        // @codeCoverageIgnoreEnd
 
         if (isDevelopment()) {
             $response['error'] = array_merge(
