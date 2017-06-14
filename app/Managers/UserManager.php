@@ -2,6 +2,7 @@
 
 namespace App\Managers;
 
+use App\Constants\BlameColumn;
 use App\Constants\FilterType;
 use App\Constants\UserStatus;
 use App\Contracts\Commons\ManagerContract;
@@ -117,11 +118,17 @@ class UserManager extends ManagerContract implements SCRUDInterface
     {
         return [
             'username' => [
-                'type' => FilterType::TEXT
+                'type' => FilterType::EMAIL
             ],
             'status' => [
                 'type' => FilterType::SELECT
-            ]
+            ],
+            BlameColumn::CREATED_BY => [
+                'type' => FilterType::NUMBER
+            ],
+            BlameColumn::CREATED_AT => [
+                'type' => FilterType::BETWEEN
+            ],
         ];
     }
 }

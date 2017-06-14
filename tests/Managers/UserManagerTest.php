@@ -2,6 +2,7 @@
 
 
 use App\Constants\BlameColumn;
+use App\Constants\FilterType;
 use App\Constants\HttpMethod;
 use App\Constants\UserStatus;
 use App\Entities\UserEntity;
@@ -13,6 +14,25 @@ class UserManagerTest extends DBTestCase
     private function request(array $excludeKeys = [], array $includeKeys = [])
     {
         return $this->applyKeys($this->userToCreate(), $excludeKeys, $includeKeys);
+    }
+
+    private function assertSearchUser($response)
+    {
+        foreach ($response as $user) {
+            $this->assertInstanceOf(\stdClass::class, $user);
+            $this->assertObjectHasAttribute('id', $user);
+            $this->assertObjectHasAttribute('username', $user);
+            $this->assertObjectHasAttribute('status', $user);
+            $this->assertObjectNotHasAttribute('password', $user);
+            $this->assertObjectNotHasAttribute('api_token', $user);
+            $this->assertObjectNotHasAttribute('type', $user);
+            $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $user);
+            $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $user);
+            $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $user);
+            $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $user);
+            $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $user);
+            $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $user);
+        }
     }
 
     public function testUserManagerCreateError()
@@ -41,7 +61,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerCreateTokenNotValidError()
     {
-        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', $this->request([], [UserEntity::KEY_API_TOKEN => 'token no_valido']), $this->headers());
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/create', $this->request([], [UserEntity::KEY_API_TOKEN => 'token_invalid_test']), $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
@@ -220,5 +240,183 @@ class UserManagerTest extends DBTestCase
         $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $response);
         $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $response);
         $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $response);
+    }
+
+    public function testUserManagerSearchSimpleMethodHttpError()
+    {
+        $this->json(HttpMethod::GET, 'http://localhost/api/v1/user/search', [], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_METHOD_NOT_ALLOWED);
+        $this->seeJsonStructure([
+            'message',
+        ]);
+
+        $this->json(HttpMethod::PUT, 'http://localhost/api/v1/user/search', [], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_METHOD_NOT_ALLOWED);
+        $this->seeJsonStructure([
+            'message',
+        ]);
+
+        $this->json(HttpMethod::DELETE, 'http://localhost/api/v1/user/search', [], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_METHOD_NOT_ALLOWED);
+        $this->seeJsonStructure([
+            'message',
+        ]);
+    }
+
+    public function testUserManagerSearchSimpleTokenError()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/search', [], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
+        $this->seeJsonStructure([
+            'message',
+        ]);
+    }
+
+    public function testUserManagerSearchSimpleNotValidToken()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/search', [
+            UserEntity::KEY_API_TOKEN => 'token_invalid_test'
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
+        $this->seeJsonStructure([
+            'message',
+        ]);
+    }
+
+    public function testUserManagerSearchSimpleEmpty()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/search', [
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        // Exist 6 users, but one was deleted, then are 5
+        $this->assertEquals(5, count($response));
+        $this->assertSearchUser($response);
+    }
+
+    public function testUserManagerSearchSimple1()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/search', [
+            'username' => 'pedro',
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertEquals(2, count($response));
+        $this->assertSearchUser($response);
+    }
+
+    public function testUserManagerSearchSimple2()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/search', [
+            'username' => 'pedro',
+            'status' => UserStatus::ACTIVE,
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertEquals(1, count($response));
+        $this->assertSearchUser($response);
+    }
+
+    public function testUserManagerSearchSimple3()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/search', [
+            'status' => UserStatus::ACTIVE,
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertEquals(3, count($response));
+        $this->assertSearchUser($response);
+    }
+
+    public function testUserManagerSearchSimple4()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/search', [
+            'status' => UserStatus::ACTIVE,
+            BlameColumn::CREATED_BY => 1,
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertEquals(1, count($response));
+        $this->assertSearchUser($response);
+    }
+
+    public function testUserManagerSearchSimple5()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/search', [
+            'status' => UserStatus::ACTIVE,
+            BlameColumn::CREATED_AT => '2015-12-01',
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertEquals(1, count($response));
+        $this->assertSearchUser($response);
+    }
+
+    public function testUserManagerSearchSimple6()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/search', [
+            'status' => UserStatus::SUSPENDED,
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertEquals(0, count($response));
+    }
+
+    public function testUserManagerSearchSimple7()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/search', [
+            'status' => UserStatus::ACTIVE,
+            BlameColumn::CREATED_AT. FilterType::BETWEEN_MIN_SUFFIX => '2015-01-01',
+            BlameColumn::CREATED_AT. FilterType::BETWEEN_MAX_SUFFIX => '2016-12-31',
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertEquals(2, count($response));
+        $this->assertSearchUser($response);
+    }
+
+    public function testUserManagerSearchSimple8()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/search', [
+            BlameColumn::CREATED_AT. FilterType::BETWEEN_MIN_SUFFIX => '2015-01-01',
+            BlameColumn::CREATED_AT. FilterType::BETWEEN_MAX_SUFFIX => '2016-12-31',
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertEquals(3, count($response));
+        $this->assertSearchUser($response);
+    }
+
+    public function testUserManagerSearchSimple9()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/search', [
+            BlameColumn::CREATED_AT. FilterType::BETWEEN_MIN_SUFFIX => '2015-01-01',
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertEquals(4, count($response));
+        $this->assertSearchUser($response);
+    }
+
+    public function testUserManagerSearchSimple10()
+    {
+        $this->json(HttpMethod::POST, 'http://localhost/api/v1/user/search', [
+            BlameColumn::CREATED_AT. FilterType::BETWEEN_MAX_SUFFIX => '2016-12-31',
+            UserEntity::KEY_API_TOKEN => $this->apiToken()
+        ], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertEquals(4, count($response));
+        $this->assertSearchUser($response);
     }
 }

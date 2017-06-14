@@ -32,7 +32,7 @@ trait FilterTrait
     /**
      * @var array
      */
-    protected $filtersToApply = [];
+    private $filtersToApply = [];
 
     /**
      * @var bool
@@ -75,9 +75,9 @@ trait FilterTrait
      * @param string $value
      * @param string $operator
      * @param string $whereType
-     * @return bool
+     * @return $this
      */
-    private function queryScope($filter, $whereType, $value = '', $operator = null)
+    private function setFilterToApply($filter, $whereType, $value = '', $operator = null)
     {
         $operator = $operator ?: OperatorType::EQUALS;
 //        if (!is_null($filter->morphs)) {
@@ -129,7 +129,7 @@ trait FilterTrait
 
         $this->filtersToApply[][$whereType] = sprintf('%s|%s|%s', $filter['field'], $operator, $value);
 
-        return true;
+        return $this;
     }
 
     /**
@@ -156,7 +156,7 @@ trait FilterTrait
 //        }
 
         foreach (static::filters() as $field => $filter) {
-            $this->applyFilter(array_merge($filter, compact('field')));
+            self::applyFilter(array_merge(compact('field'), $filter));
         }
 
         return $this;
@@ -166,22 +166,21 @@ trait FilterTrait
      * @param array $filter
      * @param string $whereType
      */
-    public function applyFilter($filter, $whereType = 'where')
+    private function applyFilter($filter, $whereType = 'where')
     {
-        $filterBy = sprintf(self::$FILTER_METHOD_PREFIX, ucfirst(camel_case($filter['type'])));
-        call_user_func([$this, $filterBy], $filter, $whereType);
+        call_user_func([$this, sprintf(self::$FILTER_METHOD_PREFIX, ucfirst(camel_case($filter['type'])))], $filter, $whereType);
     }
 
     /**
      * @param array $filter
      * @param string $whereType
      */
-    public function filterBySelect($filter, $whereType = 'where')
+    private function filterBySelect($filter, $whereType = 'where')
     {
-        $value = $this->requestInput($filter['field']);
+        $value = static::requestInput($filter['field']);
 
         if (!empty($value)) {
-            $this->queryScope($filter, $whereType, $value);
+            self::setFilterToApply($filter, $whereType, $value);
         }
     }
 
@@ -189,12 +188,12 @@ trait FilterTrait
      * @param array $filter
      * @param string $whereType
      */
-    public function filterByText($filter, $whereType = 'where')
+    private function filterByText($filter, $whereType = 'where')
     {
-        $value = $this->requestInput($filter['field']);
+        $value = static::requestInput($filter['field']);
 
         if (!empty($value)) {
-            $this->queryScope($filter, $whereType, sprintf(Pattern::QUERY_LIKE, $value), OperatorType::LIKE);
+            self::setFilterToApply($filter, $whereType, sprintf(Pattern::QUERY_LIKE, $value), OperatorType::LIKE);
         }
     }
 
@@ -202,33 +201,37 @@ trait FilterTrait
      * @param array $filter
      * @param string $whereType
      */
-    public function filterByEmail($filter, $whereType = 'where')
+    private function filterByEmail($filter, $whereType = 'where')
     {
-        $this->execText($filter, $whereType);
+        self::filterByText($filter, $whereType);
     }
 
     /**
      * @param array $filter
      * @param string $whereType
      */
-    public function filterByNumber($filter, $whereType = 'where')
+    private function filterByNumber($filter, $whereType = 'where')
     {
-        $this->execText($filter, $whereType);
+        self::filterByText($filter, $whereType);
     }
 
     /**
      * @param array $filter
      * @param string $whereType
      */
-    public function filterByDate($filter, $whereType = 'where')
+    private function filterByDate($filter, $whereType = 'where')
     {
-        $value = $this->requestInput($filter['field']);
+        $value = static::requestInput($filter['field']);
 
         if (!empty($value)) {
-            $valueFormatted = Carbon::parse($value);
+            if ($valueMinFormatted = Carbon::parse($value)) {
+                $valueMaxFormatted = Carbon::parse($value)
+                    ->hour(23)
+                    ->minute(59)
+                    ->second(59);
 
-            if ($valueFormatted) {
-                $this->queryScope($filter, $whereType, $valueFormatted);
+                self::setFilterToApply($filter, $whereType, $valueMinFormatted, OperatorType::MAJOR_EQUALS);
+                self::setFilterToApply($filter, $whereType, $valueMaxFormatted, OperatorType::MINOR_EQUALS);
             }
         }
     }
@@ -237,10 +240,10 @@ trait FilterTrait
      * @param array $filter
      * @param string $whereType
      */
-    public function filterByBetween($filter, $whereType = 'where')
+    private function filterByBetween($filter, $whereType = 'where')
     {
-        $valueMin = $this->requestInput($filter['field'] . FilterType::BETWEEN_MIN_SUFFIX);
-        $valueMax = $this->requestInput($filter['field'] . FilterType::BETWEEN_MAX_SUFFIX);
+        $valueMin = static::requestInput($filter['field'] . FilterType::BETWEEN_MIN_SUFFIX);
+        $valueMax = static::requestInput($filter['field'] . FilterType::BETWEEN_MAX_SUFFIX);
 
         $valueMinFormatted = Carbon::parse($valueMin);
         $valueMaxFormatted = Carbon::parse($valueMax)
@@ -250,19 +253,20 @@ trait FilterTrait
 
         if (!empty($valueMin) && !empty($valueMax)) {
             if ($valueMinFormatted && $valueMaxFormatted) {
-                $this->queryScope($filter, $whereType, $valueMinFormatted, OperatorType::MAJOR_EQUALS);
-                $this->queryScope($filter, $whereType, $valueMaxFormatted, OperatorType::MINOR_EQUALS);
-
+                self::setFilterToApply($filter, $whereType, $valueMinFormatted, OperatorType::MAJOR_EQUALS);
+                self::setFilterToApply($filter, $whereType, $valueMaxFormatted, OperatorType::MINOR_EQUALS);
             }
         } elseif (!empty($valueMin)) {
             if ($valueMinFormatted) {
-                $this->queryScope($filter, $whereType, $valueMinFormatted, OperatorType::MAJOR_EQUALS);
+                self::setFilterToApply($filter, $whereType, $valueMinFormatted, OperatorType::MAJOR_EQUALS);
             }
         } elseif (!empty($valueMax)) {
             if ($valueMaxFormatted) {
-                $this->queryScope($filter, $whereType, $valueMaxFormatted, OperatorType::MINOR_EQUALS);
+                self::setFilterToApply($filter, $whereType, $valueMaxFormatted, OperatorType::MINOR_EQUALS);
             }
         }
+
+        self::filterByDate($filter, $whereType);
     }
 
     /**
@@ -270,7 +274,7 @@ trait FilterTrait
      */
 //    public function filterBySmartSearch($filter)
 //    {
-//        $smartSearchValue = $this->requestInput($filter['field']);
+//        $smartSearchValue = static::requestInput($filter['field']);
 //
 //        if (empty($smartSearchValue)) {
 //            return;

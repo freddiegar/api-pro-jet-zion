@@ -51,12 +51,13 @@ abstract class ManagerContract
     }
 
     /**
-     * @param $name
+     * @param string $name
+     * @param mixed $default
      * @return mixed
      */
-    final protected function requestInput($name = null)
+    final protected function requestInput($name = null, $default = null)
     {
-        return $name ? $this->request()->input($name) : $this->request()->all();
+        return $name ? $this->request()->input($name, $default) : $this->request()->all();
     }
 
     /**
@@ -111,6 +112,7 @@ abstract class ManagerContract
 
     /**
      * @return array
+     * @codeCoverageIgnore
      */
     protected function filters()
     {
