@@ -22,8 +22,8 @@ class LoginManager extends ManagerContract
      */
     public function __construct(Request $request, LoginRepository $repository)
     {
-        $this->request = $request;
-        $this->repository = $repository;
+        $this->request($request);
+        $this->repository($repository);
     }
 
     /**

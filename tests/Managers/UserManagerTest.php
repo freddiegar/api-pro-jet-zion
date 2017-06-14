@@ -115,7 +115,7 @@ class UserManagerTest extends DBTestCase
     public function testUserManagerCreateOK()
     {
         $this->json(HttpMethod::POST, 'http://localhost/api/v1/user', $this->request(), $this->headers());
-        $this->assertResponseStatus(Response::HTTP_OK);
+        $this->assertResponseStatus(Response::HTTP_CREATED);
         $this->seeJsonStructure([
             'id',
             'username',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Managers\UserManager;
+use Illuminate\Http\Response;
 
 /**
  * Class UserController
@@ -23,7 +24,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return $this->manager()->requestValidate()->create();
+        return response()->json($this->manager()->requestValidate()->create(), Response::HTTP_CREATED);
     }
 
     /**

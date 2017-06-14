@@ -171,6 +171,7 @@ trait FilterTrait
         call_user_func([$this, sprintf(self::$FILTER_METHOD_PREFIX, ucfirst(camel_case($filter['type'])))], $filter, $whereType);
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * @param array $filter
      * @param string $whereType
@@ -197,6 +198,7 @@ trait FilterTrait
         }
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * @param array $filter
      * @param string $whereType
@@ -206,6 +208,7 @@ trait FilterTrait
         self::filterByText($filter, $whereType);
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * @param array $filter
      * @param string $whereType
@@ -236,6 +239,7 @@ trait FilterTrait
         }
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * @param array $filter
      * @param string $whereType

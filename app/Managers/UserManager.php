@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 class UserManager extends ManagerContract implements CRUDSInterface
 {
     use FilterTrait;
+
     /**
      * UserManager constructor.
      * @param Request $request
@@ -27,8 +28,8 @@ class UserManager extends ManagerContract implements CRUDSInterface
      */
     public function __construct(Request $request, UserRepository $repository)
     {
-        $this->request = $request;
-        $this->repository = $repository;
+        $this->request($request);
+        $this->repository($repository);
     }
 
     /**

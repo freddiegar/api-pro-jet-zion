@@ -13,6 +13,7 @@ use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 
 /**
  * Class Handler
@@ -63,14 +64,14 @@ class Handler extends ExceptionHandler
             ];
         }
 
-//        if ($e instanceof HttpException) {
-//            $response = [
-//                'code' => $e->getStatusCode(),
-//                'error' => [
-//                    'message' => $e->getMessage(),
-//                ],
-//            ];
-//        }
+        if ($e instanceof UnsupportedMediaTypeHttpException) {
+            $response = [
+                'code' => $e->getStatusCode(),
+                'error' => [
+                    'message' => $e->getMessage(),
+                ],
+            ];
+        }
 
         if ($e instanceof NotFoundHttpException) {
             $response = [

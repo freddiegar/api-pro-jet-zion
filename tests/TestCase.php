@@ -68,10 +68,8 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
 
     public function headers()
     {
-        return [
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-        ];
+        // Request by default use json, header not required now
+        return [];
     }
 
     public function applyKeys(array $request = [], array $excludeKeys = [], array $includeKeys = [])

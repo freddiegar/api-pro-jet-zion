@@ -15,6 +15,8 @@ abstract class ManagerContract
 {
     use ProvidesConvenienceMethods;
 
+    const MEDIA_TYPE_SUPPORTED = 'application/json';
+
     /**
      * @var Request
      */
@@ -26,10 +28,15 @@ abstract class ManagerContract
     protected $repository;
 
     /**
+     * @param Request $request
      * @return Request
      */
-    final protected function request()
+    final protected function request(Request $request = null)
     {
+        if (!is_null($request)) {
+            $this->request = $request;
+        }
+
         return $this->request;
     }
 
@@ -100,10 +107,15 @@ abstract class ManagerContract
     }
 
     /**
+     * @param mixed $repository
      * @return mixed
      */
-    final protected function repository()
+    final protected function repository($repository = null)
     {
+        if (!is_null($repository)) {
+            $this->repository = $repository;
+        }
+
         return $this->repository;
     }
 
