@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\Commons\ManagerContract;
+use FreddieGar\Base\Contracts\Commons\ManagerContract;
 use Laravel\Lumen\Routing\Controller as BaseController;
 
 /**

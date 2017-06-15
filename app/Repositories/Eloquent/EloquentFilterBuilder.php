@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Contracts\Interfaces\FilterBuilderInterface;
+use FreddieGar\Base\Contracts\Interfaces\FilterBuilderInterface;
 
 /**
  * Class EloquentFilterBuilder

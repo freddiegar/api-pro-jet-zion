@@ -1,12 +1,16 @@
 <?php
 
-namespace App\Traits;
+namespace FreddieGar\Base\Traits;
 
-use App\Constants\FilterType;
-use App\Constants\OperatorType;
-use App\Constants\Pattern;
+use FreddieGar\Base\Constants\FilterType;
+use FreddieGar\Base\Constants\OperatorType;
+use FreddieGar\Base\Constants\Pattern;
 use Carbon\Carbon;
 
+/**
+ * Trait FilterTrait
+ * @package FreddieGar\Base\Traits
+ */
 trait FilterTrait
 {
     static public $FILTER_SMART_NAME = 'q';

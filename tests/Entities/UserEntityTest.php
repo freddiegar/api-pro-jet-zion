@@ -1,7 +1,7 @@
 <?php
 
-use App\Constants\BlameColumn;
 use App\Entities\UserEntity;
+use FreddieGar\Base\Constants\BlameColumn;
 
 class UserEntityTest extends TestCase
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Traits;
+namespace FreddieGar\Base\Traits;
 
-use App\Constants\BlameColumn;
+use FreddieGar\Base\Constants\BlameColumn;
 
 /**
  * Trait BlameColumnsTrait
- * @package App\Traits
+ * @package FreddieGar\Base\Traits
  */
 trait BlameColumnsTrait
 {

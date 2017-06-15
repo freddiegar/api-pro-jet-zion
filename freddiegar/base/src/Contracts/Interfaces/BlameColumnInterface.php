@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Contracts\Interfaces;
+namespace FreddieGar\Base\Contracts\Interfaces;
 
 /**
  * Interface BlameColumnInterface
  * Setters and Getters for BlameColumns
- * @package App\Contracts\Interfaces
+ * @package FreddieGar\Base\Contracts\Interfaces
  */
 interface BlameColumnInterface
 {

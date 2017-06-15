@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Constants\BlameColumn;
-use App\Traits\BlameControlTrait;
-use App\Traits\BlameEventTrait;
+use FreddieGar\Base\Constants\BlameColumn;
+use FreddieGar\Base\Traits\BlameControlTrait;
+use FreddieGar\Base\Traits\BlameEventTrait;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Contracts\Interfaces;
+namespace FreddieGar\Base\Contracts\Interfaces;
 
 use Illuminate\Database\Query\Builder;
 
 /**
  * Interface FilterBuilderInterface
- * @package App\Contracts\Interfaces
+ * @package FreddieGar\Base\Contracts\Interfaces
  */
 interface FilterBuilderInterface
 {

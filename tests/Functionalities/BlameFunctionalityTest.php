@@ -1,10 +1,10 @@
 <?php
 
-use App\Constants\BlameEvent;
 use App\Entities\UserEntity;
 use App\Managers\UserManager;
 use App\Models\User;
 use App\Repositories\Eloquent\EloquentUserRepository;
+use FreddieGar\Base\Constants\BlameEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\UnauthorizedException;

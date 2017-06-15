@@ -21,13 +21,14 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "FreddieGar\\Base\\": "freddiegar/base/src"
         },
         "classmap": [
             "database/"
         ],
         "files": [
-            "app/helpers.php"
+            "freddiegar/base/src/helpers.php"
         ]
     },
     "autoload-dev": {

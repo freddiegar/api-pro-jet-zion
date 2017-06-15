@@ -1,6 +1,6 @@
 <?php
 
-use App\Constants\HttpMethod;
+use FreddieGar\Base\Constants\HttpMethod;
 use Illuminate\Http\Response;
 
 class GeneralFunctionalityTest extends TestCase

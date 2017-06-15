@@ -2,8 +2,8 @@
 
 use App\Constants\UserStatus;
 use App\Models\User;
+use FreddieGar\Base\Constants\BlameColumn;
 use Illuminate\Database\Seeder;
-use App\Constants\BlameColumn;
 
 class FakerUserSeeder extends Seeder
 {

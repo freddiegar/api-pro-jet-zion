@@ -2,15 +2,15 @@
 
 namespace App\Managers;
 
-use App\Constants\BlameColumn;
-use App\Constants\FilterType;
 use App\Constants\UserStatus;
-use App\Contracts\Commons\ManagerContract;
-use App\Contracts\Interfaces\CRUDSInterface;
 use App\Contracts\Repositories\UserRepository;
 use App\Entities\UserEntity;
 use App\Models\User;
-use App\Traits\FilterTrait;
+use FreddieGar\Base\Constants\BlameColumn;
+use FreddieGar\Base\Constants\FilterType;
+use FreddieGar\Base\Contracts\Commons\ManagerContract;
+use FreddieGar\Base\Contracts\Interfaces\CRUDSInterface;
+use FreddieGar\Base\Traits\FilterTrait;
 use Illuminate\Http\Request;
 
 /**

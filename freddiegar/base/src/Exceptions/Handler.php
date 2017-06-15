@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exceptions;
+namespace Freddiegar\Base\Exceptions;
 
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 
 /**
  * Class Handler
- * @package App\Exceptions
+ * @package FreddieGar\Base\Exceptions
  */
 class Handler extends ExceptionHandler
 {
@@ -146,6 +146,5 @@ class Handler extends ExceptionHandler
         }
 
         return responseJson($response['error'], $response['code']);
-//        return parent::render($request, $e);
     }
 }

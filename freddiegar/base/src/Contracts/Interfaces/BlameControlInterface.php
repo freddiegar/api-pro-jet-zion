@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Contracts\Interfaces;
+namespace FreddieGar\Base\Contracts\Interfaces;
 
 /**
  * Interface BlameControlInterface
- * @package App\Contracts\Interfaces
+ * @package FreddieGar\Base\Contracts\Interfaces
  */
 interface BlameControlInterface
 {

@@ -1,9 +1,9 @@
 <?php
 
-use App\Constants\BlameColumn;
 use App\Constants\UserStatus;
 use App\Entities\UserEntity;
 use App\Models\User;
+use FreddieGar\Base\Constants\BlameColumn;
 use Illuminate\Support\Facades\Artisan;
 
 abstract class TestCase extends Laravel\Lumen\Testing\TestCase

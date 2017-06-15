@@ -1,7 +1,11 @@
 <?php
 
-namespace App\Traits;
+namespace FreddieGar\Base\Traits;
 
+/**
+ * Trait ToArrayTrait
+ * @package FreddieGar\Base\Traits
+ */
 trait ToArrayTrait
 {
     /**

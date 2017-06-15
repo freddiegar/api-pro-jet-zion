@@ -2,10 +2,10 @@
 
 namespace App\Managers;
 
-use App\Constants\HttpMethod;
-use App\Contracts\Commons\ManagerContract;
 use App\Contracts\Repositories\LoginRepository;
 use App\Entities\UserEntity;
+use FreddieGar\Base\Constants\HttpMethod;
+use FreddieGar\Base\Contracts\Commons\ManagerContract;
 use Illuminate\Http\Request;
 use Illuminate\Validation\UnauthorizedException;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Constants;
+namespace FreddieGar\Base\Constants;
 
 /**
  * Interface Pattern
- * @package App\Constants
+ * @package FreddieGar\Base\Constants
  */
 interface Pattern
 {

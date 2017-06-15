@@ -1,7 +1,7 @@
 <?php
 
-use App\Constants\HttpMethod;
 use App\Entities\UserEntity;
+use FreddieGar\Base\Constants\HttpMethod;
 use Illuminate\Http\Response;
 
 class LoginManagerTest extends DBTestCase

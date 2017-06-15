@@ -40,7 +40,7 @@ $app->withEloquent();
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
-    App\Exceptions\Handler::class
+    FreddieGar\Base\Exceptions\Handler::class
 );
 
 $app->singleton(
@@ -60,12 +60,12 @@ $app->singleton(
 */
 
 $app->middleware([
-    App\Http\Middleware\SupportedMediaTypeMiddleware::class,
+    FreddieGar\Base\Http\Middleware\SupportedMediaTypeMiddleware::class,
 ]);
 
 $app->routeMiddleware([
-    'auth' => App\Http\Middleware\AuthenticateMiddleware::class,
-    'throttle' => App\Http\Middleware\ThrottleRequestMiddleware::class,
+    'auth' => FreddieGar\Base\Http\Middleware\AuthenticateMiddleware::class,
+    'throttle' => FreddieGar\Base\Http\Middleware\ThrottleRequestMiddleware::class,
 ]);
 
 /*

@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Contracts\Commons;
+namespace FreddieGar\Base\Contracts\Commons;
 
-use App\Constants\HttpMethod;
-use App\Contracts\Repositories\UserRepository;
+use FreddieGar\Base\Constants\HttpMethod;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\ProvidesConvenienceMethods;
 
 /**
  * Class ManagerContract
- * @package App\Contracts\Commons
+ * @package FreddieGar\Base\Contracts\Commons
  */
 abstract class ManagerContract
 {
@@ -21,7 +20,7 @@ abstract class ManagerContract
     protected $request;
 
     /**
-     * @var UserRepository
+     * @var mixed
      */
     protected $repository;
 

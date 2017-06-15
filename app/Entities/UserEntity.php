@@ -2,7 +2,7 @@
 
 namespace App\Entities;
 
-use App\Contracts\Commons\EntityContract;
+use FreddieGar\Base\Contracts\Commons\EntityContract;
 
 /**
  * Class UserEntity

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Traits;
+namespace FreddieGar\Base\Traits;
 
-use App\Constants\BlameColumn;
-use App\Constants\BlameEvent;
+use FreddieGar\Base\Constants\BlameColumn;
+use FreddieGar\Base\Constants\BlameEvent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\UnauthorizedException;
 

@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Contracts\Commons;
+namespace FreddieGar\Base\Contracts\Commons;
 
-use App\Constants\BlameColumn;
-use App\Contracts\Interfaces\BlameColumnInterface;
-use App\Traits\BlameColumnsTrait;
-use App\Traits\LoaderTrait;
-use App\Traits\ToArrayTrait;
+use FreddieGar\Base\Constants\BlameColumn;
+use FreddieGar\Base\Contracts\Interfaces\BlameColumnInterface;
+use FreddieGar\Base\Traits\BlameColumnsTrait;
+use FreddieGar\Base\Traits\LoaderTrait;
+use FreddieGar\Base\Traits\ToArrayTrait;
 
 /**
  * Class EntityContract
- * @package App\Contracts\Commons
+ * @package FreddieGar\Base\Contracts\Commons
  */
 abstract class EntityContract implements BlameColumnInterface
 {

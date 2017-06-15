@@ -1,10 +1,14 @@
 <?php
 
-namespace App\Traits;
+namespace FreddieGar\Base\Traits;
 
-use App\Constants\BlameEvent;
+use FreddieGar\Base\Constants\BlameEvent;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Trait BlameEventTrait
+ * @package FreddieGar\Base\Traits
+ */
 trait BlameEventTrait
 {
     /**

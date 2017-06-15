@@ -1,11 +1,14 @@
 <?php
 
-use App\Constants\BlameColumn;
 use App\Constants\UserStatus;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use FreddieGar\Base\Constants\BlameColumn;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
+/**
+ * Class CreateUsersTable
+ */
 class CreateUsersTable extends Migration
 {
     /**

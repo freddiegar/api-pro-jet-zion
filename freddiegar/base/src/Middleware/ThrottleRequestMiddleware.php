@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace FreddieGar\Base\Http\Middleware;
 
 use Closure;
 use Illuminate\Cache\RateLimiter;
@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class ThrottleRequestMiddleware
- * @package App\Http\Middleware
+ * @package FreddieGar\Base\Http\Middleware
  */
 class ThrottleRequestMiddleware
 {

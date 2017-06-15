@@ -1,7 +1,11 @@
 <?php
 
-namespace App\Contracts\Interfaces;
+namespace FreddieGar\Base\Contracts\Interfaces;
 
+/**
+ * Interface CRUDSInterface
+ * @package FreddieGar\Base\Contracts\Interfaces
+ */
 interface CRUDSInterface
 {
     /**

@@ -1,13 +1,13 @@
 <?php
 
 
-use App\Constants\BlameColumn;
-use App\Constants\FilterType;
-use App\Constants\HttpMethod;
 use App\Constants\UserStatus;
 use App\Entities\UserEntity;
 use App\Models\User;
-use App\Traits\FilterTrait;
+use FreddieGar\Base\Constants\BlameColumn;
+use FreddieGar\Base\Constants\FilterType;
+use FreddieGar\Base\Constants\HttpMethod;
+use FreddieGar\Base\Traits\FilterTrait;
 use Illuminate\Http\Response;
 
 class UserManagerTest extends DBTestCase
