@@ -15,8 +15,6 @@ abstract class ManagerContract
 {
     use ProvidesConvenienceMethods;
 
-    const MEDIA_TYPE_SUPPORTED = 'application/json';
-
     /**
      * @var Request
      */

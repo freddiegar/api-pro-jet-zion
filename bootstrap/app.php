@@ -60,11 +60,12 @@ $app->singleton(
 */
 
 $app->middleware([
-    App\Http\Middleware\SupportedMediaTypeMiddleware::class
+    App\Http\Middleware\SupportedMediaTypeMiddleware::class,
 ]);
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\AuthenticateMiddleware::class,
+    'throttle' => App\Http\Middleware\ThrottleRequestMiddleware::class,
 ]);
 
 /*

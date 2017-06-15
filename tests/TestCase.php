@@ -4,6 +4,7 @@ use App\Constants\BlameColumn;
 use App\Constants\UserStatus;
 use App\Entities\UserEntity;
 use App\Models\User;
+use Illuminate\Support\Facades\Artisan;
 
 abstract class TestCase extends Laravel\Lumen\Testing\TestCase
 {
@@ -15,6 +16,12 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
     public function createApplication()
     {
         return require __DIR__ . '/../bootstrap/app.php';
+    }
+
+    public function setUp()
+    {
+        parent::setUp();
+        Artisan::call('cache:clear');
     }
 
     public function login()

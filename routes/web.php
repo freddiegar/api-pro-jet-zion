@@ -19,13 +19,14 @@ $app->get('/', function () use ($app) {
 
 $app->group([
     'prefix' => $prefix,
+    'middleware' => 'throttle:5,30',
 ], function () use ($app) {
     $app->post('login', ['as' => 'api.login', 'uses' => 'LoginController@login']);
 });
 
 $app->group([
     'prefix' => $prefix,
-    'middleware' => ['auth:api'],
+    'middleware' => 'auth:api|throttle',
 ], function () use ($app) {
     resource($app, 'users', 'UserController');
 });

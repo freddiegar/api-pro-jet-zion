@@ -32,6 +32,17 @@ if (!function_exists('randomHashing')) {
     }
 }
 
+if (!function_exists('shaN')) {
+    /**
+     * @param $string
+     * @return string
+     */
+    function shaN($string)
+    {
+        return hash('sha256', $string);
+    }
+}
+
 if (!function_exists('pretty')) {
     /**
      * @param mixed $var
@@ -97,6 +108,7 @@ if (!function_exists('ll')) {
             foreach ($args as $arg) {
                 Illuminate\Support\Facades\Log::info(print_r($arg, true));
             }
+            Illuminate\Support\Facades\Log::info(customizeTrace((new Exception())->getTrace()));
             return true;
         }
 
@@ -140,6 +152,7 @@ if (!function_exists('resource')) {
      * @param mixed $app
      * @param string $route
      * @param string $controller
+     * @param string $alias
      */
     function resource($app, $route, $controller, $alias = null)
     {

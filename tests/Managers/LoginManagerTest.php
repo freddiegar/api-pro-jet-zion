@@ -14,7 +14,6 @@ class LoginManagerTest extends DBTestCase
     public function testLoginHeaderError()
     {
         $this->json(HttpMethod::POST, $this->_route('users'), [], [UserEntity::KEY_API_TOKEN_HEADER => 'token_header_error_test']);
-        ll($this->response->getContent());
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
     }
 

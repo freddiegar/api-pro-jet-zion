@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Contracts\Commons\ManagerContract;
 use Closure;
 use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 
@@ -12,6 +11,8 @@ use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
  */
 class SupportedMediaTypeMiddleware
 {
+    const MEDIA_TYPE_SUPPORTED = 'application/json';
+
     /**
      * Handle an incoming request.
      *
@@ -21,8 +22,8 @@ class SupportedMediaTypeMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (strtolower($request->headers->get('Content-Type')) !== ManagerContract::MEDIA_TYPE_SUPPORTED) {
-            throw new UnsupportedMediaTypeHttpException(trans('exceptions.unsopported_media_type', ['media_type' => ManagerContract::MEDIA_TYPE_SUPPORTED]));
+        if (strtolower($request->headers->get('Content-Type')) !== self::MEDIA_TYPE_SUPPORTED) {
+            throw new UnsupportedMediaTypeHttpException(trans('exceptions.unsopported_media_type', ['media_type' => self::MEDIA_TYPE_SUPPORTED]));
         }
 
         return $next($request);
