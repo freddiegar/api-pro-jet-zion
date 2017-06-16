@@ -24,16 +24,21 @@ class UserManagerTest extends DBTestCase
             $this->assertObjectHasAttribute('id', $user);
             $this->assertObjectHasAttribute('username', $user);
             $this->assertObjectHasAttribute('status', $user);
-            $this->assertObjectNotHasAttribute('password', $user);
-            $this->assertObjectNotHasAttribute('api_token', $user);
-            $this->assertObjectNotHasAttribute('type', $user);
-            $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $user);
-            $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $user);
-            $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $user);
-            $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $user);
-            $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $user);
-            $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $user);
+            $this->assertNotHasAttributeUser($user);
         }
+    }
+
+    private function assertNotHasAttributeUser($user)
+    {
+        $this->assertObjectNotHasAttribute('password', $user);
+        $this->assertObjectNotHasAttribute('api_token', $user);
+        $this->assertObjectNotHasAttribute('type', $user);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $user);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $user);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $user);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $user);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $user);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $user);
     }
 
     public function testUserManagerCreateError()
@@ -125,15 +130,7 @@ class UserManagerTest extends DBTestCase
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, User::where('username', 'freddie@gar.com')->first()->id);
         $this->assertEquals($response->username, 'freddie@gar.com');
-        $this->assertObjectNotHasAttribute('password', $response);
-        $this->assertObjectNotHasAttribute('api_token', $response);
-        $this->assertObjectNotHasAttribute('type', $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $response);
+        $this->assertNotHasAttributeUser($response);
     }
 
     public function testUserManagerReadOK()
@@ -150,15 +147,7 @@ class UserManagerTest extends DBTestCase
         $this->assertEquals($response->id, 1);
         $this->assertEquals($response->status, UserStatus::ACTIVE);
         $this->assertEquals($response->username, 'jon@doe.com');
-        $this->assertObjectNotHasAttribute('password', $response);
-        $this->assertObjectNotHasAttribute('api_token', $response);
-        $this->assertObjectNotHasAttribute('type', $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $response);
+        $this->assertNotHasAttributeUser($response);
     }
 
     public function testUserManagerUpdateStatusError()
@@ -179,16 +168,36 @@ class UserManagerTest extends DBTestCase
         $this->assertNotEmpty($response->errors);
     }
 
-    public function testUserManagerUpdateEmptyOk()
+    public function testUserManagerUpdateEmptyError()
     {
         $this->json(HttpMethod::PUT, $this->_route('users', 1), $this->request(['username', 'password', 'status']), $this->headers());
-        $this->assertResponseStatus(Response::HTTP_OK);
+        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->seeJsonStructure([
-            'id',
+            'message',
+            'errors',
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertNotEmpty($response->message);
+        $this->assertNotEmpty($response->errors);
+    }
+
+    public function testUserManagerUpdatePartialError()
+    {
+        $data = [
+            'status' => UserStatus::INACTIVE,
+        ];
+        $this->json(HttpMethod::PUT, $this->_route('users', 1), $this->request(['username', 'password'], $data), $this->headers());
+        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->seeJsonStructure([
+            'message',
+            'errors',
         ]);
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->id, 1);
+        $this->assertNotEmpty($response->message);
+        $this->assertNotEmpty($response->errors);
+        $this->assertNotEmpty($response->errors->username);
+        $this->assertNotEmpty($response->errors->password);
     }
 
     public function testUserManagerUpdateOK()
@@ -209,15 +218,25 @@ class UserManagerTest extends DBTestCase
         $this->assertEquals($response->id, 1);
         $this->assertEquals($response->status, $data['status']);
         $this->assertEquals($response->username, $data['username']);
-        $this->assertObjectNotHasAttribute('password', $response);
-        $this->assertObjectNotHasAttribute('api_token', $response);
-        $this->assertObjectNotHasAttribute('type', $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $response);
+        $this->assertNotHasAttributeUser($response);
+    }
+
+    public function testUserManagerPatchOK()
+    {
+        $data = [
+            'status' => UserStatus::SUSPENDED,
+        ];
+        $this->json(HttpMethod::PATCH, $this->_route('users', 1), $this->request(['username', 'password'], $data), $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $this->seeJsonStructure([
+            'id',
+            'status',
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->id, 1);
+        $this->assertEquals($response->status, $data['status']);
+        $this->assertNotHasAttributeUser($response);
     }
 
     public function testUserManagerDeleteOK()
@@ -231,16 +250,8 @@ class UserManagerTest extends DBTestCase
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, 1);
         $this->assertObjectNotHasAttribute('username', $response);
-        $this->assertObjectNotHasAttribute('password', $response);
         $this->assertObjectNotHasAttribute('status', $response);
-        $this->assertObjectNotHasAttribute('api_token', $response);
-        $this->assertObjectNotHasAttribute('type', $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $response);
-        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $response);
+        $this->assertNotHasAttributeUser($response);
     }
 
     public function testUserManagerShowSimpleMethodHttpError()
@@ -374,8 +385,8 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             'status' => UserStatus::ACTIVE,
-            BlameColumn::CREATED_AT. FilterType::BETWEEN_MIN_SUFFIX => '2015-01-01',
-            BlameColumn::CREATED_AT. FilterType::BETWEEN_MAX_SUFFIX => '2016-12-31',
+            BlameColumn::CREATED_AT . FilterType::BETWEEN_MIN_SUFFIX => '2015-01-01',
+            BlameColumn::CREATED_AT . FilterType::BETWEEN_MAX_SUFFIX => '2016-12-31',
             UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
@@ -387,8 +398,8 @@ class UserManagerTest extends DBTestCase
     public function testUserManagerShowSimple8()
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
-            BlameColumn::CREATED_AT. FilterType::BETWEEN_MIN_SUFFIX => '2015-01-01',
-            BlameColumn::CREATED_AT. FilterType::BETWEEN_MAX_SUFFIX => '2016-12-31',
+            BlameColumn::CREATED_AT . FilterType::BETWEEN_MIN_SUFFIX => '2015-01-01',
+            BlameColumn::CREATED_AT . FilterType::BETWEEN_MAX_SUFFIX => '2016-12-31',
             UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
@@ -400,7 +411,7 @@ class UserManagerTest extends DBTestCase
     public function testUserManagerShowSimple9()
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
-            BlameColumn::CREATED_AT. FilterType::BETWEEN_MIN_SUFFIX => '2015-01-01',
+            BlameColumn::CREATED_AT . FilterType::BETWEEN_MIN_SUFFIX => '2015-01-01',
             UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
@@ -412,7 +423,7 @@ class UserManagerTest extends DBTestCase
     public function testUserManagerShowSimple10()
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
-            BlameColumn::CREATED_AT. FilterType::BETWEEN_MAX_SUFFIX => '2016-12-31',
+            BlameColumn::CREATED_AT . FilterType::BETWEEN_MAX_SUFFIX => '2016-12-31',
             UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);

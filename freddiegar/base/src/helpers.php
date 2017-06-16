@@ -108,7 +108,7 @@ if (!function_exists('ll')) {
             foreach ($args as $arg) {
                 Illuminate\Support\Facades\Log::info(print_r($arg, true));
             }
-            Illuminate\Support\Facades\Log::info(customizeTrace((new Exception())->getTrace()));
+            Illuminate\Support\Facades\Log::info(print_r(customizeTrace((new Exception())->getTrace()), true));
             return true;
         }
 
@@ -161,6 +161,7 @@ if (!function_exists('resource')) {
         $app->post($route, ['as' => "api.{$alias}.create", 'uses' => "{$controller}@create"]);
         $app->get("{$route}/{id}", ['as' => "api.{$alias}.read", 'uses' => "{$controller}@read"]);
         $app->put("{$route}/{id}", ['as' => "api.{$alias}.update", 'uses' => "{$controller}@update"]);
+        $app->patch("{$route}/{id}", ['as' => "api.{$alias}.patch", 'uses' => "{$controller}@update"]);
         $app->delete("{$route}/{id}", ['as' => "api.{$alias}.delete", 'uses' => "{$controller}@delete"]);
         $app->get($route, ['as' => "api.{$alias}.show", 'uses' => "{$controller}@show"]);
     }

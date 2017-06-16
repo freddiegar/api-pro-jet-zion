@@ -100,7 +100,7 @@ abstract class ManagerContract
      */
     final private function removeRulesThatNotApply($rules)
     {
-        if (!in_array($this->requestMethod(), [HttpMethod::PUT, HttpMethod::PATCH])) {
+        if ($this->requestMethod() !== HttpMethod::PATCH) {
             return $rules;
         }
 
