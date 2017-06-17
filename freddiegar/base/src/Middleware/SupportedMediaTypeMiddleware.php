@@ -1,6 +1,6 @@
 <?php
 
-namespace FreddieGar\Base\Http\Middleware;
+namespace FreddieGar\Base\Middleware;
 
 use Closure;
 use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;

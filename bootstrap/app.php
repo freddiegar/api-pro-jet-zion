@@ -60,12 +60,12 @@ $app->singleton(
 */
 
 $app->middleware([
-    FreddieGar\Base\Http\Middleware\SupportedMediaTypeMiddleware::class,
+    FreddieGar\Base\Middleware\SupportedMediaTypeMiddleware::class,
 ]);
 
 $app->routeMiddleware([
-    'auth' => FreddieGar\Base\Http\Middleware\AuthenticateMiddleware::class,
-    'throttle' => FreddieGar\Base\Http\Middleware\ThrottleRequestMiddleware::class,
+    'auth' => FreddieGar\Base\Middleware\AuthenticateMiddleware::class,
+    'throttle' => FreddieGar\Base\Middleware\ThrottleRequestMiddleware::class,
 ]);
 
 /*

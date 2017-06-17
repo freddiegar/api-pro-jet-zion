@@ -97,7 +97,7 @@ class Handler extends ExceptionHandler
             $response = [
                 'code' => Response::HTTP_NOT_FOUND,
                 'error' => [
-                    'message' => $e->getMessage(),
+                    'message' => trans('exceptions.model_not_found', ['model' => class_basename($e->getModel())]),
                 ]
             ];
         }
