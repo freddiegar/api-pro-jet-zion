@@ -3,7 +3,7 @@
 namespace FreddieGar\Base\Traits;
 
 use FreddieGar\Base\Constants\BlameColumn;
-use FreddieGar\Base\Constants\BlameEvent;
+use FreddieGar\Base\Constants\Event;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\UnauthorizedException;
 
@@ -45,10 +45,10 @@ trait BlameControlTrait
     final static protected function blameEvents()
     {
         return [
-            BlameEvent::CREATING,
-            BlameEvent::UPDATING,
-            BlameEvent::DELETING,
-            BlameEvent::SAVED,
+            Event::CREATING,
+            Event::UPDATING,
+            Event::DELETING,
+            Event::SAVED,
         ];
     }
 
@@ -59,13 +59,13 @@ trait BlameControlTrait
     final static protected function blameColumnsByEvent($event)
     {
         $columnByEvent = [
-            BlameEvent::CREATING => [
+            Event::CREATING => [
                 static::$CREATED_BY,
             ],
-            BlameEvent::UPDATING => [
+            Event::UPDATING => [
                 static::$UPDATED_BY,
             ],
-            BlameEvent::DELETING => [
+            Event::DELETING => [
                 static::$DELETED_BY,
             ],
         ];

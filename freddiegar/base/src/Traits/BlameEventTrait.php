@@ -2,7 +2,7 @@
 
 namespace FreddieGar\Base\Traits;
 
-use FreddieGar\Base\Constants\BlameEvent;
+use FreddieGar\Base\Constants\Event;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,7 +18,7 @@ trait BlameEventTrait
     static protected function bootBlameEventTrait()
     {
         foreach (static::blameEvents() as $event) {
-            if ($event === BlameEvent::SAVED) {
+            if ($event === Event::SAVED) {
                 static::{$event}(function () {
                     // When model is saving, it enable blame columns for next process
                     static::enableBlame();

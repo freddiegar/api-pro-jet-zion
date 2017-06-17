@@ -6,7 +6,7 @@ namespace FreddieGar\Base\Constants;
  * Interface BlameEvent
  * @package FreddieGar\Base\Constants
  */
-interface BlameEvent
+interface Event
 {
     const SAVING = 'saving';
     const CREATING = 'creating';
