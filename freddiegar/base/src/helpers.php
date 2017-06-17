@@ -105,10 +105,12 @@ if (!function_exists('ll')) {
     function ll(...$args)
     {
         if (isDevelopment()) {
-            foreach ($args as $arg) {
-                Illuminate\Support\Facades\Log::info(print_r($arg, true));
+            $log = "\n\n" . ((env('APP_DEBUG_TRACE')) ? customizeTrace((new Exception())->getTrace(), 1)[0] : '');
+            foreach ($args as $i => $arg) {
+                $log .= print_r("\n" . $arg, true) . "\n";
             }
-            Illuminate\Support\Facades\Log::info(print_r(customizeTrace((new Exception())->getTrace()), true));
+            Illuminate\Support\Facades\Log::info(ltrim($log));
+
             return true;
         }
 
@@ -120,11 +122,22 @@ if (!function_exists('passwordIsValid')) {
     /**
      * @param $actual
      * @param $expected
-     * @return boolean
+     * @return bool
      */
     function passwordIsValid($actual, $expected)
     {
         return Illuminate\Support\Facades\Hash::check($actual, $expected);
+    }
+}
+
+if (!function_exists('apiTokenIsValid')) {
+    /**
+     * @param $apiToken
+     * @return bool
+     */
+    function apiTokenIsValid($apiToken)
+    {
+        return base64_decode($apiToken, true);
     }
 }
 
@@ -158,12 +171,12 @@ if (!function_exists('resource')) {
     {
         $alias = $alias ?: $route;
 
-        $app->post($route, ['as' => "api.{$alias}.create", 'uses' => "{$controller}@create"]);
-        $app->get("{$route}/{id}", ['as' => "api.{$alias}.read", 'uses' => "{$controller}@read"]);
+        $app->get($route, ['as' => "api.{$alias}.show", 'uses' => "{$controller}@index"]);
+        $app->post($route, ['as' => "api.{$alias}.create", 'uses' => "{$controller}@store"]);
+        $app->get("{$route}/{id}", ['as' => "api.{$alias}.read", 'uses' => "{$controller}@show"]);
         $app->put("{$route}/{id}", ['as' => "api.{$alias}.update", 'uses' => "{$controller}@update"]);
         $app->patch("{$route}/{id}", ['as' => "api.{$alias}.patch", 'uses' => "{$controller}@update"]);
-        $app->delete("{$route}/{id}", ['as' => "api.{$alias}.delete", 'uses' => "{$controller}@delete"]);
-        $app->get($route, ['as' => "api.{$alias}.show", 'uses' => "{$controller}@show"]);
+        $app->delete("{$route}/{id}", ['as' => "api.{$alias}.delete", 'uses' => "{$controller}@destroy"]);
     }
 }
 
@@ -176,7 +189,7 @@ if (!function_exists('responseJson')) {
      */
     function responseJson($content = '', $status = 200, array $headers = [])
     {
-        $status = empty($content) ? \Illuminate\Http\Response::HTTP_NO_CONTENT : $status;
+        $status = is_null($content) ? \Illuminate\Http\Response::HTTP_NO_CONTENT : $status;
         $options = env('APP_JSON_PRETTY_PRINT') === true ? JSON_PRETTY_PRINT : 0;
 
         return response()->json($content, $status, $headers, $options);
@@ -186,16 +199,27 @@ if (!function_exists('responseJson')) {
 if (!function_exists('customizeTrace')) {
     /**
      * @param array $exceptions
+     * @param null $deep
      * @return array
      */
-    function customizeTrace(array $exceptions)
+    function customizeTrace(array $exceptions, $deep = null)
     {
+        $i = 1;
         $trace = [];
+        $function = '';
+
         foreach ($exceptions as $index => $exception) {
             if (!isset($exception['file']) || strpos($exception['file'], '/vendor/') !== false) {
                 continue;
             }
-            $trace[] = $exception['file'] . ':' . $exception['line'];
+            if ($deep && $i > $deep) {
+                break;
+            }
+            if (isset($exceptions[$index + 1])) {
+                $function = $exceptions[$index + 1]['function'];
+            }
+            $trace[] = sprintf('%s:%d %s', $exception['file'], $exception['line'], $function);
+            ++$i;
         }
 
         return $trace;

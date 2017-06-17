@@ -20,7 +20,7 @@ interface UserRepository
      * @param int $id
      * @return array
      */
-    static public function getById($id);
+    static public function findById($id);
 
     /**
      * @param int $id
@@ -45,5 +45,5 @@ interface UserRepository
      * @param array $filters
      * @return array
      */
-    static public function where($filters);
+    static public function findWhere($filters);
 }

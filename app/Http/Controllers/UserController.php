@@ -22,7 +22,15 @@ class UserController extends Controller
     /**
      * @return array
      */
-    public function create()
+    public function index()
+    {
+        return responseJson($this->manager()->applyFilters()->show());
+    }
+
+    /**
+     * @return array
+     */
+    public function store()
     {
         return responseJson($this->manager()->requestValidate()->create(), Response::HTTP_CREATED);
     }
@@ -31,7 +39,7 @@ class UserController extends Controller
      * @param int $id
      * @return array
      */
-    public function read($id)
+    public function show($id)
     {
         return responseJson($this->manager()->read($id));
     }
@@ -49,16 +57,8 @@ class UserController extends Controller
      * @param int $id
      * @return array
      */
-    public function delete($id)
+    public function destroy($id)
     {
         return responseJson($this->manager()->delete($id));
-    }
-
-    /**
-     * @return array
-     */
-    public function show()
-    {
-        return responseJson($this->manager()->applyFilters()->show());
     }
 }

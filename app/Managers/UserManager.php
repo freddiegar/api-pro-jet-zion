@@ -9,7 +9,9 @@ use App\Models\User;
 use FreddieGar\Base\Constants\BlameColumn;
 use FreddieGar\Base\Constants\FilterType;
 use FreddieGar\Base\Contracts\Commons\ManagerContract;
+use FreddieGar\Base\Contracts\Interfaces\CacheControlInterface;
 use FreddieGar\Base\Contracts\Interfaces\CRUDSInterface;
+use FreddieGar\Base\Traits\CacheControlTrait;
 use FreddieGar\Base\Traits\FilterTrait;
 use Illuminate\Http\Request;
 
@@ -17,9 +19,10 @@ use Illuminate\Http\Request;
  * Class UserManager
  * @package App\Managers
  */
-class UserManager extends ManagerContract implements CRUDSInterface
+class UserManager extends ManagerContract implements CRUDSInterface, CacheControlInterface
 {
     use FilterTrait;
+    use CacheControlTrait;
 
     /**
      * UserManager constructor.
@@ -28,6 +31,7 @@ class UserManager extends ManagerContract implements CRUDSInterface
      */
     public function __construct(Request $request, UserRepository $repository)
     {
+        $this::setTag(User::class);
         $this->request($request);
         $this->repository($repository);
     }
@@ -60,7 +64,11 @@ class UserManager extends ManagerContract implements CRUDSInterface
      */
     public function read($id)
     {
-        return UserEntity::load($this->userRepository()->getById($id))->toArray();
+        if (!self::existLabel($id)) {
+            self::setByLabel($id, $this->userRepository()->findById($id));
+        }
+
+        return UserEntity::load(self::getByLabel($id))->toArray();
     }
 
     /**
@@ -73,7 +81,9 @@ class UserManager extends ManagerContract implements CRUDSInterface
         if ($this->requestInput('password')) {
             $userEntity->setPassword($this->requestInput('password'));
         }
+
         $this->userRepository()->updateById($id, $userEntity->toArray(true));
+
         return $userEntity->id($id)->toArray();
     }
 
@@ -83,8 +93,9 @@ class UserManager extends ManagerContract implements CRUDSInterface
      */
     public function delete($id)
     {
+        $user = $this->read($id);
         $this->userRepository()->deleteById($id);
-        return (new UserEntity())->id($id)->toArray();
+        return $user;
     }
 
     /**
@@ -92,7 +103,7 @@ class UserManager extends ManagerContract implements CRUDSInterface
      */
     public function show()
     {
-        return (new UserEntity())->toArrayMultiple($this->userRepository()->where($this->filterToApply()));
+        return (new UserEntity())->toArrayMultiple($this->userRepository()->findWhere($this->filterToApply()));
     }
 
     /**

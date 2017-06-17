@@ -61,7 +61,7 @@ class AuthServiceProvider extends ServiceProvider
                         break;
                 }
 
-                if ($apiToken) {
+                if ($apiToken && apiTokenIsValid($apiToken)) {
                     // TODO: Revise this funcionality, let interface UserRepository, not concrete EloquentUserRepository
                     /** @noinspection PhpUndefinedMethodInspection */
                     if ($user = EloquentUserRepository::getByApiToken($apiToken)) {

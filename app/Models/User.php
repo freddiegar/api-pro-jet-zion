@@ -5,6 +5,8 @@ namespace App\Models;
 use FreddieGar\Base\Constants\BlameColumn;
 use FreddieGar\Base\Traits\BlameControlTrait;
 use FreddieGar\Base\Traits\BlameEventTrait;
+use FreddieGar\Base\Traits\CacheControlTrait;
+use FreddieGar\Base\Traits\CacheEventTrait;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -31,6 +33,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use SoftDeletes;
     use BlameControlTrait;
     use BlameEventTrait;
+    use CacheControlTrait;
+    use CacheEventTrait;
 
     protected $fillable = [
         'status',

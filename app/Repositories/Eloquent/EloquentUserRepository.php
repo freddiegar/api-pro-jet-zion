@@ -12,28 +12,19 @@ use App\Models\User;
 class EloquentUserRepository extends EloquentFilterBuilder implements UserRepository
 {
     /**
-     * @return User
-     */
-    static public function model()
-    {
-        static $model;
-        return $model = (is_null($model) ? new User() : $model);
-    }
-
-    /**
      * @inheritdoc
      */
     static public function create($user)
     {
-        return self::model()->create($user)->attributesToArray();
+        return User::create($user)->attributesToArray();
     }
 
     /**
      * @inheritdoc
      */
-    static public function getById($id)
+    static public function findById($id)
     {
-        return self::model()->findOrFail($id)->attributesToArray();
+        return User::findOrFail($id)->attributesToArray();
     }
 
     /**
@@ -41,7 +32,7 @@ class EloquentUserRepository extends EloquentFilterBuilder implements UserReposi
      */
     static public function updateById($id, $user)
     {
-        return self::model()->findOrFail($id)->update($user);
+        return User::findOrFail($id)->update($user);
     }
 
     /**
@@ -49,7 +40,7 @@ class EloquentUserRepository extends EloquentFilterBuilder implements UserReposi
      */
     static public function deleteById($id)
     {
-        return self::model()->findOrFail($id)->delete();
+        return User::findOrFail($id)->delete();
     }
 
     /**
@@ -57,15 +48,15 @@ class EloquentUserRepository extends EloquentFilterBuilder implements UserReposi
      */
     static public function getByApiToken($apiToken)
     {
-        return self::model()->where('api_token', base64_decode($apiToken))->first();
+        return User::where('api_token', base64_decode($apiToken))->first();
     }
 
     /**
      * @inheritdoc
      */
-    static public function where($filters)
+    static public function findWhere($filters)
     {
-        $query = self::builder(self::model()->select(), $filters);
+        $query = self::builder(User::select(), $filters);
         return $query->get()->toArray();
     }
 }
