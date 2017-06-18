@@ -13,7 +13,7 @@ trait CacheControlTrait
     /**
      * @var bool
      */
-    static private $ENABLED_CACHE = null;
+    static private $ENABLED_CACHE = true;
 
     /**
      * @var string
@@ -43,7 +43,7 @@ trait CacheControlTrait
      */
     static public function existLabel($id)
     {
-        return self::isEnableCache() && Cache::has(self::label($id));
+        return Cache::has(self::label($id));
     }
 
     /**
@@ -52,7 +52,7 @@ trait CacheControlTrait
      */
     static public function existTag($name)
     {
-        return self::isEnableCache() && Cache::tags(self::tag())->has($name);
+        return Cache::tags(self::tag())->has($name);
     }
 
     /**
@@ -69,9 +69,7 @@ trait CacheControlTrait
      */
     final static public function setByLabel($id, $value)
     {
-        if (static::isEnableCache()) {
-            Cache::forever(self::label($id), $value);
-        }
+        Cache::forever(self::label($id), $value);
     }
 
     /**
@@ -80,9 +78,7 @@ trait CacheControlTrait
      */
     final static public function setByTag($name, $value)
     {
-        if (static::isEnableCache()) {
-            Cache::tags(self::tag())->forever($name, $value);
-        }
+        Cache::tags(self::tag())->forever($name, $value);
     }
 
     /**
@@ -140,7 +136,7 @@ trait CacheControlTrait
     /**
      * @return bool
      */
-    final static private function isEnableCache()
+    final static protected function isEnableCache()
     {
         return static::$ENABLED_CACHE === true;
     }

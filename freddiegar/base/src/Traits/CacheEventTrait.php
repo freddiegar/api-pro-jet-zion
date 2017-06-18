@@ -17,17 +17,19 @@ trait CacheEventTrait
      */
     static protected function bootCacheEventTrait()
     {
-        static::{Event::CREATED}(function (Model $model) {
-            /** @noinspection PhpUndefinedFieldInspection */
-            static::setByLabel($model->id, $model->toArray());
-            static::unsetByTag();
-        });
+        if (static::isEnableCache()) {
+            static::{Event::CREATED}(function (Model $model) {
+                /** @noinspection PhpUndefinedFieldInspection */
+                static::setByLabel($model->id, $model->toArray());
+                static::unsetByTag();
+            });
 
-        static::{Event::UPDATED}(function (Model $model) {
-            /** @noinspection PhpUndefinedFieldInspection */
-            static::setByLabel($model->id, $model->toArray());
-            static::unsetByTag();
-        });
+            static::{Event::UPDATED}(function (Model $model) {
+                /** @noinspection PhpUndefinedFieldInspection */
+                static::setByLabel($model->id, $model->toArray());
+                static::unsetByTag();
+            });
+        }
 
         static::{Event::DELETED}(function (Model $model) {
             /** @noinspection PhpUndefinedFieldInspection */
