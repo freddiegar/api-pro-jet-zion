@@ -7,7 +7,6 @@ use App\Models\User;
 use FreddieGar\Base\Constants\BlameColumn;
 use FreddieGar\Base\Constants\FilterType;
 use FreddieGar\Base\Constants\HttpMethod;
-use FreddieGar\Base\Traits\CacheControlTrait;
 use FreddieGar\Base\Traits\FilterTrait;
 use Illuminate\Http\Response;
 
@@ -609,7 +608,7 @@ class UserManagerTest extends DBTestCase
     public function testUserManagerCacheEnable()
     {
         User::enableCache();
-        CacheControlTrait::setTag(User::class);
+        User::setTag(User::class);
 
         $dataCreate = $this->request();
         $this->json(HttpMethod::POST, $this->_route('users'), $dataCreate, $this->headers());
@@ -626,7 +625,7 @@ class UserManagerTest extends DBTestCase
 
         $id = $response->id;
 
-        $this->assertEquals(true, CacheControlTrait::existLabel($id));
+        $this->assertEquals(true, User::hasInCacheId($id));
 
         $this->json(HttpMethod::GET, $this->_route('users', $id), [], $this->headers());
         $this->seeJsonStructure([
@@ -640,7 +639,7 @@ class UserManagerTest extends DBTestCase
         $this->assertEquals($response->status, UserStatus::ACTIVE);
         $this->assertEquals($response->username, $dataCreate['username']);
         $this->assertNotHasAttributeUser($response);
-        $this->assertEquals(true, CacheControlTrait::existLabel($id));
+        $this->assertEquals(true, User::hasInCacheId($id));
 
         $dataUpdate = [
             'status' => UserStatus::INACTIVE,
@@ -659,7 +658,7 @@ class UserManagerTest extends DBTestCase
         $this->assertEquals($response->status, $dataUpdate['status']);
         $this->assertEquals($response->username, $dataUpdate['username']);
         $this->assertNotHasAttributeUser($response);
-        $this->assertEquals(true, CacheControlTrait::existLabel($id));
+        $this->assertEquals(true, User::hasInCacheId($id));
 
         $dataPatch = [
             'status' => UserStatus::SUSPENDED,
@@ -676,11 +675,11 @@ class UserManagerTest extends DBTestCase
         $this->assertEquals($response->status, $dataPatch['status']);
         $this->assertEquals($response->username, $dataUpdate['username']);
         $this->assertNotHasAttributeUser($response);
-        $this->assertEquals(true, CacheControlTrait::existLabel($id));
+        $this->assertEquals(true, User::hasInCacheId($id));
 
 
         $tagCache = 'e23435cd6273aca6c0459bb27c6876458bb4cf6a69e754cb4da2159cfdff4db0';
-        $this->assertEquals(false, CacheControlTrait::existTag($tagCache));
+        $this->assertEquals(false, User::hasInCacheTag($tagCache));
 
         $dataFind = [
             FilterTrait::$FILTER_SMART_NAME => 'peed',
@@ -688,8 +687,8 @@ class UserManagerTest extends DBTestCase
         $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
         $response = json_decode($this->response->getContent());
         $this->assertSearchUser($response);
-        $this->assertEquals(true, CacheControlTrait::existLabel($id));
-        $this->assertEquals(true, CacheControlTrait::existTag($tagCache));
+        $this->assertEquals(true, User::hasInCacheId($id));
+        $this->assertEquals(true, User::hasInCacheTag($tagCache));
 
         $user = $response[0];
         $this->assertEquals($user->id, $id);
@@ -714,14 +713,14 @@ class UserManagerTest extends DBTestCase
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, $id);
         $this->assertNotHasAttributeUser($response);
-        $this->assertEquals(false, CacheControlTrait::existLabel($id));
-        $this->assertEquals(false, CacheControlTrait::existTag($tagCache));
+        $this->assertEquals(false, User::hasInCacheId($id));
+        $this->assertEquals(false, User::hasInCacheTag($tagCache));
     }
 
     public function testUserManagerCacheDisable()
     {
         User::disableCache();
-        CacheControlTrait::setTag(User::class);
+        User::setTag(User::class);
 
         $dataCreate = $this->request();
         $this->json(HttpMethod::POST, $this->_route('users'), $dataCreate, $this->headers());
@@ -738,7 +737,7 @@ class UserManagerTest extends DBTestCase
 
         $id = $response->id;
 
-        $this->assertEquals(false, CacheControlTrait::existLabel($id));
+        $this->assertEquals(false, User::hasInCacheId($id));
 
         $this->json(HttpMethod::GET, $this->_route('users', $id), [], $this->headers());
         $this->seeJsonStructure([
@@ -752,7 +751,7 @@ class UserManagerTest extends DBTestCase
         $this->assertEquals($response->status, UserStatus::ACTIVE);
         $this->assertEquals($response->username, $dataCreate['username']);
         $this->assertNotHasAttributeUser($response);
-        $this->assertEquals(false, CacheControlTrait::existLabel($id));
+        $this->assertEquals(false, User::hasInCacheId($id));
 
         $dataUpdate = [
             'status' => UserStatus::INACTIVE,
@@ -771,7 +770,7 @@ class UserManagerTest extends DBTestCase
         $this->assertEquals($response->status, $dataUpdate['status']);
         $this->assertEquals($response->username, $dataUpdate['username']);
         $this->assertNotHasAttributeUser($response);
-        $this->assertEquals(false, CacheControlTrait::existLabel($id));
+        $this->assertEquals(false, User::hasInCacheId($id));
 
         $dataPatch = [
             'status' => UserStatus::SUSPENDED,
@@ -788,11 +787,11 @@ class UserManagerTest extends DBTestCase
         $this->assertEquals($response->status, $dataPatch['status']);
         $this->assertEquals($response->username, $dataUpdate['username']);
         $this->assertNotHasAttributeUser($response);
-        $this->assertEquals(false, CacheControlTrait::existLabel($id));
+        $this->assertEquals(false, User::hasInCacheId($id));
 
 
         $tagCache = 'e23435cd6273aca6c0459bb27c6876458bb4cf6a69e754cb4da2159cfdff4db0';
-        $this->assertEquals(false, CacheControlTrait::existTag($tagCache));
+        $this->assertEquals(false, User::hasInCacheTag($tagCache));
 
         $dataFind = [
             FilterTrait::$FILTER_SMART_NAME => 'peed',
@@ -800,8 +799,8 @@ class UserManagerTest extends DBTestCase
         $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
         $response = json_decode($this->response->getContent());
         $this->assertSearchUser($response);
-        $this->assertEquals(false, CacheControlTrait::existLabel($id));
-        $this->assertEquals(false, CacheControlTrait::existTag($tagCache));
+        $this->assertEquals(false, User::hasInCacheId($id));
+        $this->assertEquals(false, User::hasInCacheTag($tagCache));
 
         $user = $response[0];
         $this->assertEquals($user->id, $id);
@@ -826,7 +825,7 @@ class UserManagerTest extends DBTestCase
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, $id);
         $this->assertNotHasAttributeUser($response);
-        $this->assertEquals(false, CacheControlTrait::existLabel($id));
-        $this->assertEquals(false, CacheControlTrait::existTag($tagCache));
+        $this->assertEquals(false, User::hasInCacheId($id));
+        $this->assertEquals(false, User::hasInCacheTag($tagCache));
     }
 }

@@ -9,9 +9,7 @@ use App\Models\User;
 use FreddieGar\Base\Constants\BlameColumn;
 use FreddieGar\Base\Constants\FilterType;
 use FreddieGar\Base\Contracts\Commons\ManagerContract;
-use FreddieGar\Base\Contracts\Interfaces\CacheControlInterface;
 use FreddieGar\Base\Contracts\Interfaces\CRUDSInterface;
-use FreddieGar\Base\Traits\CacheControlTrait;
 use FreddieGar\Base\Traits\FilterTrait;
 use Illuminate\Http\Request;
 
@@ -19,10 +17,9 @@ use Illuminate\Http\Request;
  * Class UserManager
  * @package App\Managers
  */
-class UserManager extends ManagerContract implements CRUDSInterface, CacheControlInterface
+class UserManager extends ManagerContract implements CRUDSInterface
 {
     use FilterTrait;
-    use CacheControlTrait;
 
     /**
      * UserManager constructor.
@@ -31,7 +28,6 @@ class UserManager extends ManagerContract implements CRUDSInterface, CacheContro
      */
     public function __construct(Request $request, UserRepository $repository)
     {
-        $this::setTag(User::class);
         $this->request($request);
         $this->repository($repository);
     }
@@ -64,11 +60,17 @@ class UserManager extends ManagerContract implements CRUDSInterface, CacheContro
      */
     public function read($id)
     {
-        if (self::existLabel($id)) {
-            return UserEntity::load($this->getByLabel($id))->toArray();
+        if (User::hasEnableCache()) {
+            if (User::hasInCacheId($id)) {
+                $user = User::getCacheById($id);
+            } else {
+                $user = User::setCacheById($id, $this->userRepository()->findById($id));
+            }
+        } else {
+            $user = $this->userRepository()->findById($id);
         }
 
-        return UserEntity::load($this->userRepository()->findById($id))->toArray();
+        return UserEntity::load($user)->toArray();
     }
 
     /**
@@ -105,11 +107,17 @@ class UserManager extends ManagerContract implements CRUDSInterface, CacheContro
     {
         $tag = makeTagNameCache($this->filterToApply());
 
-        if (self::existTag($tag)) {
-            self::getByTag($tag);
+        if (User::hasEnableCache()) {
+            if (User::hasInCacheTag($tag)) {
+                $users = User::getCacheByTag($tag);
+            } else {
+                $users = User::setCacheByTag($tag, $this->userRepository()->findWhere($this->filterToApply()));
+            }
+        } else {
+            $users = $this->userRepository()->findWhere($this->filterToApply());
         }
 
-        return UserEntity::toArrayMultiple($this->userRepository()->findWhere($this->filterToApply()));
+        return UserEntity::toArrayMultiple($users);
     }
 
     /**

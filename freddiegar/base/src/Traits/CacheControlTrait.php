@@ -41,18 +41,18 @@ trait CacheControlTrait
      * @param $id
      * @return bool
      */
-    static public function existLabel($id)
+    static public function hasInCacheId($id)
     {
         return Cache::has(self::label($id));
     }
 
     /**
-     * @param $name
+     * @param $tag
      * @return bool
      */
-    static public function existTag($name)
+    static public function hasInCacheTag($tag)
     {
-        return Cache::tags(self::tag())->has($name);
+        return Cache::tags(self::tag())->has($tag);
     }
 
     /**
@@ -66,37 +66,41 @@ trait CacheControlTrait
     /**
      * @param $id
      * @param $value
+     * @return mixed
      */
-    final static public function setByLabel($id, $value)
+    final static public function setCacheById($id, $value)
     {
         Cache::forever(self::label($id), $value);
+        return static::getCacheById($id);
     }
 
     /**
-     * @param $name
+     * @param $tag
      * @param $value
+     * @return mixed
      */
-    final static public function setByTag($name, $value)
+    final static public function setCacheByTag($tag, $value)
     {
-        Cache::tags(self::tag())->forever($name, $value);
+        Cache::tags(self::tag())->forever($tag, $value);
+        return static::getCacheByTag($tag);
     }
 
     /**
      * @param $id
      * @return mixed
      */
-    final static public function getByLabel($id)
+    final static public function getCacheById($id)
     {
         return Cache::get(self::label($id));
     }
 
     /**
-     * @param $name
+     * @param $tag
      * @return mixed
      */
-    final static public function getByTag($name)
+    final static public function getCacheByTag($tag)
     {
-        return Cache::tags(self::tag())->get($name);
+        return Cache::tags(self::tag())->get($tag);
     }
 
     /**
@@ -136,7 +140,7 @@ trait CacheControlTrait
     /**
      * @return bool
      */
-    final static protected function isEnableCache()
+    final static protected function hasEnableCache()
     {
         return static::$ENABLED_CACHE === true;
     }
