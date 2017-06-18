@@ -22,9 +22,7 @@ trait BlameEventTrait
                 static::{$event}(function () {
                     // When model is saving, it enable blame columns for next process
                     static::enableBlame();
-                    // Unregister and reload previuous events setup
-                    static::flushEventListeners();
-                    static::clearBootedModels();
+                    static::rebootBlameEventTrait();
                 });
                 continue;
             }
@@ -38,5 +36,15 @@ trait BlameEventTrait
                 });
             }
         }
+    }
+
+    /**
+     *
+     */
+    static public function rebootBlameEventTrait()
+    {
+        // Unregister and reload previuous events setup
+        static::flushEventListeners();
+        static::clearBootedModels();
     }
 }

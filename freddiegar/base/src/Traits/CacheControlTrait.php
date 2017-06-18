@@ -13,12 +13,12 @@ trait CacheControlTrait
     /**
      * @var bool
      */
-    static private $ENABLED_CACHE = false;
+    static private $ENABLED_CACHE = true;
 
     /**
      * @var string
      */
-    static private $TAG = '';
+    static private $TAG = null;
 
     /**
      * @param int $id
@@ -34,15 +34,7 @@ trait CacheControlTrait
      */
     final static public function tag()
     {
-        return (!empty(static::$TAG)) ? static::$TAG : get_called_class();
-    }
-
-    /**
-     * @param $tag
-     */
-    final static public function setTag($tag)
-    {
-        static::$TAG = $tag;
+        return static::$TAG ?: get_called_class();
     }
 
     /**
@@ -51,7 +43,24 @@ trait CacheControlTrait
      */
     static public function existLabel($id)
     {
-        return Cache::has(self::label($id));
+        return self::isEnableCache() && Cache::has(self::label($id));
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    static public function existTag($name)
+    {
+        return self::isEnableCache() && Cache::tags(self::tag())->has($name);
+    }
+
+    /**
+     * @param $tag
+     */
+    final static public function setTag($tag)
+    {
+        static::$TAG = $tag;
     }
 
     /**
@@ -111,6 +120,7 @@ trait CacheControlTrait
      */
     final static public function enableCache()
     {
+        self::rebootCacheControlTrait();
         static::$ENABLED_CACHE = true;
     }
 
@@ -119,14 +129,24 @@ trait CacheControlTrait
      */
     final static public function disableCache()
     {
+        self::rebootCacheControlTrait();
         static::$ENABLED_CACHE = false;
     }
 
     /**
      * @return bool
      */
-    final static public function isEnableCache()
+    final static private function isEnableCache()
     {
         return static::$ENABLED_CACHE;
+    }
+
+    /**
+     *
+     */
+    final static private function rebootCacheControlTrait()
+    {
+        static::flushEventListeners();
+        static::clearBootedModels();
     }
 }

@@ -65,10 +65,11 @@ class UserManager extends ManagerContract implements CRUDSInterface, CacheContro
     public function read($id)
     {
         if (!self::existLabel($id)) {
-            self::setByLabel($id, $this->userRepository()->findById($id));
+            ff(UserEntity::load($this->userRepository()->findById($id)));
+            self::setByLabel($id, UserEntity::load($this->userRepository()->findById($id))->toArray());
         }
 
-        return UserEntity::load(self::getByLabel($id))->toArray();
+        return ff(self::getByLabel($id));
     }
 
     /**
@@ -103,7 +104,13 @@ class UserManager extends ManagerContract implements CRUDSInterface, CacheContro
      */
     public function show()
     {
-        return (new UserEntity())->toArrayMultiple($this->userRepository()->findWhere($this->filterToApply()));
+        $tag = makeTagNameCache($this->filterToApply());
+
+        if (!self::existTag($tag)) {
+            self::setByTag($tag, UserEntity::toArrayMultiple($this->userRepository()->findWhere($this->filterToApply())));
+        }
+
+        return self::getByTag($tag);
     }
 
     /**

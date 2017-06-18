@@ -32,7 +32,7 @@ trait ToArrayTrait
      * @param bool $includeHiddens
      * @return array
      */
-    public function toArrayMultiple(array $dataSets, $includeHiddens = false)
+    static public function toArrayMultiple(array $dataSets, $includeHiddens = false)
     {
         $toArrayMultiple = [];
 

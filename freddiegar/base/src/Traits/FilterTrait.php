@@ -2,6 +2,7 @@
 
 namespace FreddieGar\Base\Traits;
 
+use App\Entities\UserEntity;
 use FreddieGar\Base\Constants\FilterType;
 use FreddieGar\Base\Constants\OperatorType;
 use FreddieGar\Base\Constants\Pattern;
@@ -94,8 +95,21 @@ trait FilterTrait
 //            return true;
 //        }
 
-        $this->filtersToApply[][$whereType] = sprintf('%s|%s|%s', $filter['field'], $operator, $value);
+        if (!empty($value)) {
+            $this->filtersToApply[][$whereType] = sprintf('%s|%s|%s', $filter['field'], $operator, $value);
+            return $this;
+        }
 
+        $this->setfilterInvalid();
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function setfilterInvalid()
+    {
+        $this->filtersToApply[]['where'] = sprintf('%s|%s|%s', 'id', OperatorType::EQUALS, 0);
         return $this;
     }
 
@@ -111,6 +125,10 @@ trait FilterTrait
 
         foreach (static::filters() as $field => $filter) {
             self::applyFilter(array_merge(compact('field'), $filter));
+        }
+
+        if (count($this->requestExcept([UserEntity::KEY_API_TOKEN])) > 0 && count($this->filterToApply()) === 0) {
+            $this->setfilterInvalid();
         }
 
         return $this;
@@ -134,7 +152,7 @@ trait FilterTrait
     {
         $value = static::requestInput($filter['field']);
 
-        if (!empty($value)) {
+        if (!is_null($value)) {
             self::setFilterToApply($filter, $whereType, $value);
         }
     }
@@ -150,6 +168,7 @@ trait FilterTrait
         if (!empty($value)) {
             self::setFilterToApply($filter, $whereType, sprintf(Pattern::QUERY_LIKE, $value), OperatorType::LIKE);
         }
+
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
@@ -171,7 +190,7 @@ trait FilterTrait
     {
         $value = static::requestInput($filter['field']);
 
-        if (!empty($value)) {
+        if (!is_null($value)) {
             self::setFilterToApply($filter, $whereType, $value);
         }
     }
@@ -185,12 +204,12 @@ trait FilterTrait
         $value = static::requestInput($filter['field']);
 
         if (!empty($value)) {
-            if ($valueMinFormatted = Carbon::parse($value)) {
-                $valueMaxFormatted = Carbon::parse($value)
-                    ->hour(23)
-                    ->minute(59)
-                    ->second(59);
-
+            $valueMinFormatted = Carbon::parse($value);
+            $valueMaxFormatted = Carbon::parse($value)
+                ->hour(23)
+                ->minute(59)
+                ->second(59);
+            if ($valueMinFormatted && $valueMaxFormatted) {
                 self::doBetween($filter, $whereType, $valueMinFormatted, $valueMaxFormatted);
             }
         }
@@ -242,7 +261,7 @@ trait FilterTrait
     {
         $value = static::requestInput($filter['field']);
 
-        if (empty($value)) {
+        if (is_null($value)) {
             return;
         }
 

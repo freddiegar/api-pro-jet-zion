@@ -73,6 +73,15 @@ abstract class ManagerContract
     }
 
     /**
+     * @param array $keys
+     * @return array
+     */
+    final protected function requestExcept(array $keys = [])
+    {
+        return $this->request()->except($keys);
+    }
+
+    /**
      * @param string $name
      * @param mixed $value
      * @return void

@@ -4,7 +4,7 @@ use App\Entities\UserEntity;
 use App\Managers\UserManager;
 use App\Models\User;
 use App\Repositories\Eloquent\EloquentUserRepository;
-use FreddieGar\Base\Constants\BlameEvent;
+use FreddieGar\Base\Constants\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\UnauthorizedException;
@@ -47,17 +47,17 @@ class BlameFunctionalityTest extends DBTestCase
 
     private function messageOnCreating()
     {
-        return $this->message(BlameEvent::CREATING);
+        return $this->message(Event::CREATING);
     }
 
     private function messageOnUpdating()
     {
-        return $this->message(BlameEvent::UPDATING);
+        return $this->message(Event::UPDATING);
     }
 
     private function messageOnDeleting()
     {
-        return $this->message(BlameEvent::DELETING);
+        return $this->message(Event::DELETING);
     }
 
     public function testBlameFunctionalityCreateError()

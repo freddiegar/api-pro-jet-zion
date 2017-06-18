@@ -97,24 +97,22 @@ if (!function_exists('getter')) {
     }
 }
 
-if (!function_exists('ll')) {
+if (!function_exists('ff')) {
     /**
-     * @param array ...$args
-     * @return bool
+     * @param array ...$attributes
+     * @return mixed
      */
-    function ll(...$args)
+    function ff(...$attributes)
     {
         if (isDevelopment()) {
             $log = "\n\n" . ((env('APP_DEBUG_TRACE')) ? customizeTrace((new Exception())->getTrace(), 1)[0] : '');
-            foreach ($args as $i => $arg) {
-                $log .= print_r("\n" . $arg, true) . "\n";
+            foreach ($attributes as $i => $attribute) {
+                $log .= "\n" . print_r($attribute, true) . "\n";
             }
             Illuminate\Support\Facades\Log::info(ltrim($log));
-
-            return true;
         }
 
-        return true;
+        return $attributes[0];
     }
 }
 
@@ -223,5 +221,16 @@ if (!function_exists('customizeTrace')) {
         }
 
         return $trace;
+    }
+}
+
+if (!function_exists('makeTagNameCache')) {
+    /**
+     * @param array $filters
+     * @return string
+     */
+    function makeTagNameCache(array $filters)
+    {
+        return shaN(json_encode($filters));
     }
 }
