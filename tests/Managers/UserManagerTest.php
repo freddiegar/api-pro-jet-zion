@@ -7,6 +7,7 @@ use App\Models\User;
 use FreddieGar\Base\Constants\BlameColumn;
 use FreddieGar\Base\Constants\FilterType;
 use FreddieGar\Base\Constants\HttpMethod;
+use FreddieGar\Base\Traits\CacheControlTrait;
 use FreddieGar\Base\Traits\FilterTrait;
 use Illuminate\Http\Response;
 
@@ -43,7 +44,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerCreateError()
     {
-        $this->json(HttpMethod::POST, $this->_route('users'), [], $this->headers());
+        $this->json(HttpMethod::POST, $this->_route('users'), [], []);
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
@@ -55,7 +56,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerCreateTokenError()
     {
-        $this->json(HttpMethod::POST, $this->_route('users'), $this->request([UserEntity::KEY_API_TOKEN]), $this->headers());
+        $this->json(HttpMethod::POST, $this->_route('users'), $this->request(), []);
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
@@ -67,7 +68,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerCreateTokenNotValidError()
     {
-        $this->json(HttpMethod::POST, $this->_route('users'), $this->request([], [UserEntity::KEY_API_TOKEN => 'token_invalid_test']), $this->headers());
+        $this->json(HttpMethod::POST, $this->_route('users'), $this->request(), [UserEntity::KEY_API_TOKEN => 'token_invalid_test']);
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
@@ -141,7 +142,6 @@ class UserManagerTest extends DBTestCase
     public function testUserManagerReadOk()
     {
         $this->json(HttpMethod::GET, $this->_route('users', 1), $this->request(), $this->headers());
-        ff($this->response->getContent());
         $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure([
             'id',
@@ -304,7 +304,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimpleTokenError()
     {
-        $this->json(HttpMethod::GET, $this->_route('users'), [], $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users'), [], []);
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
@@ -316,9 +316,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimpleNotValidToken()
     {
-        $this->json(HttpMethod::GET, $this->_route('users'), [
-            UserEntity::KEY_API_TOKEN => 'token_invalid_test'
-        ], $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users'), [], [UserEntity::KEY_API_TOKEN => 'token_invalid_test']);
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
@@ -330,9 +328,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerShowSimpleEmpty()
     {
-        $this->json(HttpMethod::GET, $this->_route('users'), [
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
-        ], $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users'), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
         // Exist 6 users, but one was deleted, then are 5
@@ -344,7 +340,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             'username' => 'pedro',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -357,7 +352,6 @@ class UserManagerTest extends DBTestCase
         $this->json(HttpMethod::GET, $this->_route('users'), [
             'username' => 'pedro',
             'status' => UserStatus::ACTIVE,
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -369,7 +363,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             'status' => UserStatus::ACTIVE,
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -382,7 +375,6 @@ class UserManagerTest extends DBTestCase
         $this->json(HttpMethod::GET, $this->_route('users'), [
             'status' => UserStatus::ACTIVE,
             BlameColumn::CREATED_BY => 1,
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -395,7 +387,6 @@ class UserManagerTest extends DBTestCase
         $this->json(HttpMethod::GET, $this->_route('users'), [
             'status' => UserStatus::ACTIVE,
             BlameColumn::CREATED_AT => '2015-12-01',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -407,7 +398,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             'status' => UserStatus::SUSPENDED,
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -420,7 +410,6 @@ class UserManagerTest extends DBTestCase
             'status' => UserStatus::ACTIVE,
             BlameColumn::CREATED_AT . FilterType::BETWEEN_MIN_SUFFIX => '2015-01-01',
             BlameColumn::CREATED_AT . FilterType::BETWEEN_MAX_SUFFIX => '2016-12-31',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -433,7 +422,6 @@ class UserManagerTest extends DBTestCase
         $this->json(HttpMethod::GET, $this->_route('users'), [
             BlameColumn::CREATED_AT . FilterType::BETWEEN_MIN_SUFFIX => '2015-01-01',
             BlameColumn::CREATED_AT . FilterType::BETWEEN_MAX_SUFFIX => '2016-12-31',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -445,7 +433,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             BlameColumn::CREATED_AT . FilterType::BETWEEN_MIN_SUFFIX => '2015-01-01',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -457,7 +444,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             BlameColumn::CREATED_AT . FilterType::BETWEEN_MAX_SUFFIX => '2016-12-31',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -469,7 +455,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             'id' => '',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -481,7 +466,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             'username' => '',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -493,7 +477,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             'password' => '',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -505,7 +488,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             'status' => '',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -517,7 +499,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             BlameColumn::CREATED_BY => '',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -529,7 +510,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             BlameColumn::CREATED_AT => '',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -541,7 +521,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             BlameColumn::CREATED_AT . FilterType::BETWEEN_MIN_SUFFIX => '',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -553,7 +532,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             BlameColumn::CREATED_AT . FilterType::BETWEEN_MAX_SUFFIX => '',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -566,7 +544,6 @@ class UserManagerTest extends DBTestCase
         $this->json(HttpMethod::GET, $this->_route('users'), [
             BlameColumn::CREATED_AT . FilterType::BETWEEN_MIN_SUFFIX => '',
             BlameColumn::CREATED_AT . FilterType::BETWEEN_MAX_SUFFIX => '',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -578,7 +555,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             FilterTrait::$FILTER_SMART_NAME => 'pica',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -590,7 +566,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             FilterTrait::$FILTER_SMART_NAME => 'o@marmol',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -602,7 +577,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             FilterTrait::$FILTER_SMART_NAME => 1,
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -614,7 +588,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             FilterTrait::$FILTER_SMART_NAME => '2015-12-01',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -626,7 +599,6 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users'), [
             FilterTrait::$FILTER_SMART_NAME => '',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $response = json_decode($this->response->getContent());
@@ -634,80 +606,227 @@ class UserManagerTest extends DBTestCase
         $this->assertSearchUser($response);
     }
 
-    public function testUserManagerCache01()
+    public function testUserManagerCacheEnable()
     {
-//        User::enableCache();
-        $this->json(HttpMethod::POST, $this->_route('users'), $this->request(), $this->headers());
+        User::enableCache();
+        CacheControlTrait::setTag(User::class);
+
+        $dataCreate = $this->request();
+        $this->json(HttpMethod::POST, $this->_route('users'), $dataCreate, $this->headers());
+        $this->seeJsonStructure([
+            'id',
+            'status',
+            'username',
+        ]);
         $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->status, UserStatus::ACTIVE);
+        $this->assertEquals($response->username, $dataCreate['username']);
+        $this->assertNotHasAttributeUser($response);
+
         $id = $response->id;
 
-        $this->json(HttpMethod::GET, $this->_route('users', $id), $this->request(), $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users', $id), $this->request(), $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users', $id), $this->request(), $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users', $id), $this->request(), $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users', $id), $this->request(), $this->headers());
+        $this->assertEquals(true, CacheControlTrait::existLabel($id));
 
-        $data = [
+        $this->json(HttpMethod::GET, $this->_route('users', $id), [], $this->headers());
+        $this->seeJsonStructure([
+            'id',
+            'status',
+            'username',
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->id, $id);
+        $this->assertEquals($response->status, UserStatus::ACTIVE);
+        $this->assertEquals($response->username, $dataCreate['username']);
+        $this->assertNotHasAttributeUser($response);
+        $this->assertEquals(true, CacheControlTrait::existLabel($id));
+
+        $dataUpdate = [
             'status' => UserStatus::INACTIVE,
             'username' => 'speedy@com.co',
+            'password' => 'NewTest',
         ];
-        $this->json(HttpMethod::PUT, $this->_route('users', $id), $this->request([], $data), $this->headers());
+        $this->json(HttpMethod::PUT, $this->_route('users', $id), $dataUpdate, $this->headers());
+        $this->seeJsonStructure([
+            'id',
+            'status',
+            'username',
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->id, $id);
+        $this->assertEquals($response->status, $dataUpdate['status']);
+        $this->assertEquals($response->username, $dataUpdate['username']);
+        $this->assertNotHasAttributeUser($response);
+        $this->assertEquals(true, CacheControlTrait::existLabel($id));
 
-        $data = [
+        $dataPatch = [
             'status' => UserStatus::SUSPENDED,
         ];
-        $this->json(HttpMethod::PATCH, $this->_route('users', $id), $this->request(['username', 'password'], $data), $this->headers());
+        $this->json(HttpMethod::PATCH, $this->_route('users', $id), $dataPatch, $this->headers());
+        $this->seeJsonStructure([
+            'id',
+            'status',
+            'username',
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->id, $id);
+        $this->assertEquals($response->status, $dataPatch['status']);
+        $this->assertEquals($response->username, $dataUpdate['username']);
+        $this->assertNotHasAttributeUser($response);
+        $this->assertEquals(true, CacheControlTrait::existLabel($id));
 
-        $data = [
+
+        $tagCache = 'e23435cd6273aca6c0459bb27c6876458bb4cf6a69e754cb4da2159cfdff4db0';
+        $this->assertEquals(false, CacheControlTrait::existTag($tagCache));
+
+        $dataFind = [
             FilterTrait::$FILTER_SMART_NAME => 'peed',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ];
+        $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
+        $response = json_decode($this->response->getContent());
+        $this->assertSearchUser($response);
+        $this->assertEquals(true, CacheControlTrait::existLabel($id));
+        $this->assertEquals(true, CacheControlTrait::existTag($tagCache));
 
-        $this->json(HttpMethod::GET, $this->_route('users'), $data, $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users'), $data, $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users'), $data, $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users'), $data, $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users'), $data, $this->headers());
+        $user = $response[0];
+        $this->assertEquals($user->id, $id);
+        $this->assertEquals($user->status, $dataPatch['status']);
+        $this->assertEquals($user->username, $dataUpdate['username']);
+
+        $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
+
 
         $this->json(HttpMethod::DELETE, $this->_route('users', $id), $this->request(), $this->headers());
+        $this->seeJsonStructure([
+            'id',
+            'status',
+            'username',
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->id, $id);
+        $this->assertNotHasAttributeUser($response);
+        $this->assertEquals(false, CacheControlTrait::existLabel($id));
+        $this->assertEquals(false, CacheControlTrait::existTag($tagCache));
     }
 
-    public function testUserManagerCache02()
+    public function testUserManagerCacheDisable()
     {
         User::disableCache();
-        $this->json(HttpMethod::POST, $this->_route('users'), $this->request(), $this->headers());
+        CacheControlTrait::setTag(User::class);
+
+        $dataCreate = $this->request();
+        $this->json(HttpMethod::POST, $this->_route('users'), $dataCreate, $this->headers());
+        $this->seeJsonStructure([
+            'id',
+            'status',
+            'username',
+        ]);
         $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->status, UserStatus::ACTIVE);
+        $this->assertEquals($response->username, $dataCreate['username']);
+        $this->assertNotHasAttributeUser($response);
+
         $id = $response->id;
 
-        $this->json(HttpMethod::GET, $this->_route('users', $id), $this->request(), $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users', $id), $this->request(), $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users', $id), $this->request(), $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users', $id), $this->request(), $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users', $id), $this->request(), $this->headers());
+        $this->assertEquals(false, CacheControlTrait::existLabel($id));
 
-        $data = [
+        $this->json(HttpMethod::GET, $this->_route('users', $id), [], $this->headers());
+        $this->seeJsonStructure([
+            'id',
+            'status',
+            'username',
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->id, $id);
+        $this->assertEquals($response->status, UserStatus::ACTIVE);
+        $this->assertEquals($response->username, $dataCreate['username']);
+        $this->assertNotHasAttributeUser($response);
+        $this->assertEquals(false, CacheControlTrait::existLabel($id));
+
+        $dataUpdate = [
             'status' => UserStatus::INACTIVE,
             'username' => 'speedy@com.co',
+            'password' => 'NewTest',
         ];
-        $this->json(HttpMethod::PUT, $this->_route('users', $id), $this->request([], $data), $this->headers());
+        $this->json(HttpMethod::PUT, $this->_route('users', $id), $dataUpdate, $this->headers());
+        $this->seeJsonStructure([
+            'id',
+            'status',
+            'username',
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->id, $id);
+        $this->assertEquals($response->status, $dataUpdate['status']);
+        $this->assertEquals($response->username, $dataUpdate['username']);
+        $this->assertNotHasAttributeUser($response);
+        $this->assertEquals(false, CacheControlTrait::existLabel($id));
 
-        $data = [
+        $dataPatch = [
             'status' => UserStatus::SUSPENDED,
         ];
-        $this->json(HttpMethod::PATCH, $this->_route('users', $id), $this->request(['username', 'password'], $data), $this->headers());
+        $this->json(HttpMethod::PATCH, $this->_route('users', $id), $dataPatch, $this->headers());
+        $this->seeJsonStructure([
+            'id',
+            'status',
+            'username',
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->id, $id);
+        $this->assertEquals($response->status, $dataPatch['status']);
+        $this->assertEquals($response->username, $dataUpdate['username']);
+        $this->assertNotHasAttributeUser($response);
+        $this->assertEquals(false, CacheControlTrait::existLabel($id));
 
-        $data = [
+
+        $tagCache = 'e23435cd6273aca6c0459bb27c6876458bb4cf6a69e754cb4da2159cfdff4db0';
+        $this->assertEquals(false, CacheControlTrait::existTag($tagCache));
+
+        $dataFind = [
             FilterTrait::$FILTER_SMART_NAME => 'peed',
-            UserEntity::KEY_API_TOKEN => $this->apiToken()
         ];
+        $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
+        $response = json_decode($this->response->getContent());
+        $this->assertSearchUser($response);
+        $this->assertEquals(false, CacheControlTrait::existLabel($id));
+        $this->assertEquals(false, CacheControlTrait::existTag($tagCache));
 
-        User::enableCache();
-        $this->json(HttpMethod::GET, $this->_route('users'), $data, $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users'), $data, $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users'), $data, $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users'), $data, $this->headers());
-        $this->json(HttpMethod::GET, $this->_route('users'), $data, $this->headers());
+        $user = $response[0];
+        $this->assertEquals($user->id, $id);
+        $this->assertEquals($user->status, $dataPatch['status']);
+        $this->assertEquals($user->username, $dataUpdate['username']);
+
+        $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users'), $dataFind, $this->headers());
+
 
         $this->json(HttpMethod::DELETE, $this->_route('users', $id), $this->request(), $this->headers());
+        $this->seeJsonStructure([
+            'id',
+            'status',
+            'username',
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->id, $id);
+        $this->assertNotHasAttributeUser($response);
+        $this->assertEquals(false, CacheControlTrait::existLabel($id));
+        $this->assertEquals(false, CacheControlTrait::existTag($tagCache));
     }
 }

@@ -74,14 +74,15 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
         return [
             'username' => 'freddie@gar.com',
             'password' => 'Admin1234/',
-            UserEntity::KEY_API_TOKEN => $this->apiToken(),
         ];
     }
 
     public function headers()
     {
         // Request by default use json, header not required now
-        return [];
+        return [
+            UserEntity::KEY_API_TOKEN_HEADER => $this->apiToken(),
+        ];
     }
 
     public function applyKeys(array $request = [], array $excludeKeys = [], array $includeKeys = [])

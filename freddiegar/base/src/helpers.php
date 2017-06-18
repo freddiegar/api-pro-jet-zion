@@ -105,11 +105,12 @@ if (!function_exists('ff')) {
     function ff(...$attributes)
     {
         if (isDevelopment()) {
-            $log = "\n\n" . ((env('APP_DEBUG_TRACE')) ? customizeTrace((new Exception())->getTrace(), 1)[0] : '');
+            $log = '';
             foreach ($attributes as $i => $attribute) {
-                $log .= "\n" . print_r($attribute, true) . "\n";
+                $log .= print_r($attribute, true);
             }
-            Illuminate\Support\Facades\Log::info(ltrim($log));
+            $log .= "\n" . ((env('APP_DEBUG_TRACE')) ? customizeTrace((new Exception())->getTrace(), 1)[0] : '');
+            Illuminate\Support\Facades\Log::info($log . "\n");
         }
 
         return $attributes[0];
@@ -231,6 +232,6 @@ if (!function_exists('makeTagNameCache')) {
      */
     function makeTagNameCache(array $filters)
     {
-        return shaN(json_encode($filters));
+        return shaN(json_encode($filters, 0));
     }
 }
