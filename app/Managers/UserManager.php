@@ -60,15 +60,9 @@ class UserManager extends ManagerContract implements CRUDSInterface
      */
     public function read($id)
     {
-        if (User::hasEnableCache()) {
-            if (User::hasInCacheId($id)) {
-                $user = User::getCacheById($id);
-            } else {
-                $user = User::setCacheById($id, $this->userRepository()->findById($id));
-            }
-        } else {
-            $user = $this->userRepository()->findById($id);
-        }
+        $user = User::getFromCacheId($id, function () use ($id) {
+            return $this->userRepository()->findById($id);
+        });
 
         return UserEntity::load($user)->toArray();
     }
@@ -107,15 +101,9 @@ class UserManager extends ManagerContract implements CRUDSInterface
     {
         $tag = makeTagNameCache($this->filterToApply());
 
-        if (User::hasEnableCache()) {
-            if (User::hasInCacheTag($tag)) {
-                $users = User::getCacheByTag($tag);
-            } else {
-                $users = User::setCacheByTag($tag, $this->userRepository()->findWhere($this->filterToApply()));
-            }
-        } else {
-            $users = $this->userRepository()->findWhere($this->filterToApply());
-        }
+        $users = User::getFromCacheTag($tag, function () {
+            return $this->userRepository()->findWhere($this->filterToApply());
+        });
 
         return UserEntity::toArrayMultiple($users);
     }

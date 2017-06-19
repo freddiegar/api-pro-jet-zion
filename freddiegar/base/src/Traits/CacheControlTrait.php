@@ -2,6 +2,7 @@
 
 namespace FreddieGar\Base\Traits;
 
+use Closure;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -24,7 +25,7 @@ trait CacheControlTrait
      * @param int $id
      * @return string
      */
-    final static public function label($id)
+    final static private function label($id)
     {
         return sprintf('%s:%d', static::tag(), $id);
     }
@@ -32,7 +33,7 @@ trait CacheControlTrait
     /**
      * @return string
      */
-    final static public function tag()
+    final static private function tag()
     {
         return static::$TAG ?: get_called_class();
     }
@@ -64,26 +65,22 @@ trait CacheControlTrait
     }
 
     /**
-     * @param $id
-     * @param $value
-     * @return mixed
+     * @param int $id
+     * @param mixed $value
      */
     final static public function setCacheById($id, $value)
     {
         Cache::forever(self::label($id), $value);
-        return static::getCacheById($id);
     }
 
     /**
      * @param $tag
      * @param $value
-     * @return mixed
      */
-    final static public function setCacheByTag($tag, $value)
-    {
-        Cache::tags(self::tag())->forever($tag, $value);
-        return static::getCacheByTag($tag);
-    }
+//    final static public function setCacheByTag($tag, $value)
+//    {
+//        Cache::tags(self::tag())->forever($tag, $value);
+//    }
 
     /**
      * @param $id
@@ -101,6 +98,44 @@ trait CacheControlTrait
     final static public function getCacheByTag($tag)
     {
         return Cache::tags(self::tag())->get($tag);
+    }
+
+    /**
+     * @param int $id
+     * @param Closure $value
+     * @return mixed
+     */
+    final static public function getFromCacheId($id, Closure $value)
+    {
+        if (static::hasEnableCache()) {
+            if (static::hasInCacheId($id)) {
+                $cache = static::getCacheById($id);
+            } else {
+                $cache = Cache::rememberForever(self::label($id), $value);
+            }
+        } else {
+            $cache = $value();
+        }
+        return $cache;
+    }
+
+    /**
+     * @param string $tag
+     * @param Closure $value
+     * @return mixed
+     */
+    final static public function getFromCacheTag($tag, Closure $value)
+    {
+        if (static::hasEnableCache()) {
+            if (static::hasInCacheTag($tag)) {
+                $cache = static::getCacheByTag($tag);
+            } else {
+                $cache = Cache::tags(self::tag())->rememberForever($tag, $value);
+            }
+        } else {
+            $cache = $value();
+        }
+        return $cache;
     }
 
     /**
@@ -140,7 +175,7 @@ trait CacheControlTrait
     /**
      * @return bool
      */
-    final static protected function hasEnableCache()
+    final static private function hasEnableCache()
     {
         return static::$ENABLED_CACHE === true;
     }
