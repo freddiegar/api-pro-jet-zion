@@ -2,7 +2,9 @@
 
 namespace FreddieGar\Base\Traits;
 
+use FreddieGar\Base\Constants\Event;
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -22,25 +24,50 @@ trait CacheControlTrait
     static private $TAG = null;
 
     /**
-     * @param int $id
-     * @return string
+     * The "booting" method of the model.
+     * @return void
      */
-    final static private function label($id)
+    static protected function bootCacheControlTrait()
+    {
+        if (static::hasEnableCache()) {
+            static::{Event::CREATED}(function (Model $model) {
+                /** @noinspection PhpUndefinedFieldInspection */
+                static::setCacheById($model->id, $model->toArray());
+                static::unsetByTag();
+            });
+
+            static::{Event::UPDATED}(function (Model $model) {
+                /** @noinspection PhpUndefinedFieldInspection */
+                static::setCacheById($model->id, $model->toArray());
+                static::unsetByTag();
+            });
+        }
+
+        static::{Event::DELETED}(function (Model $model) {
+            /** @noinspection PhpUndefinedFieldInspection */
+            static::unsetByLabel($model->id);
+            static::unsetByTag();
+        });
+    }
+
+    /**
+     * @inheritdoc
+     */
+    final static public function label($id)
     {
         return sprintf('%s:%d', static::tag(), $id);
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    final static private function tag()
+    final static public function tag()
     {
         return static::$TAG ?: get_called_class();
     }
 
     /**
-     * @param $id
-     * @return bool
+     * @inheritdoc
      */
     static public function hasInCacheId($id)
     {
@@ -48,8 +75,7 @@ trait CacheControlTrait
     }
 
     /**
-     * @param $tag
-     * @return bool
+     * @inheritdoc
      */
     static public function hasInCacheTag($tag)
     {
@@ -57,7 +83,7 @@ trait CacheControlTrait
     }
 
     /**
-     * @param $tag
+     * @inheritdoc
      */
     final static public function setTag($tag)
     {
@@ -65,8 +91,7 @@ trait CacheControlTrait
     }
 
     /**
-     * @param int $id
-     * @param mixed $value
+     * @inheritdoc
      */
     final static public function setCacheById($id, $value)
     {
@@ -74,8 +99,7 @@ trait CacheControlTrait
     }
 
     /**
-     * @param $tag
-     * @param $value
+     * @inheritdoc
      */
 //    final static public function setCacheByTag($tag, $value)
 //    {
@@ -83,8 +107,7 @@ trait CacheControlTrait
 //    }
 
     /**
-     * @param $id
-     * @return mixed
+     * @inheritdoc
      */
     final static public function getCacheById($id)
     {
@@ -92,8 +115,7 @@ trait CacheControlTrait
     }
 
     /**
-     * @param $tag
-     * @return mixed
+     * @inheritdoc
      */
     final static public function getCacheByTag($tag)
     {
@@ -101,9 +123,7 @@ trait CacheControlTrait
     }
 
     /**
-     * @param int $id
-     * @param Closure $value
-     * @return mixed
+     * @inheritdoc
      */
     final static public function getFromCacheId($id, Closure $value)
     {
@@ -120,9 +140,7 @@ trait CacheControlTrait
     }
 
     /**
-     * @param string $tag
-     * @param Closure $value
-     * @return mixed
+     * @inheritdoc
      */
     final static public function getFromCacheTag($tag, Closure $value)
     {
@@ -139,7 +157,7 @@ trait CacheControlTrait
     }
 
     /**
-     * @param $id
+     * @inheritdoc
      */
     final static public function unsetByLabel($id)
     {
@@ -147,7 +165,7 @@ trait CacheControlTrait
     }
 
     /**
-     * Eraser cacge by tag
+     * @inheritdoc
      */
     final static public function unsetByTag()
     {
@@ -155,7 +173,7 @@ trait CacheControlTrait
     }
 
     /**
-     * Enable cache
+     * @inheritdoc
      */
     final static public function enableCache()
     {
@@ -164,7 +182,7 @@ trait CacheControlTrait
     }
 
     /**
-     * Enable cache
+     * @inheritdoc
      */
     final static public function disableCache()
     {
@@ -173,15 +191,15 @@ trait CacheControlTrait
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
-    final static private function hasEnableCache()
+    final static public function hasEnableCache()
     {
         return static::$ENABLED_CACHE === true;
     }
 
     /**
-     *
+     * Reboot
      */
     final static private function rebootCacheControlTrait()
     {

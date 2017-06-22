@@ -4,6 +4,7 @@ namespace FreddieGar\Base\Traits;
 
 use FreddieGar\Base\Constants\BlameColumn;
 use FreddieGar\Base\Constants\Event;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\UnauthorizedException;
 
@@ -38,6 +39,42 @@ trait BlameControlTrait
      * @var string
      */
     static private $CURRENT_USER_AUTHENTICATED = null;
+
+    /**
+     * The "booting" method of the model.
+     * @return void
+     */
+    static protected function bootBlameControlTrait()
+    {
+        foreach (static::blameEvents() as $event) {
+            if ($event === Event::SAVED) {
+                static::{$event}(function () {
+                    // When model is saving, it enable blame columns for next process
+                    static::enableBlame();
+                });
+                continue;
+            }
+
+            if ($columns = static::blameColumnsByEvent($event)) {
+                static::{$event}(function (Model $model) use ($columns, $event) {
+                    foreach ($columns as $column) {
+                        $model->{$column} = static::getCurrentUserAuthenticated($event, class_basename($model));
+                    }
+                    return true;
+                });
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    static public function rebootBlameControlTrait()
+    {
+        // Unregister and reload previuous events setup
+        static::flushEventListeners();
+        static::clearBootedModels();
+    }
 
     /**
      * @return array
@@ -91,27 +128,30 @@ trait BlameControlTrait
      * Enable save created by column
      * @return void
      */
-    final static private function enableCreatedBy()
+    final static public function enableCreatedBy()
     {
         static::$CREATED_BY = BlameColumn::CREATED_BY;
+        static::rebootBlameControlTrait();
     }
 
     /**
      * Enable update updated by column
      * @return void
      */
-    final static private function enableUpdatedBy()
+    final static public function enableUpdatedBy()
     {
         static::$UPDATED_BY = BlameColumn::UPDATED_BY;
+        static::rebootBlameControlTrait();
     }
 
     /**
      * Enable update deleted by column
      * @return void
      */
-    final static private function enableDeletedBy()
+    final static public function enableDeletedBy()
     {
         static::$DELETED_BY = BlameColumn::DELETED_BY;
+        static::rebootBlameControlTrait();
     }
 
     /**
@@ -132,6 +172,7 @@ trait BlameControlTrait
     final static public function disableCreatedBy()
     {
         static::$CREATED_BY = null;
+        static::rebootBlameControlTrait();
     }
 
     /**
@@ -141,6 +182,7 @@ trait BlameControlTrait
     final static public function disableUpdatedBy()
     {
         static::$UPDATED_BY = null;
+        static::rebootBlameControlTrait();
     }
 
     /**
@@ -150,6 +192,7 @@ trait BlameControlTrait
     final static public function disableDeletedBy()
     {
         static::$DELETED_BY = null;
+        static::rebootBlameControlTrait();
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Eloquent;
+namespace FreddieGar\Base\Repositories\Eloquent;
 
 use FreddieGar\Base\Contracts\Interfaces\FilterBuilderInterface;
 

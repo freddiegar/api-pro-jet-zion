@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use FreddieGar\Base\Constants\BlameColumn;
+use FreddieGar\Base\Contracts\Interfaces\BlameControlInterface;
+use FreddieGar\Base\Contracts\Interfaces\CacheControlInterface;
 use FreddieGar\Base\Traits\BlameControlTrait;
 use FreddieGar\Base\Traits\BlameEventTrait;
 use FreddieGar\Base\Traits\CacheControlTrait;
@@ -26,15 +28,13 @@ use Laravel\Lumen\Auth\Authorizable;
  *
  * @package App\Models
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract
+class User extends Model implements AuthenticatableContract, AuthorizableContract, BlameControlInterface, CacheControlInterface
 {
     use Authenticatable;
     use Authorizable;
     use SoftDeletes;
     use BlameControlTrait;
-    use BlameEventTrait;
     use CacheControlTrait;
-    use CacheEventTrait;
 
     protected $fillable = [
         'status',
@@ -54,8 +54,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected $dates = [
         'last_login_at',
-        'created_at',
-        'updated_at',
-        'deleted_at',
+        BlameColumn::CREATED_AT,
+        BlameColumn::UPDATED_AT,
+        BlameColumn::DELETED_AT,
     ];
 }

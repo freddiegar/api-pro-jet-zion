@@ -2,6 +2,8 @@
 
 namespace FreddieGar\Base\Contracts\Interfaces;
 
+use Closure;
+
 /**
  * Interface CacheControlInterface
  * @package FreddieGar\Base\Constants\Interfaces
@@ -20,39 +22,59 @@ interface CacheControlInterface
     static public function tag();
 
     /**
+     * @param $id
+     * @return bool
+     */
+    static public function hasInCacheId($id);
+
+    /**
+     * @param $tag
+     * @return bool
+     */
+    static public function hasInCacheTag($tag);
+
+    /**
      * @param $tag
      */
     static public function setTag($tag);
 
     /**
-     * @param $id
-     * @param $value
+     * @param int $id
+     * @param mixed $value
      */
-    static public function setByLabel($id, $value);
+    static public function setCacheById($id, $value);
 
     /**
-     * @param $name
+     * @param $tag
      * @param $value
      */
-    static public function setByTag($name, $value);
-
-    /**
-     * @param $id
-     * @return bool
-     */
-    static public function existLabel($id);
+//    final static public function setCacheByTag($tag, $value);
 
     /**
      * @param $id
      * @return mixed
      */
-    static public function getByLabel($id);
+    static public function getCacheById($id);
 
     /**
-     * @param $name
+     * @param $tag
      * @return mixed
      */
-    static public function getByTag($name);
+    static public function getCacheByTag($tag);
+
+    /**
+     * @param int $id
+     * @param Closure $value
+     * @return mixed
+     */
+    static public function getFromCacheId($id, Closure $value);
+
+    /**
+     * @param string $tag
+     * @param Closure $value
+     * @return mixed
+     */
+    static public function getFromCacheTag($tag, Closure $value);
 
     /**
      * @param $id
@@ -73,4 +95,9 @@ interface CacheControlInterface
      * Enable cache
      */
     static public function disableCache();
+
+    /**
+     * @return bool
+     */
+    static public function hasEnableCache();
 }

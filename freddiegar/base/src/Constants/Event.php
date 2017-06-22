@@ -8,6 +8,7 @@ namespace FreddieGar\Base\Constants;
  */
 interface Event
 {
+    const BOOTING = 'booting';
     const SAVING = 'saving';
     const CREATING = 'creating';
     const CREATED = 'created';
@@ -18,4 +19,5 @@ interface Event
     const RESTORING = 'restoring';
     const RESTORED = 'restored';
     const SAVED = 'saved';
+    const BOOTED = 'booted';
 }

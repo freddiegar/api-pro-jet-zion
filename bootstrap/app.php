@@ -23,7 +23,9 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__ . '/../')
 );
 
-$app->withFacades();
+$app->withFacades(true, [
+    'FreddieGar\Rbac\Providers\RbacServiceProvider' => 'Rbac',
+]);
 
 $app->withEloquent();
 
@@ -55,7 +57,7 @@ $app->singleton(
 |
 | Next, we will register the middleware with the application. These can
 | be global middleware that run before and after each request into a
-| route or middleware that'll be assigned to some specific routes.
+| route or middleware that'll be assigned to some specific config.
 |
 */
 
@@ -82,13 +84,14 @@ $app->routeMiddleware([
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 //$app->register(App\Providers\EventServiceProvider::class);
+$app->register(FreddieGar\Rbac\Providers\RbacServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
 |--------------------------------------------------------------------------
 |
-| Next we will include the routes file so that they can all be added to
+| Next we will include the config file so that they can all be added to
 | the application. This will provide all of the URLs the application
 | can respond to, as well as the controllers that may handle them.
 |

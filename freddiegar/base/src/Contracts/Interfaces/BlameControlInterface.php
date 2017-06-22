@@ -9,12 +9,6 @@ namespace FreddieGar\Base\Contracts\Interfaces;
 interface BlameControlInterface
 {
     /**
-     * Model used in blame
-     * @return mixed
-     */
-    static public function model();
-
-    /**
      * Enable blame to all columns
      * @return void
      */

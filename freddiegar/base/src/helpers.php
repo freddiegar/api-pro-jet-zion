@@ -107,7 +107,7 @@ if (!function_exists('ff')) {
         if (isDevelopment()) {
             $log = '';
             foreach ($attributes as $i => $attribute) {
-                $log .= print_r($attribute, true);
+                $log .= print_r($attribute, true) . ' ';
             }
             $log .= "\n" . ((env('APP_DEBUG_TRACE')) ? customizeTrace((new Exception())->getTrace(), 1)[0] : '');
             Illuminate\Support\Facades\Log::info($log . "\n");
