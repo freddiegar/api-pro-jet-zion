@@ -49,7 +49,7 @@ class EloquentUserRoleRepository extends EloquentFilterBuilder implements UserRo
      */
     static public function roles($user_id)
     {
-        return UserRole::where(compact('user_id'))->toArray();
+        return UserRole::where(compact('user_id'))->get()->toArray();
     }
 
     /**
@@ -57,6 +57,6 @@ class EloquentUserRoleRepository extends EloquentFilterBuilder implements UserRo
      */
     static public function users($role_id)
     {
-        return UserRole::where(compact('role_id'))->toArray();
+        return UserRole::where(compact('role_id'))->get()->toArray();
     }
 }

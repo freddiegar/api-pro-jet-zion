@@ -19,4 +19,20 @@ class EloquentPermissionRepository extends EloquentFilterBuilder implements Perm
     {
         return Permission::findOrFail($id)->attributesToArray();
     }
+
+    /**
+     * @inheritdoc
+     */
+    static public function findBySlug($slug)
+    {
+        return Permission::where(compact('slug'))->firstOrFail()->toArray();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    static public function getSlugById($id)
+    {
+        return Permission::whereIn('id', $id)->get(['slug'])->toArray();
+    }
 }

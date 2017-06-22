@@ -4,7 +4,7 @@ namespace FreddieGar\Rbac\Repositories\Eloquent;
 
 use FreddieGar\Base\Repositories\Eloquent\EloquentFilterBuilder;
 use FreddieGar\Rbac\Contracts\Repositories\RolePermissionRepository;
-use FreddieGar\Rbac\Models\Role;
+use FreddieGar\Rbac\Models\RolePermission;
 
 /**
  * Class EloquentRolePermissionRepository
@@ -17,7 +17,7 @@ class EloquentRolePermissionRepository extends EloquentFilterBuilder implements 
      */
     static public function create($role_permission)
     {
-        return Role::create($role_permission)->attributesToArray();
+        return RolePermission::create($role_permission)->attributesToArray();
     }
 
     /**
@@ -25,7 +25,7 @@ class EloquentRolePermissionRepository extends EloquentFilterBuilder implements 
      */
     static public function findById($id)
     {
-        return Role::findOrFail($id)->attributesToArray();
+        return RolePermission::findOrFail($id)->attributesToArray();
     }
 
     /**
@@ -33,7 +33,7 @@ class EloquentRolePermissionRepository extends EloquentFilterBuilder implements 
      */
     static public function updateById($id, $role_permission)
     {
-        return Role::findOrFail($id)->update($role_permission);
+        return RolePermission::findOrFail($id)->update($role_permission);
     }
 
     /**
@@ -41,6 +41,14 @@ class EloquentRolePermissionRepository extends EloquentFilterBuilder implements 
      */
     static public function deleteById($id)
     {
-        return Role::findOrFail($id)->delete();
+        return RolePermission::findOrFail($id)->delete();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    static public function findByRole($role_id)
+    {
+        return RolePermission::where(compact('role_id'))->get()->toArray();
     }
 }

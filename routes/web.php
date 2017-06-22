@@ -28,9 +28,9 @@ $app->group([
     'prefix' => $prefix,
     'middleware' => 'auth:api|throttle',
 ], function () use ($app) {
-    resource($app, 'roles', 'RolesController');
+    resource($app, 'roles', 'RoleController');
     resource($app, 'permissions', 'PermissionController');
     resource($app, 'role-permissions', 'RolePermissionController');
-    resource($app, 'user-roles', 'UserRolesController');
+    resource($app, 'user-roles', 'UserRoleController');
     resource($app, 'users', 'UserController');
 });
