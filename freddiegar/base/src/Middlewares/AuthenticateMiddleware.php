@@ -1,6 +1,6 @@
 <?php
 
-namespace FreddieGar\Base\Middleware;
+namespace FreddieGar\Base\Middlewares;
 
 use Closure;
 use Illuminate\Contracts\Auth\Factory as Auth;
@@ -9,7 +9,7 @@ use Illuminate\Validation\UnauthorizedException;
 
 /**
  * Class AuthenticateMiddleware
- * @package FreddieGar\Base\Http\Middleware
+ * @package FreddieGar\Base\Http\Middlewares
  */
 class AuthenticateMiddleware
 {

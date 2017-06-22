@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
+use App\Contracts\Repositories\UserRepository;
 use App\Entities\UserEntity;
-use App\Repositories\Eloquent\EloquentUserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
@@ -62,9 +62,7 @@ class AuthServiceProvider extends ServiceProvider
                 }
 
                 if ($apiToken && apiTokenIsValid($apiToken)) {
-                    // TODO: Revise this funcionality, let interface UserRepository, not concrete EloquentUserRepository
-                    /** @noinspection PhpUndefinedMethodInspection */
-                    if ($user = EloquentUserRepository::getByApiToken($apiToken)) {
+                    if ($user = app(UserRepository::class)->getByApiToken($apiToken)) {
                         return $user;
                     }
 
