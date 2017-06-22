@@ -5,13 +5,16 @@ namespace App\Repositories\Eloquent;
 use App\Contracts\Repositories\UserRepository;
 use App\Models\User;
 use FreddieGar\Base\Repositories\Eloquent\EloquentFilterBuilder;
+use FreddieGar\Rbac\Contracts\Commons\PermissionContract;
+use FreddieGar\Rbac\Traits\PermissionTrait;
 
 /**
  * Class EloquentUserRepository
  * @package App\Repositories\Eloquent
  */
-class EloquentUserRepository extends EloquentFilterBuilder implements UserRepository
+class EloquentUserRepository extends EloquentFilterBuilder implements UserRepository, PermissionContract
 {
+    use PermissionTrait;
     /**
      * @inheritdoc
      */

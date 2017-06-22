@@ -52,7 +52,7 @@ $app->singleton(
 
 /*
 |--------------------------------------------------------------------------
-| Register Middleware
+| Register Middlewares
 |--------------------------------------------------------------------------
 |
 | Next, we will register the middleware with the application. These can
@@ -62,12 +62,13 @@ $app->singleton(
 */
 
 $app->middleware([
-    FreddieGar\Base\Middleware\SupportedMediaTypeMiddleware::class,
+    FreddieGar\Base\Middlewares\SupportedMediaTypeMiddleware::class,
 ]);
 
 $app->routeMiddleware([
-    'auth' => FreddieGar\Base\Middleware\AuthenticateMiddleware::class,
-    'throttle' => FreddieGar\Base\Middleware\ThrottleRequestMiddleware::class,
+    'auth' => FreddieGar\Base\Middlewares\AuthenticateMiddleware::class,
+    'throttle' => FreddieGar\Base\Middlewares\ThrottleRequestMiddleware::class,
+    'permission' => FreddieGar\Rbac\Middlewares\VerifyPermissionMiddleware::class,
 ]);
 
 /*

@@ -1,6 +1,5 @@
 <?php
 
-use App\Constants\UserStatus;
 use App\Models\User;
 use FreddieGar\Rbac\Models\Permission;
 use FreddieGar\Rbac\Models\Role;
@@ -36,8 +35,6 @@ class PermissionsSeeder extends Seeder
             'User Role' => 'SCRUD',
         ];
 
-//        $user = new stdClass();
-//        $user->id = 1;
         $user = User::findOrFail($created_by);
 
         foreach ($entities as $entity => $perms) {

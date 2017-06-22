@@ -2,12 +2,7 @@
 
 namespace FreddieGar\Rbac\Providers;
 
-use App\Entities\UserEntity;
-use App\Repositories\Eloquent\EloquentUserRepository;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Validation\UnauthorizedException;
 
 /**
  * Class AuthServiceProvider

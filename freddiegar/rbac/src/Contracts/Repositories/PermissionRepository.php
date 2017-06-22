@@ -13,4 +13,16 @@ interface PermissionRepository
      * @return array
      */
     static public function findById($id);
+
+    /**
+     * @param string $slug
+     * @return array
+     */
+    static public function findBySlug($slug);
+
+    /**
+     * @param array $id
+     * @return array
+     */
+    static public function getSlugById($id);
 }
