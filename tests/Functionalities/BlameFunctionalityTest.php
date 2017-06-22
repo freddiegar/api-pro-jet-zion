@@ -3,7 +3,6 @@
 use App\Entities\UserEntity;
 use App\Managers\UserManager;
 use App\Models\User;
-use App\Repositories\Eloquent\EloquentUserRepository;
 use FreddieGar\Base\Constants\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -36,7 +35,7 @@ class BlameFunctionalityTest extends DBTestCase
 
     private function manager()
     {
-        return new UserManager(new Request($this->request()), new EloquentUserRepository());
+        return new UserManager(new Request($this->request()), new (app('UserRepository')));
     }
 
     private function message($event)
