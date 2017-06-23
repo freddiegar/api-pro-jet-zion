@@ -85,6 +85,7 @@ return [
     'unique'               => 'The :attribute has already been taken.',
     'uploaded'             => 'The :attribute failed to upload.',
     'url'                  => 'The :attribute format is invalid.',
+    'both_not_filled'      => 'The attributtes [:attribute,:another] not can filled at same time.',
 
     /*
     |--------------------------------------------------------------------------
