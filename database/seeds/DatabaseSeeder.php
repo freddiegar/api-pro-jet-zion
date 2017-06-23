@@ -15,5 +15,6 @@ class DatabaseSeeder extends Seeder
         $this->call('PermissionsSeeder');
         // Test fakers
         $this->call('FakerUserSeeder');
+        $this->call('FakerPermissionSeeder');
     }
 }

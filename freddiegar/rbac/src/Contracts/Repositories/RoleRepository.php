@@ -32,4 +32,10 @@ interface RoleRepository
      * @return bool
      */
     static public function deleteById($id);
+
+    /**
+     * @param array $filters
+     * @return array
+     */
+    static public function findWhere($filters);
 }

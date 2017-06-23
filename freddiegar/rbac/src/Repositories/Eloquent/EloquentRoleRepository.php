@@ -43,4 +43,13 @@ class EloquentRoleRepository extends EloquentFilterBuilder implements RoleReposi
     {
         return Role::findOrFail($id)->delete();
     }
+
+    /**
+     * @inheritdoc
+     */
+    static public function findWhere($filters)
+    {
+        $query = self::builder(Role::select(), $filters);
+        return $query->get()->toArray();
+    }
 }

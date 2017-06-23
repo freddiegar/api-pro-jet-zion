@@ -5,13 +5,12 @@ use FreddieGar\Base\Constants\BlameColumn;
 
 class UserEntityTest extends TestCase
 {
-    public function testParser(){
+    public function testUserEntityParser(){
 
         $properties = $this->user();
 
         $user = UserEntity::load($properties);
 
-        $this->assertEquals($properties['id'], $user->id());
         $this->assertEquals($properties['id'], $user->id());
         $this->assertEquals($properties['status'], $user->status());
         $this->assertEquals($properties['username'], $user->username());

@@ -10,6 +10,16 @@ if (!function_exists('isDevelopment')) {
     }
 }
 
+if (!function_exists('isTesting')) {
+    /**
+     * @return bool
+     */
+    function isTesting()
+    {
+        return env('APP_ENV') === 'testing';
+    }
+}
+
 if (!function_exists('hashing')) {
     /**
      * @param $string

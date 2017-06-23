@@ -17,6 +17,15 @@ class UserManagerTest extends DBTestCase
         return $this->applyKeys($this->userToCreate(), $excludeKeys, $includeKeys);
     }
 
+    private function jsonStructure()
+    {
+        return [
+            'id',
+            'status',
+            'username',
+        ];
+    }
+
     private function assertSearchUser($response)
     {
         foreach ($response as $user) {
@@ -125,11 +134,7 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::POST, $this->_route('users'), $this->request(), $this->headers());
         $this->assertResponseStatus(Response::HTTP_CREATED);
-        $this->seeJsonStructure([
-            'id',
-            'status',
-            'username',
-        ]);
+        $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, User::where('username', 'freddie@gar.com')->first()->id);
@@ -142,11 +147,7 @@ class UserManagerTest extends DBTestCase
     {
         $this->json(HttpMethod::GET, $this->_route('users', 1), $this->request(), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $this->seeJsonStructure([
-            'id',
-            'status',
-            'username',
-        ]);
+        $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, 1);
@@ -176,7 +177,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerUpdateEmptyError()
     {
-        $this->json(HttpMethod::PUT, $this->_route('users', 1), $this->request(['username', 'password', 'status']), $this->headers());
+        $this->json(HttpMethod::PUT, $this->_route('users', 1), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->seeJsonStructure([
             'message',
@@ -216,11 +217,7 @@ class UserManagerTest extends DBTestCase
         ];
         $this->json(HttpMethod::PUT, $this->_route('users', 1), $this->request([], $data), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $this->seeJsonStructure([
-            'id',
-            'status',
-            'username',
-        ]);
+        $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, 1);
@@ -612,11 +609,7 @@ class UserManagerTest extends DBTestCase
 
         $dataCreate = $this->request();
         $this->json(HttpMethod::POST, $this->_route('users'), $dataCreate, $this->headers());
-        $this->seeJsonStructure([
-            'id',
-            'status',
-            'username',
-        ]);
+        $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->status, UserStatus::ACTIVE);
@@ -628,11 +621,7 @@ class UserManagerTest extends DBTestCase
         $this->assertEquals(true, User::hasInCacheId($id));
 
         $this->json(HttpMethod::GET, $this->_route('users', $id), [], $this->headers());
-        $this->seeJsonStructure([
-            'id',
-            'status',
-            'username',
-        ]);
+        $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, $id);
@@ -647,11 +636,7 @@ class UserManagerTest extends DBTestCase
             'password' => 'NewTest',
         ];
         $this->json(HttpMethod::PUT, $this->_route('users', $id), $dataUpdate, $this->headers());
-        $this->seeJsonStructure([
-            'id',
-            'status',
-            'username',
-        ]);
+        $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, $id);
@@ -664,11 +649,7 @@ class UserManagerTest extends DBTestCase
             'status' => UserStatus::SUSPENDED,
         ];
         $this->json(HttpMethod::PATCH, $this->_route('users', $id), $dataPatch, $this->headers());
-        $this->seeJsonStructure([
-            'id',
-            'status',
-            'username',
-        ]);
+        $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, $id);
@@ -704,11 +685,7 @@ class UserManagerTest extends DBTestCase
 
 
         $this->json(HttpMethod::DELETE, $this->_route('users', $id), $this->request(), $this->headers());
-        $this->seeJsonStructure([
-            'id',
-            'status',
-            'username',
-        ]);
+        $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, $id);
@@ -724,11 +701,7 @@ class UserManagerTest extends DBTestCase
 
         $dataCreate = $this->request();
         $this->json(HttpMethod::POST, $this->_route('users'), $dataCreate, $this->headers());
-        $this->seeJsonStructure([
-            'id',
-            'status',
-            'username',
-        ]);
+        $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->status, UserStatus::ACTIVE);
@@ -740,11 +713,7 @@ class UserManagerTest extends DBTestCase
         $this->assertEquals(false, User::hasInCacheId($id));
 
         $this->json(HttpMethod::GET, $this->_route('users', $id), [], $this->headers());
-        $this->seeJsonStructure([
-            'id',
-            'status',
-            'username',
-        ]);
+        $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, $id);
@@ -759,11 +728,7 @@ class UserManagerTest extends DBTestCase
             'password' => 'NewTest',
         ];
         $this->json(HttpMethod::PUT, $this->_route('users', $id), $dataUpdate, $this->headers());
-        $this->seeJsonStructure([
-            'id',
-            'status',
-            'username',
-        ]);
+        $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, $id);
@@ -776,11 +741,7 @@ class UserManagerTest extends DBTestCase
             'status' => UserStatus::SUSPENDED,
         ];
         $this->json(HttpMethod::PATCH, $this->_route('users', $id), $dataPatch, $this->headers());
-        $this->seeJsonStructure([
-            'id',
-            'status',
-            'username',
-        ]);
+        $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, $id);
@@ -816,11 +777,7 @@ class UserManagerTest extends DBTestCase
 
 
         $this->json(HttpMethod::DELETE, $this->_route('users', $id), $this->request(), $this->headers());
-        $this->seeJsonStructure([
-            'id',
-            'status',
-            'username',
-        ]);
+        $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->id, $id);
