@@ -145,7 +145,7 @@ class UserManagerTest extends DBTestCase
 
     public function testUserManagerReadOk()
     {
-        $this->json(HttpMethod::GET, $this->_route('users', 1), $this->request(), $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('users', 1), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
@@ -231,7 +231,7 @@ class UserManagerTest extends DBTestCase
         $data = [
             'status' => UserStatus::SUSPENDED,
         ];
-        $this->json(HttpMethod::PATCH, $this->_route('users', 1), $this->request(['username', 'password'], $data), $this->headers());
+        $this->json(HttpMethod::PATCH, $this->_route('users', 1), $data, $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure([
             'id',

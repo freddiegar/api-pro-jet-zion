@@ -41,10 +41,10 @@ abstract class ManagerContract
      * @param string $method
      * @return string
      */
-    final protected function requestIsMethod($method)
-    {
-        return $this->request()->isMethod($method);
-    }
+//    final protected function requestIsMethod($method)
+//    {
+//        return $this->request()->isMethod($method);
+//    }
 
     /**
      * @return string
@@ -137,6 +137,7 @@ abstract class ManagerContract
 
     /**
      * @return array
+     * @codeCoverageIgnore
      */
     protected function rules()
     {

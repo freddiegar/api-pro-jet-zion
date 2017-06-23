@@ -49,7 +49,7 @@ class FakerPermissionSeeder extends Seeder
 
             for ($i = 0; $i < $lenght; ++$i) {
                 $letter = $perms[$i];
-                $slug = strtolower(str_replace(' ', '_', sprintf('%s.%s', $entity, $permissions[$letter])));
+                $slug = strtolower(str_replace(' ', '-', sprintf('%s.%s', $entity, $permissions[$letter])));
                 $description = ucfirst(strtolower(sprintf('%s %s', $permissions[$letter], $entity)));
 
                 Permission::setCurrentUserAuthenticated($created_by);

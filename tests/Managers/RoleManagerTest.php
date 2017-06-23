@@ -112,7 +112,7 @@ class RoleManagerTest extends DBTestCase
 
     public function testRoleManagerReadOk()
     {
-        $this->json(HttpMethod::GET, $this->_route('roles', 1), $this->request(), $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('roles', 1), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
@@ -174,7 +174,7 @@ class RoleManagerTest extends DBTestCase
         $data = [
             'description' => 'Patching role',
         ];
-        $this->json(HttpMethod::PATCH, $this->_route('roles', 1), $this->request([], $data), $this->headers());
+        $this->json(HttpMethod::PATCH, $this->_route('roles', 1), $data, $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());

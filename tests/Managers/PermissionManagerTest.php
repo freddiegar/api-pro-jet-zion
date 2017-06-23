@@ -88,7 +88,6 @@ class PermissionManagerTest extends DBTestCase
             'description' => 'Too long to testttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt seems that is bad idea :D'
         ];
         $this->json(HttpMethod::POST, $this->_route('permissions'), $data, $this->headers());
-        ff($this->response->getContent());
         $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
         $this->seeJsonStructure([
             'message',
@@ -112,7 +111,7 @@ class PermissionManagerTest extends DBTestCase
 
     public function testPermissionManagerReadOk()
     {
-        $this->json(HttpMethod::GET, $this->_route('permissions', 1), $this->request(), $this->headers());
+        $this->json(HttpMethod::GET, $this->_route('permissions', 1), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure($this->jsonStructure());
         $response = json_decode($this->response->getContent());
@@ -169,7 +168,7 @@ class PermissionManagerTest extends DBTestCase
         $data = [
             'description' => 'Patching permission',
         ];
-        $this->json(HttpMethod::PATCH, $this->_route('permissions', 1), $this->request([], $data), $this->headers());
+        $this->json(HttpMethod::PATCH, $this->_route('permissions', 1), $data, $this->headers());
         $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
         $this->seeJsonStructure([
             'message',
