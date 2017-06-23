@@ -21,6 +21,12 @@ interface PermissionRepository
     static public function findBySlug($slug);
 
     /**
+     * @param array $filters
+     * @return array
+     */
+    static public function findWhere($filters);
+
+    /**
      * @param array $id
      * @return array
      */

@@ -25,22 +25,22 @@ class RoleManagerTest extends DBTestCase
 
     private function assertSearchRole($response)
     {
-        foreach ($response as $role) {
-            $this->assertInstanceOf(\stdClass::class, $role);
-            $this->assertObjectHasAttribute('id', $role);
-            $this->assertObjectHasAttribute('description', $role);
-            $this->assertNotHasAttributeRole($role);
+        foreach ($response as $entity) {
+            $this->assertInstanceOf(\stdClass::class, $entity);
+            $this->assertObjectHasAttribute('id', $entity);
+            $this->assertObjectHasAttribute('description', $entity);
+            $this->assertNotHasAttributeRole($entity);
         }
     }
 
-    private function assertNotHasAttributeRole($role)
+    private function assertNotHasAttributeRole($entity)
     {
-        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $role);
-        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $role);
-        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $role);
-        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $role);
-        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $role);
-        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $role);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $entity);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $entity);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $entity);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $entity);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $entity);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $entity);
     }
 
     public function testRoleManagerCreateError()

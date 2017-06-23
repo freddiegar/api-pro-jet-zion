@@ -47,6 +47,15 @@ class EloquentRolePermissionRepository extends EloquentFilterBuilder implements 
     /**
      * @inheritdoc
      */
+    static public function findWhere($filters)
+    {
+        $query = self::builder(RolePermission::select(), $filters);
+        return $query->get()->toArray();
+    }
+
+    /**
+     * @inheritdoc
+     */
     static public function findByRole($role_id)
     {
         return RolePermission::where(compact('role_id'))->get()->toArray();

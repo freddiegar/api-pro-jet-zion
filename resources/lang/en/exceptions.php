@@ -3,7 +3,7 @@
 return [
     'credentials' => 'Credentials invalid.',
     'validation' => 'The given data failed to pass validation.',
-    'not_found' => 'Location not valid.',
+    'not_found' => 'Sorry, this resource was not found.',
     'method_not_allowed' => 'Method not is allowed.',
     'model_not_found' => ':model not found.',
     'unsopported_media_type' => 'Media type must be: :media_type.',

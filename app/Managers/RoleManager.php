@@ -44,9 +44,9 @@ class RoleManager extends ManagerContract implements CRUDSInterface
      */
     public function create()
     {
-        $roleEntity = new RoleEntity();
-        $roleEntity->description($this->requestInput('description'));
-        return $roleEntity->merge($this->roleRepository()->create($roleEntity->toArray(true)))->toArray();
+        $role = new RoleEntity();
+        $role->description($this->requestInput('description'));
+        return $role->merge($this->roleRepository()->create($role->toArray(true)))->toArray();
     }
 
     /**
@@ -55,11 +55,11 @@ class RoleManager extends ManagerContract implements CRUDSInterface
      */
     public function read($id)
     {
-        $user = Role::getFromCacheId($id, function () use ($id) {
+        $role = Role::getFromCacheId($id, function () use ($id) {
             return $this->roleRepository()->findById($id);
         });
 
-        return RoleEntity::load($user)->toArray();
+        return RoleEntity::load($role)->toArray();
     }
 
     /**
@@ -68,8 +68,8 @@ class RoleManager extends ManagerContract implements CRUDSInterface
      */
     public function update($id)
     {
-        $userEntity = RoleEntity::load($this->requestInput());
-        $this->roleRepository()->updateById($id, $userEntity->toArray(true));
+        $role = RoleEntity::load($this->requestInput());
+        $this->roleRepository()->updateById($id, $role->toArray(true));
         return $this->read($id);
     }
 
@@ -79,9 +79,9 @@ class RoleManager extends ManagerContract implements CRUDSInterface
      */
     public function delete($id)
     {
-        $user = $this->read($id);
+        $role = $this->read($id);
         $this->roleRepository()->deleteById($id);
-        return $user;
+        return $role;
     }
 
     /**
@@ -91,11 +91,11 @@ class RoleManager extends ManagerContract implements CRUDSInterface
     {
         $tag = makeTagNameCache($this->filterToApply());
 
-        $users = Role::getFromCacheTag($tag, function () {
+        $roles = Role::getFromCacheTag($tag, function () {
             return $this->roleRepository()->findWhere($this->filterToApply());
         });
 
-        return RoleEntity::toArrayMultiple($users);
+        return RoleEntity::toArrayMultiple($roles);
     }
 
     /**

@@ -17,15 +17,15 @@ class RoleEntityTest extends TestCase
 
         $properties = $this->role();
 
-        $role = RoleEntity::load($properties);
+        $entity = RoleEntity::load($properties);
 
-        $this->assertEquals($properties['id'], $role->id());
-        $this->assertEquals($properties['description'], $role->description());
-        $this->assertEquals($properties[BlameColumn::CREATED_BY], $role->createdBy());
-        $this->assertEquals($properties[BlameColumn::UPDATED_BY], $role->updatedBy());
-        $this->assertEquals($properties[BlameColumn::DELETED_BY], $role->deletedBy());
-        $this->assertEquals($properties[BlameColumn::CREATED_AT], $role->createdAt());
-        $this->assertEquals($properties[BlameColumn::UPDATED_AT], $role->updatedAt());
-        $this->assertEquals($properties[BlameColumn::DELETED_AT], $role->deletedAt());
+        $this->assertEquals($properties['id'], $entity->id());
+        $this->assertEquals($properties['description'], $entity->description());
+        $this->assertEquals($properties[BlameColumn::CREATED_BY], $entity->createdBy());
+        $this->assertEquals($properties[BlameColumn::UPDATED_BY], $entity->updatedBy());
+        $this->assertEquals($properties[BlameColumn::DELETED_BY], $entity->deletedBy());
+        $this->assertEquals($properties[BlameColumn::CREATED_AT], $entity->createdAt());
+        $this->assertEquals($properties[BlameColumn::UPDATED_AT], $entity->updatedAt());
+        $this->assertEquals($properties[BlameColumn::DELETED_AT], $entity->deletedAt());
     }
 }

@@ -28,26 +28,26 @@ class UserManagerTest extends DBTestCase
 
     private function assertSearchUser($response)
     {
-        foreach ($response as $user) {
-            $this->assertInstanceOf(\stdClass::class, $user);
-            $this->assertObjectHasAttribute('id', $user);
-            $this->assertObjectHasAttribute('username', $user);
-            $this->assertObjectHasAttribute('status', $user);
-            $this->assertNotHasAttributeUser($user);
+        foreach ($response as $entity) {
+            $this->assertInstanceOf(\stdClass::class, $entity);
+            $this->assertObjectHasAttribute('id', $entity);
+            $this->assertObjectHasAttribute('username', $entity);
+            $this->assertObjectHasAttribute('status', $entity);
+            $this->assertNotHasAttributeUser($entity);
         }
     }
 
-    private function assertNotHasAttributeUser($user)
+    private function assertNotHasAttributeUser($entity)
     {
-        $this->assertObjectNotHasAttribute('password', $user);
-        $this->assertObjectNotHasAttribute('api_token', $user);
-        $this->assertObjectNotHasAttribute('type', $user);
-        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $user);
-        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $user);
-        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $user);
-        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $user);
-        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $user);
-        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $user);
+        $this->assertObjectNotHasAttribute('password', $entity);
+        $this->assertObjectNotHasAttribute('api_token', $entity);
+        $this->assertObjectNotHasAttribute('type', $entity);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $entity);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $entity);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $entity);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $entity);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $entity);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $entity);
     }
 
     public function testUserManagerCreateError()
@@ -658,7 +658,6 @@ class UserManagerTest extends DBTestCase
         $this->assertNotHasAttributeUser($response);
         $this->assertEquals(true, User::hasInCacheId($id));
 
-
         $tagCache = 'e23435cd6273aca6c0459bb27c6876458bb4cf6a69e754cb4da2159cfdff4db0';
         $this->assertEquals(false, User::hasInCacheTag($tagCache));
 
@@ -749,7 +748,6 @@ class UserManagerTest extends DBTestCase
         $this->assertEquals($response->username, $dataUpdate['username']);
         $this->assertNotHasAttributeUser($response);
         $this->assertEquals(false, User::hasInCacheId($id));
-
 
         $tagCache = 'e23435cd6273aca6c0459bb27c6876458bb4cf6a69e754cb4da2159cfdff4db0';
         $this->assertEquals(false, User::hasInCacheTag($tagCache));

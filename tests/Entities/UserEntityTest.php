@@ -9,21 +9,21 @@ class UserEntityTest extends TestCase
 
         $properties = $this->user();
 
-        $user = UserEntity::load($properties);
+        $entity = UserEntity::load($properties);
 
-        $this->assertEquals($properties['id'], $user->id());
-        $this->assertEquals($properties['status'], $user->status());
-        $this->assertEquals($properties['username'], $user->username());
-        $this->assertEquals($properties['password'], $user->password());
-        $this->assertEquals($properties['type'], $user->type());
-        $this->assertEquals(base64_encode($properties['api_token']), $user->apiToken());
-        $this->assertEquals($properties['last_login_at'], $user->lastLoginAt());
-        $this->assertEquals($properties['last_ip_address'], $user->lastIpAddress());
-        $this->assertEquals($properties[BlameColumn::CREATED_BY], $user->createdBy());
-        $this->assertEquals($properties[BlameColumn::UPDATED_BY], $user->updatedBy());
-        $this->assertEquals($properties[BlameColumn::DELETED_BY], $user->deletedBy());
-        $this->assertEquals($properties[BlameColumn::CREATED_AT], $user->createdAt());
-        $this->assertEquals($properties[BlameColumn::UPDATED_AT], $user->updatedAt());
-        $this->assertEquals($properties[BlameColumn::DELETED_AT], $user->deletedAt());
+        $this->assertEquals($properties['id'], $entity->id());
+        $this->assertEquals($properties['status'], $entity->status());
+        $this->assertEquals($properties['username'], $entity->username());
+        $this->assertEquals($properties['password'], $entity->password());
+        $this->assertEquals($properties['type'], $entity->type());
+        $this->assertEquals(base64_encode($properties['api_token']), $entity->apiToken());
+        $this->assertEquals($properties['last_login_at'], $entity->lastLoginAt());
+        $this->assertEquals($properties['last_ip_address'], $entity->lastIpAddress());
+        $this->assertEquals($properties[BlameColumn::CREATED_BY], $entity->createdBy());
+        $this->assertEquals($properties[BlameColumn::UPDATED_BY], $entity->updatedBy());
+        $this->assertEquals($properties[BlameColumn::DELETED_BY], $entity->deletedBy());
+        $this->assertEquals($properties[BlameColumn::CREATED_AT], $entity->createdAt());
+        $this->assertEquals($properties[BlameColumn::UPDATED_AT], $entity->updatedAt());
+        $this->assertEquals($properties[BlameColumn::DELETED_AT], $entity->deletedAt());
     }
 }

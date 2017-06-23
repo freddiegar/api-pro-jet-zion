@@ -32,4 +32,16 @@ interface RolePermissionRepository
      * @return bool
      */
     static public function deleteById($id);
+
+    /**
+     * @param array $filters
+     * @return array
+     */
+    static public function findWhere($filters);
+
+    /**
+     * @param int $role_id
+     * @return array
+     */
+    static public function findByRole($role_id);
 }

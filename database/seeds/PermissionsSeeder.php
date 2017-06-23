@@ -31,6 +31,7 @@ class PermissionsSeeder extends Seeder
         $entities = [
             'User' => 'SCRUD',
             'Role' => 'SCRUD',
+            'Permission' => 'SR',
             'Role Permission' => 'SCRUD',
             'User Role' => 'SCRUD',
         ];

@@ -47,6 +47,15 @@ class EloquentUserRoleRepository extends EloquentFilterBuilder implements UserRo
     /**
      * @inheritdoc
      */
+    static public function findWhere($filters)
+    {
+        $query = self::builder(UserRole::select(), $filters);
+        return $query->get()->toArray();
+    }
+
+    /**
+     * @inheritdoc
+     */
     static public function roles($user_id)
     {
         return UserRole::where(compact('user_id'))->get()->toArray();

@@ -138,7 +138,10 @@ abstract class ManagerContract
     /**
      * @return array
      */
-    abstract protected function rules();
+    protected function rules()
+    {
+        return [];
+    }
 
     /**
      * @return array

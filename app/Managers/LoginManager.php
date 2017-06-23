@@ -4,7 +4,6 @@ namespace App\Managers;
 
 use App\Contracts\Repositories\LoginRepository;
 use App\Entities\UserEntity;
-use FreddieGar\Base\Constants\HttpMethod;
 use FreddieGar\Base\Contracts\Commons\ManagerContract;
 use Illuminate\Http\Request;
 use Illuminate\Validation\UnauthorizedException;
@@ -39,20 +38,20 @@ class LoginManager extends ManagerContract
      */
     public function login()
     {
-        $userEntity = UserEntity::load($this->loginRepository()->getUserPasswordByUsername($this->requestInput('username')));
+        $user = UserEntity::load($this->loginRepository()->getUserPasswordByUsername($this->requestInput('username')));
 
-        if (!passwordIsValid($this->requestInput('password'), $userEntity->password())) {
+        if (!passwordIsValid($this->requestInput('password'), $user->password())) {
             throw new UnauthorizedException(trans('exceptions.credentials'));
         }
 
-        $userEntity->lastIpAddress($this->requestIp());
-        $userEntity->lastLoginAt(now());
-        $userEntity->apiToken(randomHashing());
+        $user->lastIpAddress($this->requestIp());
+        $user->lastLoginAt(now());
+        $user->apiToken(randomHashing());
 
-        $this->loginRepository()->updateUserLastLogin($userEntity->id(), $userEntity->toArray());
+        $this->loginRepository()->updateUserLastLogin($user->id(), $user->toArray());
 
         return [
-            UserEntity::KEY_API_TOKEN => $userEntity->apiToken()
+            UserEntity::KEY_API_TOKEN => $user->apiToken()
         ];
     }
 
@@ -61,15 +60,9 @@ class LoginManager extends ManagerContract
      */
     protected function rules()
     {
-        $rules = [];
-
-        if ($this->requestIsMethod(HttpMethod::POST)) {
-            $rules = [
-                'username' => 'required',
-                'password' => 'required',
-            ];
-        }
-
-        return $rules;
+        return [
+            'username' => 'required',
+            'password' => 'required',
+        ];
     }
 }

@@ -31,6 +31,15 @@ class EloquentPermissionRepository extends EloquentFilterBuilder implements Perm
     /**
      * @inheritdoc
      */
+    static public function findWhere($filters)
+    {
+        $query = self::builder(Permission::select(), $filters);
+        return $query->get()->toArray();
+    }
+
+    /**
+     * @inheritdoc
+     */
     static public function getSlugById($id)
     {
         return Permission::whereIn('id', $id)->get(['slug'])->toArray();

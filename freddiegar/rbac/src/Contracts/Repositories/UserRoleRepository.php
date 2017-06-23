@@ -50,4 +50,10 @@ interface UserRoleRepository
      * @return array
      */
     static public function users($role_id);
+
+    /**
+     * @param array $filters
+     * @return array
+     */
+    static public function findWhere($filters);
 }
