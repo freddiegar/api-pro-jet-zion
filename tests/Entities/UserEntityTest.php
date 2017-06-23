@@ -5,8 +5,8 @@ use FreddieGar\Base\Constants\BlameColumn;
 
 class UserEntityTest extends TestCase
 {
-    public function testUserEntityParser(){
-
+    public function testUserEntityParser()
+    {
         $properties = $this->user();
 
         $entity = UserEntity::load($properties);

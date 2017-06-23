@@ -94,6 +94,23 @@ class RolePermissionManagerTest extends DBTestCase
         $this->assertEquals($response->message, trans('exceptions.credentials'));
     }
 
+    public function testRolePermissionManagerCreateEmptyError()
+    {
+        $this->json(HttpMethod::POST, $this->_route('role-permissions'), [], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->seeJsonStructure([
+            'message',
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->message, trans('exceptions.validation'));
+        $this->assertNotEmpty($response->errors);
+        $this->assertNotEmpty($response->errors->role_id);
+        $this->assertNotEmpty($response->errors->permission_id);
+        $this->assertNotEmpty($response->errors->parent_id);
+        $this->assertNotEmpty($response->errors->granted);
+    }
+
     public function testRolePermissionManagerCreateRoleError()
     {
         $data = [
@@ -108,7 +125,6 @@ class RolePermissionManagerTest extends DBTestCase
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->message, trans('exceptions.validation'));
-        $this->assertNotEmpty($response->errors);
         $this->assertNotEmpty($response->errors);
         $this->assertNotEmpty($response->errors->role_id);
     }
@@ -128,7 +144,6 @@ class RolePermissionManagerTest extends DBTestCase
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->message, trans('exceptions.validation'));
-        $this->assertNotEmpty($response->errors);
         $this->assertNotEmpty($response->errors);
         $this->assertNotEmpty($response->errors->permission_id);
         $this->assertNotEmpty($response->errors->parent_id);
@@ -150,7 +165,6 @@ class RolePermissionManagerTest extends DBTestCase
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->message, trans('exceptions.validation'));
         $this->assertNotEmpty($response->errors);
-        $this->assertNotEmpty($response->errors);
         $this->assertNotEmpty($response->errors->parent_id);
         $this->assertNotEmpty($response->errors->permission_id);
     }
@@ -170,7 +184,6 @@ class RolePermissionManagerTest extends DBTestCase
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->message, trans('exceptions.validation'));
         $this->assertNotEmpty($response->errors);
-        $this->assertNotEmpty($response->errors);
         $this->assertNotEmpty($response->errors->granted);
     }
 
@@ -185,7 +198,6 @@ class RolePermissionManagerTest extends DBTestCase
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->message, trans('exceptions.validation'));
-        $this->assertNotEmpty($response->errors);
         $this->assertNotEmpty($response->errors);
         $this->assertNotEmpty($response->errors->permission_id);
         $this->assertNotEmpty($response->errors->parent_id);

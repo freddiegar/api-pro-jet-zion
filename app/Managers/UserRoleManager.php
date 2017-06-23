@@ -2,12 +2,14 @@
 
 namespace App\Managers;
 
+use FreddieGar\Base\Constants\BlameColumn;
 use FreddieGar\Base\Constants\FilterType;
 use FreddieGar\Base\Contracts\Commons\ManagerContract;
 use FreddieGar\Base\Contracts\Interfaces\CRUDSInterface;
 use FreddieGar\Base\Traits\FilterTrait;
 use FreddieGar\Rbac\Contracts\Repositories\UserRoleRepository;
 use FreddieGar\Rbac\Entities\UserRoleEntity;
+use FreddieGar\Rbac\Models\UserRole;
 use Illuminate\Http\Request;
 
 /**
@@ -42,8 +44,10 @@ class UserRoleManager extends ManagerContract implements CRUDSInterface
      */
     public function create()
     {
-        $userRoleEntity = UserRoleEntity::load($this->requestInput());
-        return $userRoleEntity->merge($this->userRoleRepository()->create($userRoleEntity->toArray(true)))->toArray();
+        $userRole = new UserRoleEntity();
+        $userRole->userId($this->requestInput('user_id'));
+        $userRole->roleId($this->requestInput('role_id'));
+        return $userRole->merge($this->userRoleRepository()->create($userRole->toArray(true)))->toArray();
     }
 
     /**
@@ -52,12 +56,11 @@ class UserRoleManager extends ManagerContract implements CRUDSInterface
      */
     public function read($id)
     {
-//        $user = User::getFromCacheId($id, function () use ($id) {
-//            return $this->userRoleRepository()->findById($id);
-//        });
-//
-//        return UserEntity::load($user)->toArray();
-        return [];
+        $userRole = UserRole::getFromCacheId($id, function () use ($id) {
+            return $this->userRoleRepository()->findById($id);
+        });
+
+        return UserRoleEntity::load($userRole)->toArray();
     }
 
     /**
@@ -66,15 +69,9 @@ class UserRoleManager extends ManagerContract implements CRUDSInterface
      */
     public function update($id)
     {
-//        $userEntity = UserEntity::load($this->requestInput());
-//        if ($this->requestInput('password')) {
-//            $userEntity->setPassword($this->requestInput('password'));
-//        }
-
-//        $this->userRoleRepository()->updateById($id, $userEntity->toArray(true));
-
-//        return $this->read($id);
-        return [];
+        $userRole = UserRoleEntity::load($this->requestInput());
+        $this->userRoleRepository()->updateById($id, $userRole->toArray(true));
+        return $this->read($id);
     }
 
     /**
@@ -83,10 +80,9 @@ class UserRoleManager extends ManagerContract implements CRUDSInterface
      */
     public function delete($id)
     {
-//        $user = $this->read($id);
-//        $this->userRoleRepository()->deleteById($id);
-//        return $user;
-        return [];
+        $userRole = $this->read($id);
+        $this->userRoleRepository()->deleteById($id);
+        return $userRole;
     }
 
     /**
@@ -94,14 +90,13 @@ class UserRoleManager extends ManagerContract implements CRUDSInterface
      */
     public function show()
     {
-//        $tag = makeTagNameCache($this->filterToApply());
-//
-//        $users = User::getFromCacheTag($tag, function () {
-//            return $this->userRoleRepository()->findWhere($this->filterToApply());
-//        });
-//
-//        return UserEntity::toArrayMultiple($users);
-        return [];
+        $tag = makeTagNameCache($this->filterToApply());
+
+        $userRoles = UserRole::getFromCacheTag($tag, function () {
+            return $this->userRoleRepository()->findWhere($this->filterToApply());
+        });
+
+        return UserRoleEntity::toArrayMultiple($userRoles);
     }
 
     /**
@@ -127,6 +122,9 @@ class UserRoleManager extends ManagerContract implements CRUDSInterface
             'role_id' => [
                 'type' => FilterType::NUMBER
             ],
+            BlameColumn::CREATED_BY => [
+                'type' => FilterType::NUMBER
+            ]
         ];
     }
 }

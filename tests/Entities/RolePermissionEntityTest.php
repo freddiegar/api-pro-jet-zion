@@ -16,8 +16,8 @@ class RolePermissionEntityTest extends TestCase
         ], $this->blame());
     }
 
-    public function testRoleEntityParser(){
-
+    public function testRoleEntityParser()
+    {
         $properties = $this->rolePermission();
 
         $entity = RolePermissionEntity::load($properties);

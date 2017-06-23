@@ -1,28 +1,29 @@
 <?php
 
 use FreddieGar\Base\Constants\BlameColumn;
-use FreddieGar\Rbac\Entities\PermissionEntity;
+use FreddieGar\Rbac\Entities\UserRoleEntity;
 
-class PermissionEntityTest extends TestCase
+class UserRoleEntityTest extends TestCase
 {
-    public function permission()
+    public function userRole()
     {
         return array_merge([
             'id' => 1,
-            'slug' => 'test.permission',
-            'description' => 'Test permission',
+            'user_id' => 2,
+            'role_id' => 3,
         ], $this->blame());
     }
 
     public function testRoleEntityParser()
     {
-        $properties = $this->permission();
 
-        $entity = PermissionEntity::load($properties);
+        $properties = $this->userRole();
+
+        $entity = UserRoleEntity::load($properties);
 
         $this->assertEquals($properties['id'], $entity->id());
-        $this->assertEquals($properties['slug'], $entity->slug());
-        $this->assertEquals($properties['description'], $entity->description());
+        $this->assertEquals($properties['user_id'], $entity->userId());
+        $this->assertEquals($properties['role_id'], $entity->roleId());
         $this->assertEquals($properties[BlameColumn::CREATED_BY], $entity->createdBy());
         $this->assertEquals($properties[BlameColumn::UPDATED_BY], $entity->updatedBy());
         $this->assertEquals($properties[BlameColumn::DELETED_BY], $entity->deletedBy());

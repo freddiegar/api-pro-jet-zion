@@ -82,6 +82,18 @@ class PermissionManagerTest extends DBTestCase
         $this->assertEquals($response->message, trans('exceptions.credentials'));
     }
 
+    public function testPermissionManagerCreateEmptyError()
+    {
+        $this->json(HttpMethod::POST, $this->_route('permissions'), [], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
+        $this->seeJsonStructure([
+            'message',
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->message, trans('exceptions.not_found'));
+    }
+
     public function testPermissionManagerCreateDescriptionError()
     {
         $data = [

@@ -86,6 +86,22 @@ class UserManagerTest extends DBTestCase
         $this->assertEquals($response->message, trans('exceptions.credentials'));
     }
 
+    public function testUserManagerCreateEmptyError()
+    {
+        $this->json(HttpMethod::POST, $this->_route('users'), [], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->seeJsonStructure([
+            'message',
+            'errors',
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->message, trans('exceptions.validation'));
+        $this->assertNotEmpty($response->errors);
+        $this->assertNotEmpty($response->errors->username);
+        $this->assertNotEmpty($response->errors->password);
+    }
+
     public function testUserManagerCreateUsernameError()
     {
         $this->json(HttpMethod::POST, $this->_route('users'), $this->request(['username']), $this->headers());
@@ -97,7 +113,6 @@ class UserManagerTest extends DBTestCase
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
         $this->assertEquals($response->message, trans('exceptions.validation'));
-        $this->assertNotEmpty($response->errors);
         $this->assertNotEmpty($response->errors);
         $this->assertNotEmpty($response->errors->username);
     }

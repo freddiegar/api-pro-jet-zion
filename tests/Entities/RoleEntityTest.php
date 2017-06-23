@@ -13,8 +13,8 @@ class RoleEntityTest extends TestCase
         ], $this->blame());
     }
 
-    public function testRoleEntityParser(){
-
+    public function testRoleEntityParser()
+    {
         $properties = $this->role();
 
         $entity = RoleEntity::load($properties);
