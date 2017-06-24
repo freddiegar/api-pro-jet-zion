@@ -49,8 +49,7 @@ class EloquentRolePermissionRepository extends EloquentFilterBuilder implements 
      */
     static public function findWhere($filters)
     {
-        $query = self::builder(RolePermission::select(), $filters);
-        return $query->get()->toArray();
+        return self::builder(RolePermission::select(), $filters)->get()->toArray();
     }
 
     /**

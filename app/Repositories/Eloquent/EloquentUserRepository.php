@@ -15,6 +15,7 @@ use FreddieGar\Rbac\Traits\PermissionTrait;
 class EloquentUserRepository extends EloquentFilterBuilder implements UserRepository, PermissionContract
 {
     use PermissionTrait;
+
     /**
      * @inheritdoc
      */
@@ -60,7 +61,14 @@ class EloquentUserRepository extends EloquentFilterBuilder implements UserReposi
      */
     static public function findWhere($filters)
     {
-        $query = self::builder(User::select(), $filters);
-        return $query->get()->toArray();
+        return self::builder(User::select(), $filters)->get()->toArray();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    static public function roles($user_id)
+    {
+        return User::findOrFail($user_id)->roles->toArray();
     }
 }

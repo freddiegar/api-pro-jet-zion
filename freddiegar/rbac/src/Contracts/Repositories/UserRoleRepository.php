@@ -40,10 +40,10 @@ interface UserRoleRepository
     static public function deleteById($id);
 
     /**
-     * @param int $user_id
+     * @param array $filters
      * @return array
      */
-    static public function roles($user_id);
+    static public function findWhere($filters);
 
     /**
      * @param int $role_id
@@ -52,8 +52,20 @@ interface UserRoleRepository
     static public function users($role_id);
 
     /**
-     * @param array $filters
+     * @param int $user_id
      * @return array
      */
-    static public function findWhere($filters);
+    static public function roles($user_id);
+
+    /**
+     * @param int $user_id
+     * @return array
+     */
+    static public function user($user_id);
+
+    /**
+     * @param int $role_id
+     * @return mixed
+     */
+    static public function role($role_id);
 }

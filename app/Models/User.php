@@ -7,6 +7,7 @@ use FreddieGar\Base\Contracts\Interfaces\BlameControlInterface;
 use FreddieGar\Base\Contracts\Interfaces\CacheControlInterface;
 use FreddieGar\Base\Traits\BlameControlTrait;
 use FreddieGar\Base\Traits\CacheControlTrait;
+use FreddieGar\Rbac\Models\Role;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -34,21 +35,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use BlameControlTrait;
     use CacheControlTrait;
 
-    protected $fillable = [
-        'status',
-        'username',
-        'password',
-        'type',
-        'api_token',
-        'last_login_at',
-        'last_ip_address',
-        BlameColumn::CREATED_BY,
-        BlameColumn::UPDATED_BY,
-        BlameColumn::DELETED_BY,
-        BlameColumn::CREATED_AT,
-        BlameColumn::UPDATED_AT,
-        BlameColumn::DELETED_AT,
-    ];
+    protected $guarded = [];
 
     protected $dates = [
         'last_login_at',
@@ -56,4 +43,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         BlameColumn::UPDATED_AT,
         BlameColumn::DELETED_AT,
     ];
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_roles');
+    }
 }

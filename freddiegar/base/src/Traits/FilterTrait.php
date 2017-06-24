@@ -45,7 +45,7 @@ trait FilterTrait
      * @param string $whereType
      * @return $this
      */
-    private function setFilterToApply($filter, $whereType, $value = '', $operator = null)
+    private function setFilterToApply(array $filter, $value, $whereType = 'where', $operator = null)
     {
         $operator = $operator ?: OperatorType::EQUALS;
 //        if (!is_null($filter->morphs)) {
@@ -153,7 +153,7 @@ trait FilterTrait
         $value = static::requestInput($filter['field']);
 
         if (!is_null($value)) {
-            self::setFilterToApply($filter, $whereType, $value);
+            self::setFilterToApply($filter, $value, $whereType);
         }
     }
 
@@ -166,7 +166,7 @@ trait FilterTrait
         $value = static::requestInput($filter['field']);
 
         if (!empty($value)) {
-            self::setFilterToApply($filter, $whereType, sprintf(Pattern::QUERY_LIKE, $value), OperatorType::LIKE);
+            self::setFilterToApply($filter, sprintf(Pattern::QUERY_LIKE, $value), $whereType, OperatorType::LIKE);
         }
 
     }
@@ -191,7 +191,7 @@ trait FilterTrait
         $value = static::requestInput($filter['field']);
 
         if (!is_null($value)) {
-            self::setFilterToApply($filter, $whereType, $value);
+            self::setFilterToApply($filter, $value, $whereType);
         }
     }
 
@@ -210,7 +210,7 @@ trait FilterTrait
                 ->minute(59)
                 ->second(59);
             if ($valueMinFormatted && $valueMaxFormatted) {
-                self::doBetween($filter, $whereType, $valueMinFormatted, $valueMaxFormatted);
+                self::doBetween($filter, $valueMinFormatted, $valueMaxFormatted, $whereType);
             }
         }
     }
@@ -232,11 +232,11 @@ trait FilterTrait
             ->second(59);
 
         if (!empty($valueMin) && !empty($valueMax) && $valueMinFormatted && $valueMaxFormatted) {
-            self::doBetween($filter, $whereType, $valueMinFormatted, $valueMaxFormatted);
+            self::doBetween($filter, $valueMinFormatted, $valueMaxFormatted, $whereType);
         } elseif (!empty($valueMin) && $valueMinFormatted) {
-            self::setFilterToApply($filter, $whereType, $valueMinFormatted, OperatorType::MAJOR_EQUALS);
+            self::setFilterToApply($filter, $valueMinFormatted, $whereType, OperatorType::MAJOR_EQUALS);
         } elseif (!empty($valueMax) && $valueMaxFormatted) {
-            self::setFilterToApply($filter, $whereType, $valueMaxFormatted, OperatorType::MINOR_EQUALS);
+            self::setFilterToApply($filter, $valueMaxFormatted, $whereType, OperatorType::MINOR_EQUALS);
         }
 
         self::filterByDate($filter, $whereType);
@@ -248,10 +248,10 @@ trait FilterTrait
      * @param string $min
      * @param string $max
      */
-    private function doBetween($filter, $whereType, $min, $max)
+    private function doBetween($filter, $min, $max, $whereType)
     {
-        self::setFilterToApply($filter, $whereType, $min, OperatorType::MAJOR_EQUALS);
-        self::setFilterToApply($filter, 'where', $max, OperatorType::MINOR_EQUALS);
+        self::setFilterToApply($filter, $min, $whereType, OperatorType::MAJOR_EQUALS);
+        self::setFilterToApply($filter, $max, 'where', OperatorType::MINOR_EQUALS);
     }
 
     /**

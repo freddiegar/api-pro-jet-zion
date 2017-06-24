@@ -19,7 +19,9 @@ trait PermissionTrait
     static public function getRoles()
     {
         $roles = [];
-        $userRoles = app(UserRoleRepository::class)->roles(Auth::id());
+        /** @var UserRoleRepository $userRoleRepository */
+        $userRoleRepository = app(UserRoleRepository::class);
+        $userRoles = $userRoleRepository->roles(Auth::id());
         foreach ($userRoles as $userRole) {
             array_push($roles, $userRole['role_id']);
         }
@@ -38,9 +40,11 @@ trait PermissionTrait
             $permission_ids = array_merge(static::getPermissionsFromRole($role), $permission_ids);
         }
 
+        /** @var PermissionRepository $permissionRepository */
+        $permissionRepository = app(PermissionRepository::class);
         return array_map(function ($permission) {
             return $permission['slug'];
-        }, app(PermissionRepository::class)->getSlugById($permission_ids));
+        }, $permissionRepository->getSlugById($permission_ids));
     }
 
     /**
@@ -50,7 +54,9 @@ trait PermissionTrait
     static public function getPermissionsFromRole($role_id)
     {
         $permissions = [];
-        $rolePermissions = app(RolePermissionRepository::class)->findByRole($role_id);
+        /** @var RolePermissionRepository $rolePermissionRepository */
+        $rolePermissionRepository = app(RolePermissionRepository::class);
+        $rolePermissions = $rolePermissionRepository->findByRole($role_id);
 
         foreach ($rolePermissions as $rolePermission) {
             if ($rolePermission['granted']) {

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Managers\UserManager;
 use App\Managers\UserRoleManager;
+use FreddieGar\Base\Constants\Action;
 use Illuminate\Http\Response;
 
 /**
@@ -12,8 +12,17 @@ use Illuminate\Http\Response;
  */
 class UserRoleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:user-role.' . Action::INDEX, ['only' => 'index']);
+        $this->middleware('permission:user-role.' . Action::STORE, ['only' => 'store']);
+        $this->middleware('permission:user-role.' . Action::SHOW, ['only' => ['show', 'relationship']]);
+        $this->middleware('permission:user-role.' . Action::UPDATE, ['only' => 'update']);
+        $this->middleware('permission:user-role.' . Action::DESTROY, ['only' => 'destroy']);
+    }
+
     /**
-     * @return UserManager
+     * @return UserRoleManager
      */
     protected function manager()
     {

@@ -2,6 +2,7 @@
 
 namespace FreddieGar\Rbac\Models;
 
+use App\Models\User;
 use FreddieGar\Base\Constants\BlameColumn;
 use FreddieGar\Base\Contracts\Interfaces\BlameControlInterface;
 use FreddieGar\Base\Contracts\Interfaces\CacheControlInterface;
@@ -22,25 +23,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @package FreddieGar\Rbac\Models
  */
-class Role extends Model  implements BlameControlInterface, CacheControlInterface
+class Role extends Model implements BlameControlInterface, CacheControlInterface
 {
     use SoftDeletes;
     use BlameControlTrait;
     use CacheControlTrait;
 
-    protected $fillable = [
-        'description',
-        BlameColumn::CREATED_BY,
-        BlameColumn::UPDATED_BY,
-        BlameColumn::DELETED_BY,
-        BlameColumn::CREATED_AT,
-        BlameColumn::UPDATED_AT,
-        BlameColumn::DELETED_AT,
-    ];
+    protected $guarded = [];
 
     protected $dates = [
         BlameColumn::CREATED_AT,
         BlameColumn::UPDATED_AT,
         BlameColumn::DELETED_AT,
     ];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_roles');
+    }
 }

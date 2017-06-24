@@ -100,6 +100,28 @@ class UserRoleManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
+     * @param int $id
+     * @return array
+     */
+    public function user($id)
+    {
+        /** @var UserManager $user */
+        $user = app(UserManager::class);
+        return $user->read($id);
+    }
+
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function role($id)
+    {
+        /** @var RoleManager $role */
+        $role = app(RoleManager::class);
+        return $role->read($id);
+    }
+
+    /**
      * @return array
      */
     protected function rules()

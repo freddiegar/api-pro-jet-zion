@@ -46,4 +46,10 @@ interface UserRepository
      * @return array
      */
     static public function findWhere($filters);
+
+    /**
+     * @param int $user_id
+     * @return array
+     */
+    static public function roles($user_id);
 }

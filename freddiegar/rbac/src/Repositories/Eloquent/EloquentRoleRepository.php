@@ -49,7 +49,13 @@ class EloquentRoleRepository extends EloquentFilterBuilder implements RoleReposi
      */
     static public function findWhere($filters)
     {
-        $query = self::builder(Role::select(), $filters);
-        return $query->get()->toArray();
+        return self::builder(Role::select(), $filters)->get()->toArray();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    static public function users($role_id){
+        return Role::findOrFail($role_id)->users->toArray();
     }
 }

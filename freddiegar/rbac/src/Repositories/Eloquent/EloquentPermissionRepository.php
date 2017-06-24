@@ -33,8 +33,7 @@ class EloquentPermissionRepository extends EloquentFilterBuilder implements Perm
      */
     static public function findWhere($filters)
     {
-        $query = self::builder(Permission::select(), $filters);
-        return $query->get()->toArray();
+        return self::builder(Permission::select(), $filters)->get()->toArray();
     }
 
     /**

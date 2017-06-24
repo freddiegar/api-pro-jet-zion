@@ -28,18 +28,7 @@ class RolePermission extends Model implements BlameControlInterface, CacheContro
     use BlameControlTrait;
     use CacheControlTrait;
 
-    protected $fillable = [
-        'role_id',
-        'permission_id',
-        'parent_id',
-        'granted',
-        BlameColumn::CREATED_BY,
-        BlameColumn::UPDATED_BY,
-        BlameColumn::DELETED_BY,
-        BlameColumn::CREATED_AT,
-        BlameColumn::UPDATED_AT,
-        BlameColumn::DELETED_AT,
-    ];
+    protected $guarded = [];
 
     protected $dates = [
         BlameColumn::CREATED_AT,

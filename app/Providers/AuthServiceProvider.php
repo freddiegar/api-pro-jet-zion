@@ -62,7 +62,9 @@ class AuthServiceProvider extends ServiceProvider
                 }
 
                 if ($apiToken && apiTokenIsValid($apiToken)) {
-                    if ($user = app(UserRepository::class)->getByApiToken($apiToken)) {
+                    /** @var UserRepository $userRepository */
+                    $userRepository = app(UserRepository::class);
+                    if ($user = $userRepository->getByApiToken($apiToken)) {
                         return $user;
                     }
 

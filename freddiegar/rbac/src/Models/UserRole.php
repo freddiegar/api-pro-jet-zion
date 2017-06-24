@@ -28,16 +28,7 @@ class UserRole extends Model implements BlameControlInterface, CacheControlInter
     use BlameControlTrait;
     use CacheControlTrait;
 
-    protected $fillable = [
-        'user_id',
-        'role_id',
-        BlameColumn::CREATED_BY,
-        BlameColumn::UPDATED_BY,
-        BlameColumn::DELETED_BY,
-        BlameColumn::CREATED_AT,
-        BlameColumn::UPDATED_AT,
-        BlameColumn::DELETED_AT,
-    ];
+    protected $guarded = [];
 
     protected $dates = [
         BlameColumn::CREATED_AT,

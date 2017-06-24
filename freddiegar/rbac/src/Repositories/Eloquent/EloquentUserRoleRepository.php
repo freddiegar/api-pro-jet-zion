@@ -2,8 +2,10 @@
 
 namespace FreddieGar\Rbac\Repositories\Eloquent;
 
+use App\Models\User;
 use FreddieGar\Base\Repositories\Eloquent\EloquentFilterBuilder;
 use FreddieGar\Rbac\Contracts\Repositories\UserRoleRepository;
+use FreddieGar\Rbac\Models\Role;
 use FreddieGar\Rbac\Models\UserRole;
 
 /**
@@ -49,8 +51,15 @@ class EloquentUserRoleRepository extends EloquentFilterBuilder implements UserRo
      */
     static public function findWhere($filters)
     {
-        $query = self::builder(UserRole::select(), $filters);
-        return $query->get()->toArray();
+        return self::builder(UserRole::select(), $filters)->get()->toArray();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    static public function users($role_id)
+    {
+        return UserRole::where(compact('role_id'))->get()->toArray();
     }
 
     /**
@@ -64,8 +73,16 @@ class EloquentUserRoleRepository extends EloquentFilterBuilder implements UserRo
     /**
      * @inheritdoc
      */
-    static public function users($role_id)
+    static public function user($user_id)
     {
-        return UserRole::where(compact('role_id'))->get()->toArray();
+        return User::findOrFail($user_id)->toArray();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    static public function role($role_id)
+    {
+        return Role::findOrFail($role_id)->toArray();
     }
 }
