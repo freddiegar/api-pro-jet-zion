@@ -10,11 +10,9 @@ use FreddieGar\Base\Providers\ExtraValidator;
 use FreddieGar\Rbac\Contracts\Repositories\PermissionRepository;
 use FreddieGar\Rbac\Contracts\Repositories\RolePermissionRepository;
 use FreddieGar\Rbac\Contracts\Repositories\RoleRepository;
-use FreddieGar\Rbac\Contracts\Repositories\UserRoleRepository;
 use FreddieGar\Rbac\Repositories\Eloquent\EloquentPermissionRepository;
 use FreddieGar\Rbac\Repositories\Eloquent\EloquentRolePermissionRepository;
 use FreddieGar\Rbac\Repositories\Eloquent\EloquentRoleRepository;
-use FreddieGar\Rbac\Repositories\Eloquent\EloquentUserRoleRepository;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 
@@ -54,7 +52,6 @@ class AppServiceProvider extends ServiceProvider
             RoleRepository::class => EloquentRoleRepository::class,
             PermissionRepository::class => EloquentPermissionRepository::class,
             RolePermissionRepository::class => EloquentRolePermissionRepository::class,
-            UserRoleRepository::class => EloquentUserRoleRepository::class,
         ];
 
         foreach ($repositories as $interface => $concrete) {

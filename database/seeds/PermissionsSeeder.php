@@ -1,10 +1,10 @@
 <?php
 
 use App\Models\User;
+use FreddieGar\Base\Constants\BlameColumn;
 use FreddieGar\Rbac\Models\Permission;
 use FreddieGar\Rbac\Models\Role;
 use FreddieGar\Rbac\Models\RolePermission;
-use FreddieGar\Rbac\Models\UserRole;
 use Illuminate\Database\Seeder;
 
 class PermissionsSeeder extends Seeder
@@ -33,7 +33,6 @@ class PermissionsSeeder extends Seeder
             'Role' => 'SCRUD',
             'Permission' => 'SR',
             'Role Permission' => 'SCRUD',
-            'User Role' => 'SCRUD',
         ];
 
         $user = User::findOrFail($created_by);
@@ -66,13 +65,11 @@ class PermissionsSeeder extends Seeder
 
         }
 
-        Role::setCurrentUserAuthenticated($created_by);
         $role = Role::create([
             'description' => sprintf('Super Administration')
         ]);
 
         foreach ($roles as $id) {
-            RolePermission::setCurrentUserAuthenticated($created_by);
             RolePermission::create([
                 'role_id' => $role->id,
                 'parent_id' => $id,
@@ -80,10 +77,6 @@ class PermissionsSeeder extends Seeder
             ]);
         }
 
-        UserRole::setCurrentUserAuthenticated($created_by);
-        UserRole::create([
-            'user_id' => $user->id,
-            'role_id' => $role->id,
-        ]);
+        $user->roles()->attach($role->id, [BlameColumn::CREATED_BY => $created_by, BlameColumn::CREATED_AT => Carbon\Carbon::now()]);
     }
 }

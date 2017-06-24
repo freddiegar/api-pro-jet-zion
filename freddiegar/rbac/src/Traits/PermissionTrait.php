@@ -2,9 +2,9 @@
 
 namespace FreddieGar\Rbac\Traits;
 
+use App\Contracts\Repositories\UserRepository;
 use FreddieGar\Rbac\Contracts\Repositories\PermissionRepository;
 use FreddieGar\Rbac\Contracts\Repositories\RolePermissionRepository;
-use FreddieGar\Rbac\Contracts\Repositories\UserRoleRepository;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -18,14 +18,15 @@ trait PermissionTrait
      */
     static public function getRoles()
     {
-        $roles = [];
-        /** @var UserRoleRepository $userRoleRepository */
-        $userRoleRepository = app(UserRoleRepository::class);
-        $userRoles = $userRoleRepository->roles(Auth::id());
-        foreach ($userRoles as $userRole) {
-            array_push($roles, $userRole['role_id']);
+        $role_ids = [];
+        /** @var UserRepository $userRepository */
+        $userRepository = app(UserRepository::class);
+        $roles = $userRepository->roles(Auth::id());
+        foreach ($roles as $role) {
+            array_push($role_ids, $role['id']);
         }
-        return $roles;
+
+        return $role_ids;
     }
 
     /**

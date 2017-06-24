@@ -427,4 +427,13 @@ class RoleManagerTest extends DBTestCase
         $this->assertEquals(0, count($response));
         $this->assertSearchRole($response);
     }
+
+    public function testRoleManagerRelationShip01()
+    {
+        $this->json(HttpMethod::GET, $this->_route('roles', 1, 'users'), [], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertObjectHasAttribute('role', $response);
+        $this->assertObjectHasAttribute('users', $response);
+    }
 }

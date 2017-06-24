@@ -32,8 +32,6 @@ $app->group([
     $app->get("roles/{id}/{relationship}", ['as' => "api.roles.relationship", 'uses' => "RoleController@relationship"]);
     resource($app, 'permissions', 'PermissionController');
     resource($app, 'role-permissions', 'RolePermissionController');
-    resource($app, 'user-roles', 'UserRoleController');
-    $app->get("user-roles/{id}/{relationship}", ['as' => "api.user-roles.relationship", 'uses' => "UserRoleController@relationship"]);
     resource($app, 'users', 'UserController');
     $app->get("users/{id}/{relationship}", ['as' => "api.users.relationship", 'uses' => "UserController@relationship"]);
 });

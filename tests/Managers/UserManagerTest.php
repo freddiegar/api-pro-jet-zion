@@ -617,6 +617,15 @@ class UserManagerTest extends DBTestCase
         $this->assertSearchUser($response);
     }
 
+    public function testUserManagerRelationShip01()
+    {
+        $this->json(HttpMethod::GET, $this->_route('users', 1, 'roles'), [], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertObjectHasAttribute('user', $response);
+        $this->assertObjectHasAttribute('roles', $response);
+    }
+
     public function testUserManagerCacheEnable()
     {
         User::enableCache();
