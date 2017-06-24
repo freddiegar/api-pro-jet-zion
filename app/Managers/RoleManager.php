@@ -2,6 +2,7 @@
 
 namespace App\Managers;
 
+use App\Entities\UserEntity;
 use FreddieGar\Base\Constants\BlameColumn;
 use FreddieGar\Base\Constants\FilterType;
 use FreddieGar\Base\Contracts\Commons\ManagerContract;
@@ -96,6 +97,21 @@ class RoleManager extends ManagerContract implements CRUDSInterface
         });
 
         return RoleEntity::toArrayMultiple($roles);
+    }
+
+    /**
+     * @param $role_id
+     * @return array
+     */
+    public function users($role_id)
+    {
+        $tag = makeTagNameCache([__METHOD__, $role_id]);
+
+        $users = Role::getFromCacheTag($tag, function () use ($role_id) {
+            return $this->roleRepository()->users($role_id);
+        });
+
+        return UserEntity::toArrayMultiple($users);
     }
 
     /**

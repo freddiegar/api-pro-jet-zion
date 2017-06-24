@@ -248,6 +248,27 @@ class UserRoleManagerTest extends DBTestCase
 
     public function testUserRoleManagerDeleteOk()
     {
+        $this->json(HttpMethod::DELETE, $this->_route('user-roles', 2), $this->request(), $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $this->seeJsonStructure([
+            'id',
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->id, 2);
+        $this->assertObjectHasAttribute('user_id', $response);
+        $this->assertObjectHasAttribute('role_id', $response);
+        $this->assertNotHasAttributeUserRole($response);
+
+        $this->json(HttpMethod::GET, $this->_route('user-roles', 2), $this->request(), $this->headers());
+        $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
+        $this->seeJsonStructure([
+            'message',
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertInstanceOf(\stdClass::class, $response);
+        $this->assertEquals($response->message, trans('exceptions.model_not_found', ['model' => class_basename(UserRole::class)]));
+
         $this->json(HttpMethod::DELETE, $this->_route('user-roles', 1), $this->request(), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure([
@@ -261,13 +282,13 @@ class UserRoleManagerTest extends DBTestCase
         $this->assertNotHasAttributeUserRole($response);
 
         $this->json(HttpMethod::GET, $this->_route('user-roles', 1), $this->request(), $this->headers());
-        $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
+        $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
         $this->seeJsonStructure([
             'message',
         ]);
         $response = json_decode($this->response->getContent());
         $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.model_not_found', ['model' => class_basename(UserRole::class)]));
+        $this->assertEquals($response->message, trans('exceptions.not_permission', ['description' => 'Read user role']));
     }
 
     public function testUserRoleManagerShowSimpleMethodHttpError()

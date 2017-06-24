@@ -16,7 +16,7 @@ class RoleController extends Controller
     {
         $this->middleware('permission:role.' . Action::INDEX, ['only' => 'index']);
         $this->middleware('permission:role.' . Action::STORE, ['only' => 'store']);
-        $this->middleware('permission:role.' . Action::SHOW, ['only' => 'show']);
+        $this->middleware('permission:role.' . Action::SHOW, ['only' => ['show', 'relationship']]);
         $this->middleware('permission:role.' . Action::UPDATE, ['only' => 'update']);
         $this->middleware('permission:role.' . Action::DESTROY, ['only' => 'destroy']);
     }

@@ -3,6 +3,7 @@
 namespace Freddiegar\Base\Exceptions;
 
 use Exception;
+use FreddieGar\Rbac\Exceptions\VerifyPermissionException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
@@ -117,6 +118,15 @@ class Handler extends ExceptionHandler
                 'code' => Response::HTTP_CONFLICT,
                 'error' => [
                     'message' => is_array($e->errorInfo) ? implode(' ', $e->errorInfo) : $e->errorInfo,
+                ]
+            ];
+        }
+
+        if ($e instanceof VerifyPermissionException) {
+            $response = [
+                'code' => Response::HTTP_UNAUTHORIZED,
+                'error' => [
+                    'message' => $e->getMessage(),
                 ]
             ];
         }

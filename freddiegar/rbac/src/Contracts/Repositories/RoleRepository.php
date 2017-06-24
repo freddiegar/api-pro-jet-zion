@@ -38,4 +38,10 @@ interface RoleRepository
      * @return array
      */
     static public function findWhere($filters);
+
+    /**
+     * @param $role_id
+     * @return array
+     */
+    static public function users($role_id);
 }

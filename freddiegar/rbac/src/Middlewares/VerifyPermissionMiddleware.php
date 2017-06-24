@@ -6,6 +6,7 @@ use App\Contracts\Repositories\UserRepository;
 use Closure;
 use Exception;
 use FreddieGar\Rbac\Contracts\Repositories\PermissionRepository;
+use FreddieGar\Rbac\Exceptions\VerifyPermissionException;
 use Illuminate\Contracts\Auth\Guard;
 
 /**
@@ -54,6 +55,6 @@ class VerifyPermissionMiddleware
         }
 
         $permission = $this->permissionRepository->findBySlug($slug);
-        throw new Exception(trans('exceptions.not_permission', ['description' => $permission['description']]));
+        throw new VerifyPermissionException(trans('exceptions.not_permission', ['description' => $permission['description']]));
     }
 }

@@ -16,7 +16,7 @@ class UserController extends Controller
     {
         $this->middleware('permission:user.' . Action::INDEX, ['only' => 'index']);
         $this->middleware('permission:user.' . Action::STORE, ['only' => 'store']);
-        $this->middleware('permission:user.' . Action::SHOW, ['only' => 'show']);
+        $this->middleware('permission:user.' . Action::SHOW, ['only' => ['show', 'relationship']]);
         $this->middleware('permission:user.' . Action::UPDATE, ['only' => 'update']);
         $this->middleware('permission:user.' . Action::DESTROY, ['only' => 'destroy']);
     }

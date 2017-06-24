@@ -16,7 +16,7 @@ class RolePermissionController extends Controller
     {
         $this->middleware('permission:role-permission.' . Action::INDEX, ['only' => 'index']);
         $this->middleware('permission:role-permission.' . Action::STORE, ['only' => 'store']);
-        $this->middleware('permission:role-permission.' . Action::SHOW, ['only' => 'show']);
+        $this->middleware('permission:role-permission.' . Action::SHOW, ['only' => ['show', 'relationship']]);
         $this->middleware('permission:role-permission.' . Action::UPDATE, ['only' => 'update']);
         $this->middleware('permission:role-permission.' . Action::DESTROY, ['only' => 'destroy']);
     }

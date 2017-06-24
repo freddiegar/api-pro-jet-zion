@@ -15,4 +15,14 @@ abstract class Controller extends BaseController
      * @return ManagerContract
      */
     abstract protected function manager();
+
+    /**
+     * @param int $id
+     * @param string $relationship
+     * @return array
+     */
+    public function relationship($id, $relationship)
+    {
+        return responseJson($this->manager()->relationship($id, $relationship));
+    }
 }

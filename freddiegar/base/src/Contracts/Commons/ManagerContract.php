@@ -135,6 +135,24 @@ abstract class ManagerContract
         return $this->repository;
     }
 
+    final private function name()
+    {
+        return snake_case(str_replace('Manager', '', class_basename(static::class)), '-');
+    }
+
+    /**
+     * @param int $id
+     * @param string $relationship
+     * @return array
+     */
+    final public function relationship($id, $relationship)
+    {
+        $entity = static::read($id);
+        $relation_id = isset($entity[$relationship . '_id']) ? $entity[$relationship . '_id'] : $entity['id'];
+
+        return array_merge([self::name() => $entity], [$relationship => static::{$relationship}($relation_id)]);
+    }
+
     /**
      * @return array
      * @codeCoverageIgnore

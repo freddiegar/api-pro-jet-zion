@@ -11,6 +11,7 @@ use FreddieGar\Base\Constants\FilterType;
 use FreddieGar\Base\Contracts\Commons\ManagerContract;
 use FreddieGar\Base\Contracts\Interfaces\CRUDSInterface;
 use FreddieGar\Base\Traits\FilterTrait;
+use FreddieGar\Rbac\Entities\RoleEntity;
 use Illuminate\Http\Request;
 
 /**
@@ -106,6 +107,21 @@ class UserManager extends ManagerContract implements CRUDSInterface
         });
 
         return UserEntity::toArrayMultiple($users);
+    }
+
+    /**
+     * @param $user_id
+     * @return array
+     */
+    public function roles($user_id)
+    {
+        $tag = makeTagNameCache([__METHOD__, $user_id]);
+
+        $roles = User::getFromCacheTag($tag, function () use ($user_id) {
+            return $this->userRepository()->roles($user_id);
+        });
+
+        return RoleEntity::toArrayMultiple($roles);
     }
 
     /**
