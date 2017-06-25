@@ -428,6 +428,19 @@ class RoleManagerTest extends DBTestCase
         $this->assertSearchRole($response);
     }
 
+    public function testRoleManagerRelationshipNotFound()
+    {
+        $relationship = 'failed';
+        $this->json(HttpMethod::GET, $this->_route('roles', 1, $relationship), [], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
+        $this->seeJsonStructure([
+            'message'
+        ]);
+        $response = json_decode($this->response->getContent());
+        $this->assertNotEmpty($response->message);
+        $this->assertEquals(trans('exceptions.relationship_not_found', compact('relationship')), $response->message);
+    }
+
     public function testRoleManagerRelationShip01()
     {
         $this->json(HttpMethod::GET, $this->_route('roles', 1, 'users'), [], $this->headers());
@@ -435,5 +448,14 @@ class RoleManagerTest extends DBTestCase
         $response = json_decode($this->response->getContent());
         $this->assertObjectHasAttribute('role', $response);
         $this->assertObjectHasAttribute('users', $response);
+    }
+
+    public function testRoleManagerRelationShip02()
+    {
+        $this->json(HttpMethod::GET, $this->_route('roles', Role::all()->sortBy('id', SORT_REGULAR, true)->first()->id, 'permissions'), [], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_OK);
+        $response = json_decode($this->response->getContent());
+        $this->assertObjectHasAttribute('role', $response);
+        $this->assertObjectHasAttribute('permissions', $response);
     }
 }

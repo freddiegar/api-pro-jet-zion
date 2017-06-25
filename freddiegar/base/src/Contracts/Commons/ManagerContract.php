@@ -3,6 +3,7 @@
 namespace FreddieGar\Base\Contracts\Commons;
 
 use FreddieGar\Base\Constants\HttpMethod;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\ProvidesConvenienceMethods;
 
@@ -177,5 +178,14 @@ abstract class ManagerContract
     protected function filters()
     {
         return [];
+    }
+
+    /**
+     * @param string $relationship
+     * @param array $arguments
+     */
+    public function __call($relationship, array $arguments = [])
+    {
+        throw new ModelNotFoundException(trans('exceptions.relationship_not_found', compact('relationship')));
     }
 }

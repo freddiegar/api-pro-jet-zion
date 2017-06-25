@@ -41,4 +41,14 @@ class Role extends Model implements BlameControlInterface, CacheControlInterface
     {
         return $this->belongsToMany(User::class, 'user_roles');
     }
+
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'role_permissions');
+    }
+
+    public function parents()
+    {
+        return $this->belongsToMany(Role::class, 'role_permissions', 'role_id', 'parent_id');
+    }
 }

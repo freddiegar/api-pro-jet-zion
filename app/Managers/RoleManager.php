@@ -9,6 +9,7 @@ use FreddieGar\Base\Contracts\Commons\ManagerContract;
 use FreddieGar\Base\Contracts\Interfaces\CRUDSInterface;
 use FreddieGar\Base\Traits\FilterTrait;
 use FreddieGar\Rbac\Contracts\Repositories\RoleRepository;
+use FreddieGar\Rbac\Entities\PermissionEntity;
 use FreddieGar\Rbac\Entities\RoleEntity;
 use FreddieGar\Rbac\Models\Role;
 use Illuminate\Http\Request;
@@ -112,6 +113,17 @@ class RoleManager extends ManagerContract implements CRUDSInterface
         });
 
         return UserEntity::toArrayMultiple($users);
+    }
+
+    public function permissions($role_id)
+    {
+        $tag = makeTagNameCache([__METHOD__, $role_id]);
+
+        $permissions = Role::getFromCacheTag($tag, function () use ($role_id) {
+            return $this->roleRepository()->permissions($role_id);
+        });
+
+        return PermissionEntity::toArrayMultiple($permissions);
     }
 
     /**

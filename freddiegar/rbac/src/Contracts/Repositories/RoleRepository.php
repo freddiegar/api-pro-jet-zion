@@ -44,4 +44,10 @@ interface RoleRepository
      * @return array
      */
     static public function users($role_id);
+
+    /**
+     * @param $role_id
+     * @return array
+     */
+    static public function permissions($role_id);
 }

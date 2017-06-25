@@ -55,7 +55,26 @@ class EloquentRoleRepository extends EloquentFilterBuilder implements RoleReposi
     /**
      * @inheritdoc
      */
-    static public function users($role_id){
+    static public function users($role_id)
+    {
         return Role::findOrFail($role_id)->users->toArray();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    static public function permissions($role_id)
+    {
+        $permissions = Role::findOrFail($role_id)->permissions->toArray();
+
+        $parents = Role::findOrFail($role_id)->parents;
+        foreach ($parents as $parent) {
+            $permission = self::permissions($parent['id']);
+            foreach ($permission as $perm) {
+                array_push($permissions, $perm);
+            }
+        }
+
+        return $permissions;
     }
 }
