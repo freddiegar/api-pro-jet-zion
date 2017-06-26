@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
  */
 class SupportedMediaTypeMiddleware
 {
-    const MEDIA_TYPE_SUPPORTED = 'application/json';
+    const MEDIA_TYPE_SUPPORTED = 'application/vnd.api+json';
 
     /**
      * Handle an incoming request.

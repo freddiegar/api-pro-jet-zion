@@ -8,19 +8,24 @@ use FreddieGar\Base\Constants\FilterType;
 use FreddieGar\Base\Contracts\Commons\ManagerContract;
 use FreddieGar\Base\Contracts\Interfaces\CRUDSInterface;
 use FreddieGar\Base\Traits\FilterTrait;
+use FreddieGar\Base\Traits\ManagerRelationshipTrait;
+use FreddieGar\Rbac\Contracts\Commons\RoleRelationshipInterface;
 use FreddieGar\Rbac\Contracts\Repositories\RoleRepository;
 use FreddieGar\Rbac\Entities\PermissionEntity;
 use FreddieGar\Rbac\Entities\RoleEntity;
 use FreddieGar\Rbac\Models\Role;
+use FreddieGar\Rbac\Schemas\RoleSchema;
 use Illuminate\Http\Request;
+use Neomerx\JsonApi\Encoder\Encoder;
 
 /**
  * Class RoleManager
  * @package App\Managers
  */
-class RoleManager extends ManagerContract implements CRUDSInterface
+class RoleManager extends ManagerContract implements CRUDSInterface, RoleRelationshipInterface
 {
     use FilterTrait;
+    use ManagerRelationshipTrait;
 
     /**
      * RoleManager constructor.
@@ -34,6 +39,14 @@ class RoleManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
+     * @return Role
+     */
+    public function model()
+    {
+        return new Role();
+    }
+
+    /**
      * @return RoleRepository
      */
     protected function roleRepository()
@@ -42,7 +55,7 @@ class RoleManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function create()
     {
@@ -52,21 +65,23 @@ class RoleManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @param int $id
-     * @return array
+     * @inheritdoc
      */
     public function read($id)
     {
-        $role = Role::getFromCacheId($id, function () use ($id) {
-            return $this->roleRepository()->findById($id);
-        });
+        return $this->model()->getFromCacheId($id, function () use ($id) {
+            $role = $this->roleRepository()->findById($id);
 
-        return RoleEntity::load($role)->toArray();
+            $encoder = Encoder::instance([
+                RoleEntity::class => RoleSchema::class,
+            ], encoderOptions());
+
+            return $encoder->encodeData(RoleEntity::load($role));
+        });
     }
 
     /**
-     * @param int $id
-     * @return array
+     * @inheritdoc
      */
     public function update($id)
     {
@@ -76,8 +91,7 @@ class RoleManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @param int $id
-     * @return array
+     * @inheritdoc
      */
     public function delete($id)
     {
@@ -87,13 +101,13 @@ class RoleManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function show()
     {
         $tag = makeTagNameCache($this->filterToApply());
 
-        $roles = Role::getFromCacheTag($tag, function () {
+        $roles = $this->model()->getFromCacheTag($tag, function () {
             return $this->roleRepository()->findWhere($this->filterToApply());
         });
 
@@ -101,25 +115,27 @@ class RoleManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @param $role_id
-     * @return array
+     * @inheritdoc
      */
     public function users($role_id)
     {
         $tag = makeTagNameCache([__METHOD__, $role_id]);
 
-        $users = Role::getFromCacheTag($tag, function () use ($role_id) {
+        $users = $this->model()->getFromCacheTag($tag, function () use ($role_id) {
             return $this->roleRepository()->users($role_id);
         });
 
         return UserEntity::toArrayMultiple($users);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function permissions($role_id)
     {
         $tag = makeTagNameCache([__METHOD__, $role_id]);
 
-        $permissions = Role::getFromCacheTag($tag, function () use ($role_id) {
+        $permissions = $this->model()->getFromCacheTag($tag, function () use ($role_id) {
             return $this->roleRepository()->permissions($role_id);
         });
 
@@ -127,7 +143,7 @@ class RoleManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     protected function rules()
     {
@@ -137,7 +153,7 @@ class RoleManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     protected function filters()
     {

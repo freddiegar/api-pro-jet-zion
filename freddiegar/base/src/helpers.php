@@ -205,6 +205,36 @@ if (!function_exists('responseJson')) {
     }
 }
 
+if (!function_exists('responseJsonApi')) {
+    /**
+     * @param string $content
+     * @param int $status
+     * @param array $headers
+     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+     */
+    function responseJsonApi($content = '', $status = 200, array $headers = [])
+    {
+        $status = is_null($content) ? \Illuminate\Http\Response::HTTP_NO_CONTENT : $status;
+        $headers = array_merge([
+            'Content-Type' => \FreddieGar\Base\Middlewares\SupportedMediaTypeMiddleware::MEDIA_TYPE_SUPPORTED
+        ], $headers);
+
+        return response($content, $status, $headers);
+    }
+}
+
+if (!function_exists('encoderOptions')) {
+    /**
+     * @return \Neomerx\JsonApi\Encoder\EncoderOptions
+     */
+    function encoderOptions()
+    {
+        $options = env('APP_JSON_PRETTY_PRINT') === true ? JSON_PRETTY_PRINT : 0;
+
+        return new Neomerx\JsonApi\Encoder\EncoderOptions($options, route('/'));
+    }
+}
+
 if (!function_exists('customizeTrace')) {
     /**
      * @param array $exceptions
