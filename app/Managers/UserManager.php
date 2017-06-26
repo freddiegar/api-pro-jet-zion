@@ -11,6 +11,8 @@ use FreddieGar\Base\Constants\FilterType;
 use FreddieGar\Base\Contracts\Commons\ManagerContract;
 use FreddieGar\Base\Contracts\Interfaces\CRUDSInterface;
 use FreddieGar\Base\Traits\FilterTrait;
+use FreddieGar\Base\Traits\ManagerRelationshipTrait;
+use FreddieGar\Rbac\Contracts\Commons\UserRelationshipInterface;
 use FreddieGar\Rbac\Entities\RoleEntity;
 use Illuminate\Http\Request;
 
@@ -18,9 +20,10 @@ use Illuminate\Http\Request;
  * Class UserManager
  * @package App\Managers
  */
-class UserManager extends ManagerContract implements CRUDSInterface
+class UserManager extends ManagerContract implements CRUDSInterface, UserRelationshipInterface
 {
     use FilterTrait;
+    use ManagerRelationshipTrait;
 
     /**
      * UserManager constructor.
@@ -34,6 +37,14 @@ class UserManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
+     * @return User
+     */
+    public function model()
+    {
+        return new User();
+    }
+
+    /**
      * @return UserRepository
      */
     protected function userRepository()
@@ -42,7 +53,7 @@ class UserManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function create()
     {
@@ -56,12 +67,11 @@ class UserManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @param int $id
-     * @return array
+     * @inheritdoc
      */
     public function read($id)
     {
-        $user = User::getFromCacheId($id, function () use ($id) {
+        $user = $this->model()->getFromCacheId($id, function () use ($id) {
             return $this->userRepository()->findById($id);
         });
 
@@ -69,8 +79,7 @@ class UserManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @param int $id
-     * @return array
+     * @inheritdoc
      */
     public function update($id)
     {
@@ -85,8 +94,7 @@ class UserManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @param int $id
-     * @return array
+     * @inheritdoc
      */
     public function delete($id)
     {
@@ -96,13 +104,13 @@ class UserManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function show()
     {
         $tag = makeTagNameCache($this->filterToApply());
 
-        $users = User::getFromCacheTag($tag, function () {
+        $users = $this->model()->getFromCacheTag($tag, function () {
             return $this->userRepository()->findWhere($this->filterToApply());
         });
 
@@ -110,14 +118,13 @@ class UserManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @param $user_id
-     * @return array
+     * @inheritdoc
      */
     public function roles($user_id)
     {
         $tag = makeTagNameCache([__METHOD__, $user_id]);
 
-        $roles = User::getFromCacheTag($tag, function () use ($user_id) {
+        $roles = $this->model()->getFromCacheTag($tag, function () use ($user_id) {
             return $this->userRepository()->roles($user_id);
         });
 
@@ -125,7 +132,7 @@ class UserManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     protected function rules()
     {
@@ -142,7 +149,7 @@ class UserManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     protected function filters()
     {

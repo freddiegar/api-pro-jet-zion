@@ -5,23 +5,33 @@ namespace App\Repositories\Eloquent;
 use App\Contracts\Repositories\UserRepository;
 use App\Models\User;
 use FreddieGar\Base\Repositories\Eloquent\EloquentFilterBuilder;
-use FreddieGar\Rbac\Contracts\Commons\PermissionContract;
+use FreddieGar\Base\Traits\RepositoryRelationshipTrait;
+use FreddieGar\Rbac\Contracts\Commons\PermissionInterface;
 use FreddieGar\Rbac\Traits\PermissionTrait;
 
 /**
  * Class EloquentUserRepository
  * @package App\Repositories\Eloquent
  */
-class EloquentUserRepository extends EloquentFilterBuilder implements UserRepository, PermissionContract
+class EloquentUserRepository extends EloquentFilterBuilder implements UserRepository, PermissionInterface
 {
     use PermissionTrait;
+    use RepositoryRelationshipTrait;
+
+    /**
+     * @inheritdoc
+     */
+    static public function model()
+    {
+        return new User();
+    }
 
     /**
      * @inheritdoc
      */
     static public function create($user)
     {
-        return User::create($user)->attributesToArray();
+        return self::model()->create($user)->attributesToArray();
     }
 
     /**
@@ -29,7 +39,7 @@ class EloquentUserRepository extends EloquentFilterBuilder implements UserReposi
      */
     static public function findById($id)
     {
-        return User::findOrFail($id)->attributesToArray();
+        return self::model()->findOrFail($id)->attributesToArray();
     }
 
     /**
@@ -37,7 +47,7 @@ class EloquentUserRepository extends EloquentFilterBuilder implements UserReposi
      */
     static public function updateById($id, $user)
     {
-        return User::findOrFail($id)->update($user);
+        return self::model()->findOrFail($id)->update($user);
     }
 
     /**
@@ -45,7 +55,7 @@ class EloquentUserRepository extends EloquentFilterBuilder implements UserReposi
      */
     static public function deleteById($id)
     {
-        return User::findOrFail($id)->delete();
+        return self::model()->findOrFail($id)->delete();
     }
 
     /**
@@ -53,7 +63,7 @@ class EloquentUserRepository extends EloquentFilterBuilder implements UserReposi
      */
     static public function getByApiToken($apiToken)
     {
-        return User::where('api_token', base64_decode($apiToken))->first();
+        return self::model()->where('api_token', base64_decode($apiToken))->first();
     }
 
     /**
@@ -61,7 +71,7 @@ class EloquentUserRepository extends EloquentFilterBuilder implements UserReposi
      */
     static public function findWhere($filters)
     {
-        return self::builder(User::select(), $filters)->get()->toArray();
+        return self::builder(self::model()->select(), $filters)->get()->toArray();
     }
 
     /**
@@ -69,6 +79,6 @@ class EloquentUserRepository extends EloquentFilterBuilder implements UserReposi
      */
     static public function roles($user_id)
     {
-        return User::findOrFail($user_id)->roles->toArray();
+        return self::model()->findOrFail($user_id)->roles->toArray();
     }
 }

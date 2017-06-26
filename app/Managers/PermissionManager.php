@@ -7,7 +7,6 @@ use FreddieGar\Base\Contracts\Commons\ManagerContract;
 use FreddieGar\Base\Traits\FilterTrait;
 use FreddieGar\Rbac\Contracts\Repositories\PermissionRepository;
 use FreddieGar\Rbac\Entities\PermissionEntity;
-use FreddieGar\Rbac\Entities\RoleEntity;
 use FreddieGar\Rbac\Models\Permission;
 use Illuminate\Http\Request;
 
@@ -31,6 +30,14 @@ class PermissionManager extends ManagerContract
     }
 
     /**
+     * @return Permission
+     */
+    public function model()
+    {
+        return new Permission();
+    }
+
+    /**
      * @return PermissionRepository
      */
     protected function permissionRepository()
@@ -44,11 +51,11 @@ class PermissionManager extends ManagerContract
      */
     public function read($id)
     {
-        $permission = Permission::getFromCacheId($id, function () use ($id) {
+        $permission = $this->model()->getFromCacheId($id, function () use ($id) {
             return $this->permissionRepository()->findById($id);
         });
 
-        return RoleEntity::load($permission)->toArray();
+        return PermissionEntity::load($permission)->toArray();
     }
 
     /**
@@ -58,7 +65,7 @@ class PermissionManager extends ManagerContract
     {
         $tag = makeTagNameCache($this->filterToApply());
 
-        $permissions = Permission::getFromCacheTag($tag, function () {
+        $permissions = $this->model()->getFromCacheTag($tag, function () {
             return $this->permissionRepository()->findWhere($this->filterToApply());
         });
 

@@ -2,12 +2,19 @@
 
 namespace FreddieGar\Rbac\Contracts\Repositories;
 
+use FreddieGar\Rbac\Models\Role;
+
 /**
  * Interface RoleRepository
  * @package FreddieGar\Rbac\Contracts\Repositories
  */
 interface RoleRepository
 {
+    /**
+     * @return Role
+     */
+    static public function model();
+
     /**
      * @param array $role
      * @return array
@@ -38,6 +45,18 @@ interface RoleRepository
      * @return array
      */
     static public function findWhere($filters);
+
+    /**
+     * @param $role_id
+     * @return mixed
+     */
+    static public function createdBy($role_id);
+
+    /**
+     * @param $role_id
+     * @return mixed
+     */
+    static public function updatedBy($role_id);
 
     /**
      * @param $role_id

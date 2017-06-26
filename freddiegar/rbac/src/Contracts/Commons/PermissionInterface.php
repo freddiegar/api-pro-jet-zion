@@ -3,10 +3,10 @@
 namespace FreddieGar\Rbac\Contracts\Commons;
 
 /**
- * Interface PermissionContract
+ * Interface PermissionInterface
  * @package FreddieGar\Rbac\Contracts\Commons
  */
-interface PermissionContract
+interface PermissionInterface
 {
     /**
      * @return array

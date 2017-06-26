@@ -21,6 +21,7 @@ $app->group([
     'prefix' => $prefix,
     'middleware' => 'throttle:5,30',
 ], function () use ($app) {
+    $app->get('/', ['as' => '/']);
     $app->post('login', ['as' => 'api.login', 'uses' => 'LoginController@login']);
 });
 

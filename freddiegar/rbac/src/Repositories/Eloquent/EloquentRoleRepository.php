@@ -3,6 +3,7 @@
 namespace FreddieGar\Rbac\Repositories\Eloquent;
 
 use FreddieGar\Base\Repositories\Eloquent\EloquentFilterBuilder;
+use FreddieGar\Base\Traits\RepositoryRelationshipTrait;
 use FreddieGar\Rbac\Contracts\Repositories\RoleRepository;
 use FreddieGar\Rbac\Models\Role;
 
@@ -12,12 +13,22 @@ use FreddieGar\Rbac\Models\Role;
  */
 class EloquentRoleRepository extends EloquentFilterBuilder implements RoleRepository
 {
+    use RepositoryRelationshipTrait;
+
+    /**
+     * @inheritdoc
+     */
+    static public function model()
+    {
+        return new Role();
+    }
+
     /**
      * @inheritdoc
      */
     static public function create($role)
     {
-        return Role::create($role)->attributesToArray();
+        return self::model()->create($role)->attributesToArray();
     }
 
     /**
@@ -25,7 +36,7 @@ class EloquentRoleRepository extends EloquentFilterBuilder implements RoleReposi
      */
     static public function findById($id)
     {
-        return Role::findOrFail($id)->attributesToArray();
+        return self::model()->findOrFail($id)->attributesToArray();
     }
 
     /**
@@ -33,7 +44,7 @@ class EloquentRoleRepository extends EloquentFilterBuilder implements RoleReposi
      */
     static public function updateById($id, $role)
     {
-        return Role::findOrFail($id)->update($role);
+        return self::model()->findOrFail($id)->update($role);
     }
 
     /**
@@ -41,7 +52,7 @@ class EloquentRoleRepository extends EloquentFilterBuilder implements RoleReposi
      */
     static public function deleteById($id)
     {
-        return Role::findOrFail($id)->delete();
+        return self::model()->findOrFail($id)->delete();
     }
 
     /**
@@ -49,7 +60,7 @@ class EloquentRoleRepository extends EloquentFilterBuilder implements RoleReposi
      */
     static public function findWhere($filters)
     {
-        return self::builder(Role::select(), $filters)->get()->toArray();
+        return self::builder(self::model()->select(), $filters)->get()->toArray();
     }
 
     /**
@@ -57,7 +68,7 @@ class EloquentRoleRepository extends EloquentFilterBuilder implements RoleReposi
      */
     static public function users($role_id)
     {
-        return Role::findOrFail($role_id)->users->toArray();
+        return self::model()->findOrFail($role_id)->users->toArray();
     }
 
     /**
@@ -65,9 +76,9 @@ class EloquentRoleRepository extends EloquentFilterBuilder implements RoleReposi
      */
     static public function permissions($role_id)
     {
-        $permissions = Role::findOrFail($role_id)->permissions->toArray();
+        $permissions = self::model()->findOrFail($role_id)->permissions->toArray();
 
-        $parents = Role::findOrFail($role_id)->parents;
+        $parents = self::model()->findOrFail($role_id)->parents;
         foreach ($parents as $parent) {
             $permission = self::permissions($parent['id']);
             foreach ($permission as $perm) {

@@ -14,7 +14,7 @@ class FakerUserSeeder extends Seeder
      */
     public function run()
     {
-        if (!isTesting()) {
+        if (!isDevelopment()) {
             return;
         }
 

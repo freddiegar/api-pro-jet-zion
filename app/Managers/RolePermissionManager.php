@@ -7,6 +7,7 @@ use FreddieGar\Base\Constants\FilterType;
 use FreddieGar\Base\Contracts\Commons\ManagerContract;
 use FreddieGar\Base\Contracts\Interfaces\CRUDSInterface;
 use FreddieGar\Base\Traits\FilterTrait;
+use FreddieGar\Base\Traits\ManagerRelationshipTrait;
 use FreddieGar\Rbac\Contracts\Repositories\RolePermissionRepository;
 use FreddieGar\Rbac\Entities\RolePermissionEntity;
 use FreddieGar\Rbac\Models\RolePermission;
@@ -19,6 +20,7 @@ use Illuminate\Http\Request;
 class RolePermissionManager extends ManagerContract implements CRUDSInterface
 {
     use FilterTrait;
+    use ManagerRelationshipTrait;
 
     /**
      * RolePermissionManager constructor.
@@ -32,6 +34,14 @@ class RolePermissionManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
+     * @return RolePermission
+     */
+    public function model()
+    {
+        return new RolePermission();
+    }
+
+    /**
      * @return RolePermissionRepository
      */
     protected function rolePermissionRepository()
@@ -40,7 +50,7 @@ class RolePermissionManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function create()
     {
@@ -53,12 +63,11 @@ class RolePermissionManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @param int $id
-     * @return array
+     * @inheritdoc
      */
     public function read($id)
     {
-        $rolePermission = RolePermission::getFromCacheId($id, function () use ($id) {
+        $rolePermission = $this->model()->getFromCacheId($id, function () use ($id) {
             return $this->rolePermissionRepository()->findById($id);
         });
 
@@ -66,8 +75,7 @@ class RolePermissionManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @param int $id
-     * @return array
+     * @inheritdoc
      */
     public function update($id)
     {
@@ -77,8 +85,7 @@ class RolePermissionManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @param int $id
-     * @return array
+     * @inheritdoc
      */
     public function delete($id)
     {
@@ -88,13 +95,13 @@ class RolePermissionManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function show()
     {
         $tag = makeTagNameCache($this->filterToApply());
 
-        $rolePermissions = RolePermission::getFromCacheTag($tag, function () {
+        $rolePermissions = $this->model()->getFromCacheTag($tag, function () {
             return $this->rolePermissionRepository()->findWhere($this->filterToApply());
         });
 
@@ -102,7 +109,7 @@ class RolePermissionManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     protected function rules()
     {
@@ -115,7 +122,7 @@ class RolePermissionManager extends ManagerContract implements CRUDSInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     protected function filters()
     {

@@ -4,6 +4,7 @@ namespace App\Managers;
 
 use App\Contracts\Repositories\LoginRepository;
 use App\Entities\UserEntity;
+use App\Models\User;
 use FreddieGar\Base\Contracts\Commons\ManagerContract;
 use Illuminate\Http\Request;
 use Illuminate\Validation\UnauthorizedException;
@@ -23,6 +24,15 @@ class LoginManager extends ManagerContract
     {
         $this->request($request);
         $this->repository($repository);
+    }
+
+    /**
+     * @return User
+     * @codeCoverageIgnore
+     */
+    public function model()
+    {
+        return new User();
     }
 
     /**
@@ -56,7 +66,7 @@ class LoginManager extends ManagerContract
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     protected function rules()
     {

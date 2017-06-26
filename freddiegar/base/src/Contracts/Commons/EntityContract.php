@@ -9,7 +9,7 @@ use FreddieGar\Base\Traits\LoaderTrait;
 use FreddieGar\Base\Traits\ToArrayTrait;
 
 /**
- * Class EntityContract
+ * Class Entity
  * @package FreddieGar\Base\Contracts\Commons
  */
 abstract class EntityContract implements BlameColumnInterface

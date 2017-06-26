@@ -1,4 +1,4 @@
-    <?php
+<?php
 
 use App\Models\User;
 use FreddieGar\Base\Constants\BlameColumn;
@@ -17,7 +17,7 @@ class FakerPermissionSeeder extends Seeder
     public function run()
     {
 
-        if (!isTesting()) {
+        if (!isDevelopment()) {
             return;
         }
 

@@ -11,6 +11,11 @@ use App\Models\User;
 interface UserRepository
 {
     /**
+     * @return User
+     */
+    static public function model();
+
+    /**
      * @param array $user
      * @return array
      */
@@ -46,6 +51,18 @@ interface UserRepository
      * @return array
      */
     static public function findWhere($filters);
+
+    /**
+     * @param $user_id
+     * @return mixed
+     */
+    static public function createdBy($user_id);
+
+    /**
+     * @param $user_id
+     * @return mixed
+     */
+    static public function updatedBy($user_id);
 
     /**
      * @param int $user_id

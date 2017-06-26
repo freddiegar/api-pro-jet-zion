@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\UnauthorizedException;
 
+/**
+ * Trait BlameControlTrait
+ * @package FreddieGar\Base\Traits
+ */
 trait BlameControlTrait
 {
     /**

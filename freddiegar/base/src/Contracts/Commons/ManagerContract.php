@@ -26,6 +26,12 @@ abstract class ManagerContract
     protected $repository;
 
     /**
+     * Model that manage manager
+     * @return mixed
+     */
+    abstract protected function model();
+
+    /**
      * @param Request $request
      * @return Request
      */
@@ -37,15 +43,6 @@ abstract class ManagerContract
 
         return $this->request;
     }
-
-    /**
-     * @param string $method
-     * @return string
-     */
-//    final protected function requestIsMethod($method)
-//    {
-//        return $this->request()->isMethod($method);
-//    }
 
     /**
      * @return string
@@ -124,6 +121,14 @@ abstract class ManagerContract
     }
 
     /**
+     * @return string
+     */
+    final private function name()
+    {
+        return snake_case(str_replace('Manager', '', class_basename(static::class)), '-');
+    }
+
+    /**
      * @param mixed $repository
      * @return mixed
      */
@@ -136,11 +141,6 @@ abstract class ManagerContract
         return $this->repository;
     }
 
-    final private function name()
-    {
-        return snake_case(str_replace('Manager', '', class_basename(static::class)), '-');
-    }
-
     /**
      * @param int $id
      * @param string $relationship
@@ -149,9 +149,11 @@ abstract class ManagerContract
     final public function relationship($id, $relationship)
     {
         $entity = static::read($id);
-        $relation_id = isset($entity[$relationship . '_id']) ? $entity[$relationship . '_id'] : $entity['id'];
+        $method = camel_case($relationship);
+//        dd($entity, $relationship, $method);
+//        $relation_id = isset($entity[$relationship . '_id']) ? $entity[$relationship . '_id'] : $entity['id'];
 
-        return array_merge([self::name() => $entity], [$relationship => static::{$relationship}($relation_id)]);
+        return array_merge([self::name() => $entity], [$relationship => static::{$method}($id)]);
     }
 
     /**

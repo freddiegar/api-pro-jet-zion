@@ -6,6 +6,7 @@ use FreddieGar\Base\Constants\BlameColumn;
 use FreddieGar\Base\Contracts\Interfaces\BlameControlInterface;
 use FreddieGar\Base\Contracts\Interfaces\CacheControlInterface;
 use FreddieGar\Base\Traits\BlameControlTrait;
+use FreddieGar\Base\Traits\BlameRelationshipTrait;
 use FreddieGar\Base\Traits\CacheControlTrait;
 use FreddieGar\Rbac\Models\Role;
 use Illuminate\Auth\Authenticatable;
@@ -34,6 +35,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use SoftDeletes;
     use BlameControlTrait;
     use CacheControlTrait;
+    use BlameRelationshipTrait;
 
     protected $guarded = [];
 

@@ -7,6 +7,7 @@ use FreddieGar\Base\Constants\BlameColumn;
 use FreddieGar\Base\Contracts\Interfaces\BlameControlInterface;
 use FreddieGar\Base\Contracts\Interfaces\CacheControlInterface;
 use FreddieGar\Base\Traits\BlameControlTrait;
+use FreddieGar\Base\Traits\BlameRelationshipTrait;
 use FreddieGar\Base\Traits\CacheControlTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -28,6 +29,7 @@ class Role extends Model implements BlameControlInterface, CacheControlInterface
     use SoftDeletes;
     use BlameControlTrait;
     use CacheControlTrait;
+    use BlameRelationshipTrait;
 
     protected $guarded = [];
 
