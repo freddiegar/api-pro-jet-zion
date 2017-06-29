@@ -36,7 +36,7 @@ class ThrottleRequestMiddleware
      * @param  \Closure $next
      * @param  int $maxAttempts
      * @param  int $decayMinutes
-     * @return mixed
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function handle($request, Closure $next, $maxAttempts = 60, $decayMinutes = 1)
     {
@@ -46,10 +46,13 @@ class ThrottleRequestMiddleware
         }
         $this->limiter->hit($key, $decayMinutes);
         $response = $next($request);
-        return $this->addHeaders(
-            $response, $maxAttempts,
+
+        $response->headers->add($this->getHeaders(
+            $maxAttempts,
             $this->calculateRemainingAttempts($key, $maxAttempts)
-        );
+        ));
+
+        return $response;
     }
 
     /**
@@ -73,30 +76,37 @@ class ThrottleRequestMiddleware
      *
      * @param  string $key
      * @param  int $maxAttempts
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     protected function buildResponse($key, $maxAttempts)
     {
-        $response = new Response('Too Many Attempts.', Response::HTTP_TOO_MANY_REQUESTS);
         $retryAfter = $this->limiter->availableIn($key);
+        $message = trans('exceptions.max_attempts', ['seconds' => $retryAfter]);
 
-        return $this->addHeaders(
-            $response, $maxAttempts,
+        $response = [
+            'status' => Response::HTTP_TOO_MANY_REQUESTS,
+            'title' => $message,
+            'detail' => $message,
+        ];
+
+        $headers = $this->getHeaders(
+            $maxAttempts,
             $this->calculateRemainingAttempts($key, $maxAttempts, $retryAfter),
             $retryAfter
         );
+
+        return responseJsonApiError($response, $headers);
     }
 
     /**
      * Add the limit header information to the given response.
      *
-     * @param  \Symfony\Component\HttpFoundation\Response $response
      * @param  int $maxAttempts
      * @param  int $remainingAttempts
      * @param  int|null $retryAfter
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return array
      */
-    protected function addHeaders(Response $response, $maxAttempts, $remainingAttempts, $retryAfter = null)
+    protected function getHeaders($maxAttempts, $remainingAttempts, $retryAfter = null)
     {
         $headers = [
             'X-RateLimit-Limit' => $maxAttempts,
@@ -105,9 +115,7 @@ class ThrottleRequestMiddleware
         if (!is_null($retryAfter)) {
             $headers['Retry-After'] = $retryAfter;
         }
-        $response->headers->add($headers);
-
-        return $response;
+        return $headers;
     }
 
     /**

@@ -11,4 +11,5 @@ return [
     'unauthorized' => 'Not authenticated to :event of :model',
     'not_permission' => 'You don\'t have permission to: :description',
     'internal_server_error' => 'Sorry, in this moment is not possible response you.',
+    'max_attempts' => 'Wow! Too many attempts, try again in :seconds seconds.',
 ];

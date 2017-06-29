@@ -223,6 +223,32 @@ if (!function_exists('responseJsonApi')) {
     }
 }
 
+if (!function_exists('responseJsonApiError')) {
+    /**
+     * @param array $response
+     * @param array $headers
+     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+     */
+    function responseJsonApiError(array $response, array $headers = [])
+    {
+        $errors = new Neomerx\JsonApi\Exceptions\ErrorCollection();
+
+        $response['meta'] = isset($response['meta']) ? $response['meta'] : null;
+
+        if (is_array($response['detail'])) {
+            foreach ($response['detail'] as $idx => $detail) {
+                $errors->addDataError($response['title'], $detail[0], $response['status'], $idx, null, null, $response['meta']);
+            }
+        } else {
+            $errors->addDataError($response['title'], $response['detail'], $response['status'], null, null, null, $response['meta']);
+        }
+
+        $encoder = Neomerx\JsonApi\Encoder\Encoder::instance([], encoderOptions());
+
+        return responseJsonApi($encoder->encodeErrors($errors), $response['status'], $headers);
+    }
+}
+
 if (!function_exists('encoderOptions')) {
     /**
      * @return \Neomerx\JsonApi\Encoder\EncoderOptions
