@@ -11,24 +11,16 @@ class GeneralFunctionalityTest extends TestCase
         $model = 'error';
         $this->json(HttpMethod::POST, $this->_route($model), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
-        $this->seeJsonStructure([
-            'message'
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertNotEmpty($response->message);
-        $this->assertEquals(trans('exceptions.not_found', compact('model')), $response->message);
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.not_found', compact('model')), $response->title);
     }
 
     public function testMethodNotAllowedHttp()
     {
         $this->json(HttpMethod::GET, $this->_route('login'), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_METHOD_NOT_ALLOWED);
-        $this->seeJsonStructure([
-            'message'
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertNotEmpty($response->message);
-        $this->assertEquals(trans('exceptions.method_not_allowed'), $response->message);
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.method_not_allowed'), $response->title);
     }
 
     public function testUnsopportedMediaTypeHttp()
@@ -36,19 +28,17 @@ class GeneralFunctionalityTest extends TestCase
         $media_type = SupportedMediaTypeMiddleware::MEDIA_TYPE_SUPPORTED;
         $this->json(HttpMethod::GET, $this->_route('login'), [], ['CONTENT_TYPE' => '']);
         $this->assertResponseStatus(Response::HTTP_UNSUPPORTED_MEDIA_TYPE);
-        $this->seeJsonStructure([
-            'message'
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertNotEmpty($response->message);
-        $this->assertEquals(trans('exceptions.unsopported_media_type', compact('media_type')), $response->message);
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.unsopported_media_type', compact('media_type')), $response->title);
     }
 
     public function testTooManyAttemptsHttp()
     {
         for ($i = 0; $i < 5; ++$i) {
             $this->json(HttpMethod::POST, $this->_route('login'), [], $this->headers());
+            $response = $this->responseWithErrors();
             $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->assertEquals(trans('exceptions.validation'), $response->title);
         }
 
         $this->json(HttpMethod::POST, $this->_route('login'), [], $this->headers());

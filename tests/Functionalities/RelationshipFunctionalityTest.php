@@ -13,26 +13,16 @@ class RelationshipFunctionalityTest extends DBTestCase
         $relationship = 'failed';
         $this->json(HttpMethod::GET, $this->_route('users', 1, $relationship), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
-        $this->seeJsonStructure([
-            'message'
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertNotEmpty($response->message);
-        $this->assertEquals(trans('exceptions.relationship_not_found', compact('relationship')), $response->message);
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.relationship_not_found', compact('relationship')), $response->title);
     }
 
     public function testRelationshipCreatedBy()
     {
-        $relationship = 'createdBy';
+        $relationship = 'created-by';
         $this->json(HttpMethod::GET, $this->_route('users', 2, $relationship), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $this->seeJsonStructure([
-            'user',
-            'createdBy',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertObjectHasAttribute('user', $response);
-        $this->assertObjectHasAttribute('createdBy', $response);
+        $this->responseWithData();
     }
 
     public function testRelationshipUpdatedBy()
@@ -40,12 +30,6 @@ class RelationshipFunctionalityTest extends DBTestCase
         $relationship = 'updatedBy';
         $this->json(HttpMethod::GET, $this->_route('users', 4, $relationship), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $this->seeJsonStructure([
-            'user',
-            'updatedBy',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertObjectHasAttribute('user', $response);
-        $this->assertObjectHasAttribute('updatedBy', $response);
+        $this->responseWithData();
     }
 }

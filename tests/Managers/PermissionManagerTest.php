@@ -17,81 +17,58 @@ class PermissionManagerTest extends DBTestCase
         ], $excludeKeys, $includeKeys);
     }
 
-    private function jsonStructure()
-    {
-        return [
-            'id',
-            'description',
-        ];
-    }
-
     private function assertSearchPermission($response)
     {
-        foreach ($response as $entity) {
-            $this->assertInstanceOf(\stdClass::class, $entity);
-            $this->assertObjectHasAttribute('id', $entity);
-            $this->assertObjectHasAttribute('description', $entity);
-            $this->assertNotHasAttributePermission($entity);
+        foreach ($response as $data) {
+            $attributes = $data->attributes;
+            $this->assertObjectHasAttribute('description', $attributes);
+            $this->assertObjectHasAttribute('created', $attributes);
+            $this->assertObjectHasAttribute('updated', $attributes);
+            $this->assertNotHasAttributePermission($attributes);
         }
     }
 
-    private function assertNotHasAttributePermission($entity)
+    private function assertNotHasAttributePermission($attributes)
     {
-        $this->assertObjectNotHasAttribute('slug', $entity);
-        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $entity);
-        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $entity);
-        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $entity);
-        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $entity);
-        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $entity);
-        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $entity);
+        $this->assertObjectNotHasAttribute('slug', $attributes);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_BY, $attributes);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_BY, $attributes);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_BY, $attributes);
+        $this->assertObjectNotHasAttribute(BlameColumn::CREATED_AT, $attributes);
+        $this->assertObjectNotHasAttribute(BlameColumn::UPDATED_AT, $attributes);
+        $this->assertObjectNotHasAttribute(BlameColumn::DELETED_AT, $attributes);
     }
 
     public function testPermissionManagerCreateError()
     {
-        $this->json(HttpMethod::POST, $this->_route('permissions'), [], []);
-        $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.credentials'));
+        $this->json(HttpMethod::POST, $this->_route('permissions'), [], $this->headers());
+        $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.not_found'), $response->title);
     }
 
     public function testPermissionManagerCreateTokenError()
     {
-        $this->json(HttpMethod::POST, $this->_route('permissions'), $this->request(), []);
+        $this->json(HttpMethod::POST, $this->_route('permissions'), $this->request(), array_merge($this->supportedMediaType(), [UserEntity::KEY_API_TOKEN_HEADER => '']));
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.credentials'));
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.credentials'), $response->title);
     }
 
     public function testPermissionManagerCreateTokenNotValidError()
     {
-        $this->json(HttpMethod::POST, $this->_route('permissions'), $this->request(), [UserEntity::KEY_API_TOKEN => 'token_invalid_test']);
+        $this->json(HttpMethod::POST, $this->_route('permissions'), $this->request(), array_merge($this->supportedMediaType(), [UserEntity::KEY_API_TOKEN => 'token_invalid_test']));
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.credentials'));
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.credentials'), $response->title);
     }
 
     public function testPermissionManagerCreateEmptyError()
     {
         $this->json(HttpMethod::POST, $this->_route('permissions'), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.not_found'));
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.not_found'), $response->title);
     }
 
     public function testPermissionManagerCreateDescriptionError()
@@ -101,36 +78,27 @@ class PermissionManagerTest extends DBTestCase
         ];
         $this->json(HttpMethod::POST, $this->_route('permissions'), $data, $this->headers());
         $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.not_found'));
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.not_found'), $response->title);
     }
 
     public function testPermissionManagerCreateOk()
     {
         $this->json(HttpMethod::POST, $this->_route('permissions'), $this->request(), $this->headers());
         $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.not_found'));
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.not_found'), $response->title);
     }
 
     public function testPermissionManagerReadOk()
     {
         $this->json(HttpMethod::GET, $this->_route('permissions', 1), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $this->seeJsonStructure($this->jsonStructure());
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->id, 1);
-        $this->assertEquals($response->description, 'Show user');
-        $this->assertNotHasAttributePermission($response);
+        $response = $this->responseWithData();
+        $this->assertEquals(1, $response->id);
+        $attributes = $response->attributes;
+        $this->assertEquals('Show user', $attributes->description);
+        $this->assertNotHasAttributePermission($attributes);
     }
 
     public function testPermissionManagerUpdateDescriptionError()
@@ -140,24 +108,16 @@ class PermissionManagerTest extends DBTestCase
         ];
         $this->json(HttpMethod::PUT, $this->_route('permissions', 1), $this->request([], $data), $this->headers());
         $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.not_found'));
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.not_found'), $response->title);
     }
 
     public function testPermissionManagerUpdateEmptyError()
     {
         $this->json(HttpMethod::PUT, $this->_route('permissions', 1), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.not_found'));
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.not_found'), $response->title);
     }
 
     public function testPermissionManagerUpdateOk()
@@ -167,12 +127,8 @@ class PermissionManagerTest extends DBTestCase
         ];
         $this->json(HttpMethod::PUT, $this->_route('permissions', 1), $this->request([], $data), $this->headers());
         $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.not_found'));
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.not_found'), $response->title);
     }
 
     public function testPermissionManagerPatchOk()
@@ -182,193 +138,165 @@ class PermissionManagerTest extends DBTestCase
         ];
         $this->json(HttpMethod::PATCH, $this->_route('permissions', 1), $data, $this->headers());
         $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.not_found'));
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.not_found'), $response->title);
     }
 
     public function testPermissionManagerDeleteOk()
     {
         $this->json(HttpMethod::DELETE, $this->_route('permissions', 1), $this->request(), $this->headers());
         $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.not_found'));
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.not_found'), $response->title);
 
         $this->json(HttpMethod::GET, $this->_route('permissions', 1), $this->request(), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $this->seeJsonStructure($this->jsonStructure());
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->id, 1);
-        $this->assertEquals($response->description, 'Show user');
-        $this->assertNotHasAttributePermission($response);
+        $response = $this->responseWithData();
+        $this->assertEquals(1, $response->id);
+        $attributes = $response->attributes;
+        $this->assertEquals('Show user', $attributes->description);
+        $this->assertNotHasAttributePermission($attributes);
     }
 
     public function testPermissionManagerShowSimpleMethodHttpError()
     {
         $this->json(HttpMethod::PUT, $this->_route('permissions'), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_METHOD_NOT_ALLOWED);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.method_not_allowed'));
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.method_not_allowed'), $response->title);
 
         $this->json(HttpMethod::PATCH, $this->_route('permissions'), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_METHOD_NOT_ALLOWED);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.method_not_allowed'));
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.method_not_allowed'), $response->title);
 
         $this->json(HttpMethod::DELETE, $this->_route('permissions'), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_METHOD_NOT_ALLOWED);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.method_not_allowed'));
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.method_not_allowed'), $response->title);
     }
 
     public function testPermissionManagerShowSimpleTokenError()
     {
-        $this->json(HttpMethod::GET, $this->_route('permissions'), [], []);
+        $this->json(HttpMethod::GET, $this->_route('permissions'), [], $this->supportedMediaType());
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.credentials'));
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.credentials'), $response->title);
     }
 
     public function testPermissionManagerShowSimpleNotValidToken()
     {
-        $this->json(HttpMethod::GET, $this->_route('permissions'), [], [UserEntity::KEY_API_TOKEN => 'token_invalid_test']);
+        $this->json(HttpMethod::GET, $this->_route('permissions'), [], array_merge($this->supportedMediaType(), [UserEntity::KEY_API_TOKEN => 'token_invalid_test']));
         $this->assertResponseStatus(Response::HTTP_UNAUTHORIZED);
-        $this->seeJsonStructure([
-            'message',
-        ]);
-        $response = json_decode($this->response->getContent());
-        $this->assertInstanceOf(\stdClass::class, $response);
-        $this->assertEquals($response->message, trans('exceptions.credentials'));
+        $response = $this->responseWithErrors();
+        $this->assertEquals(trans('exceptions.credentials'), $response->title);
     }
 
     public function testPermissionManagerShowSimpleEmpty()
     {
         $this->json(HttpMethod::GET, $this->_route('permissions'), [], $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $response = json_decode($this->response->getContent());
+        $response = $this->responseWithDataMultiple();
         $this->assertEquals(true, count($response) > 0);
         $this->assertSearchPermission($response);
     }
 
     public function testPermissionManagerShowSimple01()
     {
-        $this->json(HttpMethod::GET, $this->_route('permissions'), [
+        $this->json(HttpMethod::GET, $this->_route('permissions'), $this->filters([
             'description' => 'Test',
-        ], $this->headers());
+        ]), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $response = json_decode($this->response->getContent());
+        $response = $this->responseWithDataMultiple();
         $this->assertEquals(5, count($response));
         $this->assertSearchPermission($response);
     }
 
     public function testPermissionManagerShowSimple02()
     {
-        $this->json(HttpMethod::GET, $this->_route('permissions'), [
+        $this->json(HttpMethod::GET, $this->_route('permissions'), $this->filters([
             'description' => 'Testing',
-        ], $this->headers());
+        ]), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $response = json_decode($this->response->getContent());
+        $response = $this->responseWithDataMultiple();
         $this->assertEquals(0, count($response));
         $this->assertSearchPermission($response);
     }
 
     public function testPermissionManagerShowSimple03()
     {
-        $this->json(HttpMethod::GET, $this->_route('permissions'), [
+        $this->json(HttpMethod::GET, $this->_route('permissions'), $this->filters([
             'description' => '',
-        ], $this->headers());
+        ]), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $response = json_decode($this->response->getContent());
+        $response = $this->responseWithDataMultiple();
         $this->assertEquals(0, count($response));
         $this->assertSearchPermission($response);
     }
 
     public function testPermissionManagerShowSimple04()
     {
-        $this->json(HttpMethod::GET, $this->_route('permissions'), [
+        $this->json(HttpMethod::GET, $this->_route('permissions'), $this->filters([
             'description' => 'Testing',
             BlameColumn::CREATED_BY => 1,
-        ], $this->headers());
+        ]), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $response = json_decode($this->response->getContent());
+        $response = $this->responseWithDataMultiple();
         $this->assertEquals(0, count($response));
         $this->assertSearchPermission($response);
     }
 
     public function testPermissionManagerShowSimple05()
     {
-        $this->json(HttpMethod::GET, $this->_route('permissions'), [
+        $this->json(HttpMethod::GET, $this->_route('permissions'), $this->filters([
             'description' => 'This description not exists',
-        ], $this->headers());
+        ]), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $response = json_decode($this->response->getContent());
+        $response = $this->responseWithDataMultiple();
         $this->assertEquals(0, count($response));
+        $this->assertSearchPermission($response);
     }
 
     public function testPermissionManagerShowSimple06()
     {
-        $this->json(HttpMethod::GET, $this->_route('permissions'), [
+        $this->json(HttpMethod::GET, $this->_route('permissions'), $this->filters([
             'id' => '',
-        ], $this->headers());
+        ]), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $response = json_decode($this->response->getContent());
+        $response = $this->responseWithDataMultiple();
         $this->assertEquals(0, count($response));
         $this->assertSearchPermission($response);
     }
 
     public function testPermissionManagerShowSimple07()
     {
-        $this->json(HttpMethod::GET, $this->_route('permissions'), [
+        $this->json(HttpMethod::GET, $this->_route('permissions'), $this->filters([
             'description' => '',
-        ], $this->headers());
+        ]), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $response = json_decode($this->response->getContent());
+        $response = $this->responseWithDataMultiple();
         $this->assertEquals(0, count($response));
         $this->assertSearchPermission($response);
     }
 
     public function testPermissionManagerShowSmart01()
     {
-        $this->json(HttpMethod::GET, $this->_route('permissions'), [
+        $this->json(HttpMethod::GET, $this->_route('permissions'), $this->filters([
             FilterTrait::$FILTER_SMART_NAME => 'test',
-        ], $this->headers());
+        ]), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $response = json_decode($this->response->getContent());
+        $response = $this->responseWithDataMultiple();
         $this->assertEquals(5, count($response));
         $this->assertSearchPermission($response);
     }
 
     public function testPermissionManagerShowSmart02()
     {
-        $this->json(HttpMethod::GET, $this->_route('permissions'), [
+        $this->json(HttpMethod::GET, $this->_route('permissions'), $this->filters([
             FilterTrait::$FILTER_SMART_NAME => '',
-        ], $this->headers());
+        ]), $this->headers());
         $this->assertResponseStatus(Response::HTTP_OK);
-        $response = json_decode($this->response->getContent());
+        $response = $this->responseWithDataMultiple();
         $this->assertEquals(0, count($response));
         $this->assertSearchPermission($response);
     }

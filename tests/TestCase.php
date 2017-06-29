@@ -4,6 +4,9 @@ use App\Constants\UserStatus;
 use App\Entities\UserEntity;
 use App\Models\User;
 use FreddieGar\Base\Constants\BlameColumn;
+use FreddieGar\Base\Constants\JsonApiName;
+use FreddieGar\Base\Contracts\Commons\ManagerContract;
+use FreddieGar\Base\Middlewares\SupportedMediaTypeMiddleware;
 use Illuminate\Support\Facades\Artisan;
 
 abstract class TestCase extends Laravel\Lumen\Testing\TestCase
@@ -83,9 +86,15 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
 
     public function headers()
     {
-        // Request by default use json, header not required now
-        return [
+        return array_merge($this->supportedMediaType(), [
             UserEntity::KEY_API_TOKEN_HEADER => $this->apiToken(),
+        ]);
+    }
+
+    public function supportedMediaType()
+    {
+        return [
+            'CONTENT_TYPE' => SupportedMediaTypeMiddleware::MEDIA_TYPE_SUPPORTED,
         ];
     }
 
@@ -107,4 +116,64 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
 
         return $request;
     }
+
+    public function responseWithData()
+    {
+        $this->seeJsonStructure([
+            JsonApiName::DATA
+        ]);
+
+        $response = json_decode($this->response->getContent());
+
+        $this->assertObjectHasAttribute(JsonApiName::TYPE, $response->data);
+        $this->assertObjectHasAttribute(JsonApiName::ID, $response->data);
+        $this->assertObjectHasAttribute(JsonApiName::ATTRIBUTES, $response->data);
+
+        return $response->data;
+    }
+
+    public function responseWithDataMultiple()
+    {
+        $this->seeJsonStructure([
+            JsonApiName::DATA
+        ]);
+
+        $response = json_decode($this->response->getContent());
+
+        foreach ($response->data as $data) {
+            $this->assertObjectHasAttribute(JsonApiName::TYPE, $data);
+            $this->assertObjectHasAttribute(JsonApiName::ID, $data);
+            $this->assertObjectHasAttribute(JsonApiName::ATTRIBUTES, $data);
+        }
+
+        return $response->data;
+    }
+
+    public function responseWithErrors()
+    {
+        $this->seeJsonStructure([
+            JsonApiName::ERRORS
+        ]);
+
+        $response = json_decode($this->response->getContent());
+        $error = $response->errors[0];
+
+        $this->assertObjectHasAttribute(JsonApiName::STATUS, $error);
+        $this->assertObjectHasAttribute(JsonApiName::TITLE, $error);
+        $this->assertObjectHasAttribute(JsonApiName::DETAIL, $error);
+
+        return $error;
+    }
+
+    public function filters(array $fields = [])
+    {
+        $filters = [];
+
+        foreach ($fields as $field => $value) {
+            $filters[$field] = $value;
+        }
+
+        return [ManagerContract::WRAPPER_FILTERS => $filters];
+    }
+
 }

@@ -99,7 +99,7 @@ class BlameFunctionalityTest extends DBTestCase
         }
     }
 
-    public function testBlameFunctionalityCreateDisableCreatedByOK()
+    public function testBlameFunctionalityCreateDisableCreatedByOk()
     {
         try {
             User::disableCreatedBy();
@@ -222,7 +222,7 @@ class BlameFunctionalityTest extends DBTestCase
         $this->assertEquals($this->userId(), User::getCurrentUserAuthenticated('test', $this->model()));
     }
 
-    public function testBlameFunctionalityDeleteSetCurrentUserAuthenticatedOK()
+    public function testBlameFunctionalityDeleteSetCurrentUserAuthenticatedOk()
     {
         try {
             User::setCurrentUserAuthenticated($this->userId());
@@ -233,7 +233,7 @@ class BlameFunctionalityTest extends DBTestCase
         $this->assertEquals(true, true);
     }
 
-    public function testBlameFunctionalityCreateDisableBlameOK()
+    public function testBlameFunctionalityCreateDisableBlameOk()
     {
         try {
             User::disableBlame();
@@ -244,7 +244,7 @@ class BlameFunctionalityTest extends DBTestCase
         $this->assertEquals(true, true);
     }
 
-    public function testBlameFunctionalityUpdateDisableBlameOK()
+    public function testBlameFunctionalityUpdateDisableBlameOk()
     {
         try {
             User::disableBlame();
@@ -255,7 +255,7 @@ class BlameFunctionalityTest extends DBTestCase
         $this->assertEquals(true, true);
     }
 
-    public function testBlameFunctionalityDeleteDisableBlameOK()
+    public function testBlameFunctionalityDeleteDisableBlameOk()
     {
         try {
             User::disableBlame();
@@ -266,7 +266,7 @@ class BlameFunctionalityTest extends DBTestCase
         $this->assertEquals(true, true);
     }
 
-    public function testBlameFunctionalityCreateSetCurrentUserAuthenticatedOK()
+    public function testBlameFunctionalityCreateSetCurrentUserAuthenticatedOk()
     {
         try {
             User::setCurrentUserAuthenticated($this->userId());
@@ -277,7 +277,7 @@ class BlameFunctionalityTest extends DBTestCase
         $this->assertEquals(true, true);
     }
 
-    public function testBlameFunctionalityUpdateSetCurrentUserAuthenticatedOK()
+    public function testBlameFunctionalityUpdateSetCurrentUserAuthenticatedOk()
     {
         try {
             User::setCurrentUserAuthenticated($this->userId());
