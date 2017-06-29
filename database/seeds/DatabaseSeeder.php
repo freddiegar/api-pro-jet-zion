@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,5 +17,6 @@ class DatabaseSeeder extends Seeder
         // Test fakers
         $this->call('FakerUserSeeder');
         $this->call('FakerPermissionSeeder');
+        Artisan::call('cache:clear');
     }
 }

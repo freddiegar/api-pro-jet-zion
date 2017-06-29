@@ -33,7 +33,7 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        return responseJson($this->manager()->applyFilters()->show());
+        return responseJsonApi($this->manager()->applyFilters()->show());
     }
 
     /**
@@ -42,6 +42,6 @@ class PermissionController extends Controller
      */
     public function show($id)
     {
-        return responseJson($this->manager()->read($id));
+        return responseJsonApi($this->manager()->read($id));
     }
 }

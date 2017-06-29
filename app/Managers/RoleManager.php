@@ -5,6 +5,7 @@ namespace App\Managers;
 use App\Entities\UserEntity;
 use FreddieGar\Base\Constants\BlameColumn;
 use FreddieGar\Base\Constants\FilterType;
+use FreddieGar\Base\Constants\JsonApiName;
 use FreddieGar\Base\Contracts\Commons\ManagerContract;
 use FreddieGar\Base\Contracts\Interfaces\CRUDSInterface;
 use FreddieGar\Base\Traits\FilterTrait;
@@ -16,7 +17,6 @@ use FreddieGar\Rbac\Entities\RoleEntity;
 use FreddieGar\Rbac\Models\Role;
 use FreddieGar\Rbac\Schemas\RoleSchema;
 use Illuminate\Http\Request;
-use Neomerx\JsonApi\Encoder\Encoder;
 
 /**
  * Class RoleManager
@@ -60,8 +60,9 @@ class RoleManager extends ManagerContract implements CRUDSInterface, RoleRelatio
     public function create()
     {
         $role = new RoleEntity();
-        $role->description($this->requestInput('description'));
-        return $role->merge($this->roleRepository()->create($role->toArray(true)))->toArray();
+        $role->description($this->requestAttribute('description'));
+        $id = $role->merge($this->roleRepository()->create($role->toArray(true)))->id();
+        return $this->read($id);
     }
 
     /**
@@ -69,15 +70,11 @@ class RoleManager extends ManagerContract implements CRUDSInterface, RoleRelatio
      */
     public function read($id)
     {
-        return $this->model()->getFromCacheId($id, function () use ($id) {
-            $role = $this->roleRepository()->findById($id);
-
-            $encoder = Encoder::instance([
-                RoleEntity::class => RoleSchema::class,
-            ], encoderOptions());
-
-            return $encoder->encodeData(RoleEntity::load($role));
+        $role = $this->model()->getFromCacheId($id, function () use ($id) {
+            return $this->roleRepository()->findById($id);
         });
+
+        return $this->response(RoleEntity::load($role));
     }
 
     /**
@@ -85,7 +82,7 @@ class RoleManager extends ManagerContract implements CRUDSInterface, RoleRelatio
      */
     public function update($id)
     {
-        $role = RoleEntity::load($this->requestInput());
+        $role = RoleEntity::load($this->requestAttribute());
         $this->roleRepository()->updateById($id, $role->toArray(true));
         return $this->read($id);
     }
@@ -111,7 +108,7 @@ class RoleManager extends ManagerContract implements CRUDSInterface, RoleRelatio
             return $this->roleRepository()->findWhere($this->filterToApply());
         });
 
-        return RoleEntity::toArrayMultiple($roles);
+        return $this->response(RoleEntity::loadMultiple($roles));
     }
 
     /**
@@ -125,7 +122,7 @@ class RoleManager extends ManagerContract implements CRUDSInterface, RoleRelatio
             return $this->roleRepository()->users($role_id);
         });
 
-        return UserEntity::toArrayMultiple($users);
+        return UserManager::response(UserEntity::loadMultiple($users));
     }
 
     /**
@@ -139,7 +136,17 @@ class RoleManager extends ManagerContract implements CRUDSInterface, RoleRelatio
             return $this->roleRepository()->permissions($role_id);
         });
 
-        return PermissionEntity::toArrayMultiple($permissions);
+        return PermissionManager::response(PermissionEntity::loadMultiple($permissions));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    static protected function schemas()
+    {
+        return [
+            RoleEntity::class => RoleSchema::class,
+        ];
     }
 
     /**
@@ -148,7 +155,12 @@ class RoleManager extends ManagerContract implements CRUDSInterface, RoleRelatio
     protected function rules()
     {
         return [
-            'description' => 'required|max:255',
+            JsonApiName::DATA => [
+                JsonApiName::TYPE => 'roles',
+                JsonApiName::ATTRIBUTES => [
+                    'description' => 'required|max:255',
+                ]
+            ]
         ];
     }
 

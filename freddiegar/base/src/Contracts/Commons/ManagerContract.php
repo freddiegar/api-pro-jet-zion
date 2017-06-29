@@ -3,9 +3,11 @@
 namespace FreddieGar\Base\Contracts\Commons;
 
 use FreddieGar\Base\Constants\HttpMethod;
+use FreddieGar\Base\Constants\JsonApiName;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\ProvidesConvenienceMethods;
+use Neomerx\JsonApi\Encoder\Encoder;
 
 /**
  * Class ManagerContract
@@ -14,6 +16,9 @@ use Laravel\Lumen\Routing\ProvidesConvenienceMethods;
 abstract class ManagerContract
 {
     use ProvidesConvenienceMethods;
+
+    const WRAPPER_FILTERS = JsonApiName::FILTER;
+    const WRAPPER_ATTRIBUTES = JsonApiName::DATA . '.' . JsonApiName::ATTRIBUTES;
 
     /**
      * @var Request
@@ -71,6 +76,30 @@ abstract class ManagerContract
     }
 
     /**
+     * @param string $name
+     * @param mixed $default
+     * @return mixed
+     */
+    final protected function requestAttribute($name = null, $default = null)
+    {
+        $attributes = $name
+            ? $this->request()->input(self::WRAPPER_ATTRIBUTES . '.' . $name, $default)
+            : $this->request()->input(self::WRAPPER_ATTRIBUTES);
+
+        return $attributes ?: [];
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $default
+     * @return mixed
+     */
+    final protected function requestFilter($name, $default = null)
+    {
+        return $this->request()->input(self::WRAPPER_FILTERS . '.' . $name, $default);
+    }
+
+    /**
      * @param array $keys
      * @return array
      */
@@ -84,9 +113,11 @@ abstract class ManagerContract
      * @param mixed $value
      * @return void
      */
-    final protected function requestAddInput($name, $value = null)
+    final protected function requestAddFilter($name, $value = null)
     {
-        $this->request()->merge([$name => $value]);
+        $this->request()->merge([
+            self::WRAPPER_FILTERS => [$name => $value]
+        ]);
     }
 
     /**
@@ -95,7 +126,15 @@ abstract class ManagerContract
      */
     final public function requestValidate()
     {
-        $this->validate($this->request(), $this->removeRulesThatNotApply($this->rules()), $this->messages());
+        $validator = $this->getValidationFactory()->make(
+            $this->requestAttribute(),
+            $this->removeRulesThatNotApply($this->rules()),
+            $this->messages()
+        );
+
+        if ($validator->fails()) {
+            $this->throwValidationException($this->request(), $validator);
+        }
 
         return $this;
     }
@@ -107,25 +146,17 @@ abstract class ManagerContract
      */
     final private function removeRulesThatNotApply($rules)
     {
-        if ($this->requestMethod() !== HttpMethod::PATCH) {
-            return $rules;
-        }
+        $attributes = $rules[JsonApiName::DATA][JsonApiName::ATTRIBUTES];
 
-        foreach ($rules as $field => $_rules) {
-            if (!$this->requestInput($field)) {
-                unset($rules[$field]);
+        if ($this->requestMethod() === HttpMethod::PATCH) {
+            foreach ($attributes as $field => $_rules) {
+                if (!$this->requestAttribute($field)) {
+                    unset($attributes[$field]);
+                }
             }
         }
 
-        return $rules;
-    }
-
-    /**
-     * @return string
-     */
-    final private function name()
-    {
-        return snake_case(str_replace('Manager', '', class_basename(static::class)), '-');
+        return $attributes;
     }
 
     /**
@@ -148,12 +179,28 @@ abstract class ManagerContract
      */
     final public function relationship($id, $relationship)
     {
-        $entity = static::read($id);
         $method = camel_case($relationship);
-//        dd($entity, $relationship, $method);
-//        $relation_id = isset($entity[$relationship . '_id']) ? $entity[$relationship . '_id'] : $entity['id'];
 
-        return array_merge([self::name() => $entity], [$relationship => static::{$method}($id)]);
+        return static::{$method}($id);
+    }
+
+    /**
+     * @param $resource
+     * @return string
+     */
+    final static public function response($resource)
+    {
+        $encoder = Encoder::instance(static::schemas(), encoderOptions());
+        return $encoder->encodeData($resource);
+    }
+
+    /**
+     * @return array
+     * @codeCoverageIgnore
+     */
+    static protected function schemas()
+    {
+        return [];
     }
 
     /**

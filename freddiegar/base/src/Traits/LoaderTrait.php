@@ -29,6 +29,21 @@ trait LoaderTrait
     }
 
     /**
+     * @param array $dataSets
+     * @return array
+     */
+    static public function loadMultiple(array $dataSets)
+    {
+        $loadMultiple = [];
+
+        foreach ($dataSets as $dataSet) {
+            $loadMultiple[] = static::load($dataSet);
+        }
+
+        return $loadMultiple;
+    }
+
+    /**
      * @param array $newProperties
      * @return static
      */

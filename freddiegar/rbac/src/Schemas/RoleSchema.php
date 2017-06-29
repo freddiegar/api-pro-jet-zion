@@ -2,6 +2,9 @@
 
 namespace FreddieGar\Rbac\Schemas;
 
+use FreddieGar\Rbac\Entities\RoleEntity;
+use Neomerx\JsonApi\Contracts\Document\LinkInterface;
+use Neomerx\JsonApi\Document\Link;
 use Neomerx\JsonApi\Schema\SchemaProvider;
 
 /**
@@ -10,7 +13,7 @@ use Neomerx\JsonApi\Schema\SchemaProvider;
  */
 class RoleSchema extends SchemaProvider
 {
-    protected $resourceType = 'role';
+    protected $resourceType = 'roles';
 
     /**
      * Get resource identity.
@@ -21,6 +24,7 @@ class RoleSchema extends SchemaProvider
      */
     public function getId($role)
     {
+        /** @var RoleEntity $role */
         return $role->id();
     }
 
@@ -33,10 +37,39 @@ class RoleSchema extends SchemaProvider
      */
     public function getAttributes($role)
     {
+        /** @var RoleEntity $role */
         return [
             'description' => $role->description(),
             'created' => $role->createdAt(),
             'updated' => $role->updatedAt(),
         ];
+    }
+
+    public function getRelationships($role, $isPrimary, array $includeRelationships)
+    {
+        $userLinks = [
+            LinkInterface::RELATED => new Link($this->getSelfSubUrl($role) . '/users'),
+        ];
+
+        $permissionLinks = [
+            LinkInterface::RELATED => new Link($this->getSelfSubUrl($role) . '/permissions'),
+        ];
+
+        $relationships = [];
+
+        $relationships['users'] = [
+            self::LINKS => $userLinks,
+        ];
+
+        $relationships['permissions'] = [
+            self::LINKS => $permissionLinks,
+        ];
+
+        return $relationships;
+    }
+
+    public function getResourceLinks($role)
+    {
+        return [];
     }
 }

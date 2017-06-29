@@ -8,12 +8,14 @@ use App\Entities\UserEntity;
 use App\Models\User;
 use FreddieGar\Base\Constants\BlameColumn;
 use FreddieGar\Base\Constants\FilterType;
+use FreddieGar\Base\Constants\JsonApiName;
 use FreddieGar\Base\Contracts\Commons\ManagerContract;
 use FreddieGar\Base\Contracts\Interfaces\CRUDSInterface;
 use FreddieGar\Base\Traits\FilterTrait;
 use FreddieGar\Base\Traits\ManagerRelationshipTrait;
 use FreddieGar\Rbac\Contracts\Commons\UserRelationshipInterface;
 use FreddieGar\Rbac\Entities\RoleEntity;
+use FreddieGar\Rbac\Schemas\UserSchema;
 use Illuminate\Http\Request;
 
 /**
@@ -57,13 +59,13 @@ class UserManager extends ManagerContract implements CRUDSInterface, UserRelatio
      */
     public function create()
     {
-        $userEntity = new UserEntity();
-        $userEntity->username($this->requestInput('username'));
-        $userEntity->setPassword($this->requestInput('password'));
-        $userEntity->status(UserStatus::ACTIVE);
-        $userEntity->type(User::class);
-
-        return $userEntity->merge($this->userRepository()->create($userEntity->toArray(true)))->toArray();
+        $user = new UserEntity();
+        $user->username($this->requestAttribute('username'));
+        $user->setPassword($this->requestAttribute('password'));
+        $user->status(UserStatus::ACTIVE);
+        $user->type(User::class);
+        $id = $user->merge($this->userRepository()->create($user->toArray(true)))->id();
+        return $this->read($id);
     }
 
     /**
@@ -75,7 +77,7 @@ class UserManager extends ManagerContract implements CRUDSInterface, UserRelatio
             return $this->userRepository()->findById($id);
         });
 
-        return UserEntity::load($user)->toArray();
+        return $this->response(UserEntity::load($user));
     }
 
     /**
@@ -83,13 +85,11 @@ class UserManager extends ManagerContract implements CRUDSInterface, UserRelatio
      */
     public function update($id)
     {
-        $userEntity = UserEntity::load($this->requestInput());
-        if ($this->requestInput('password')) {
-            $userEntity->setPassword($this->requestInput('password'));
+        $user = UserEntity::load($this->requestAttribute());
+        if ($this->requestAttribute('password')) {
+            $user->setPassword($this->requestAttribute('password'));
         }
-
-        $this->userRepository()->updateById($id, $userEntity->toArray(true));
-
+        $this->userRepository()->updateById($id, $user->toArray(true));
         return $this->read($id);
     }
 
@@ -114,7 +114,7 @@ class UserManager extends ManagerContract implements CRUDSInterface, UserRelatio
             return $this->userRepository()->findWhere($this->filterToApply());
         });
 
-        return UserEntity::toArrayMultiple($users);
+        return $this->response(UserEntity::loadMultiple($users));
     }
 
     /**
@@ -128,7 +128,17 @@ class UserManager extends ManagerContract implements CRUDSInterface, UserRelatio
             return $this->userRepository()->roles($user_id);
         });
 
-        return RoleEntity::toArrayMultiple($roles);
+        return RoleManager::response(RoleEntity::loadMultiple($roles));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    static protected function schemas()
+    {
+        return [
+            UserEntity::class => UserSchema::class,
+        ];
     }
 
     /**
@@ -137,14 +147,19 @@ class UserManager extends ManagerContract implements CRUDSInterface, UserRelatio
     protected function rules()
     {
         return [
-            'username' => 'required|max:255',
-            'password' => 'required|max:255',
-            'status' => 'in:' . implode(',', [
-                    UserStatus::ACTIVE,
-                    UserStatus::INACTIVE,
-                    UserStatus::SUSPENDED,
-                    UserStatus::BLOCKED,
-                ]),
+            JsonApiName::DATA => [
+                JsonApiName::TYPE => 'users',
+                JsonApiName::ATTRIBUTES => [
+                    'username' => 'required|max:255',
+                    'password' => 'required|max:255',
+                    'status' => 'in:' . implode(',', [
+                            UserStatus::ACTIVE,
+                            UserStatus::INACTIVE,
+                            UserStatus::SUSPENDED,
+                            UserStatus::BLOCKED,
+                        ]),
+                ]
+            ]
         ];
     }
 

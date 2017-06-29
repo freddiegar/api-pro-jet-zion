@@ -23,6 +23,6 @@ abstract class Controller extends BaseController
      */
     public function relationship($id, $relationship)
     {
-        return responseJson($this->manager()->relationship($id, $relationship));
+        return responseJsonApi($this->manager()->relationship($id, $relationship));
     }
 }

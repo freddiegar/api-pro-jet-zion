@@ -8,6 +8,7 @@ use FreddieGar\Base\Traits\FilterTrait;
 use FreddieGar\Rbac\Contracts\Repositories\PermissionRepository;
 use FreddieGar\Rbac\Entities\PermissionEntity;
 use FreddieGar\Rbac\Models\Permission;
+use FreddieGar\Rbac\Schemas\PermissionSchema;
 use Illuminate\Http\Request;
 
 /**
@@ -46,8 +47,7 @@ class PermissionManager extends ManagerContract
     }
 
     /**
-     * @param int $id
-     * @return array
+     * @inheritdoc
      */
     public function read($id)
     {
@@ -55,11 +55,11 @@ class PermissionManager extends ManagerContract
             return $this->permissionRepository()->findById($id);
         });
 
-        return PermissionEntity::load($permission)->toArray();
+        return $this->response(PermissionEntity::load($permission));
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function show()
     {
@@ -69,7 +69,17 @@ class PermissionManager extends ManagerContract
             return $this->permissionRepository()->findWhere($this->filterToApply());
         });
 
-        return PermissionEntity::toArrayMultiple($permissions);
+        return $this->response(PermissionEntity::loadMultiple($permissions));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    static protected function schemas()
+    {
+        return [
+            PermissionEntity::class => PermissionSchema::class,
+        ];
     }
 
     /**

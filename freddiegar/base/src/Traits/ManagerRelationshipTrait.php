@@ -3,6 +3,7 @@
 namespace FreddieGar\Base\Traits;
 
 use App\Entities\UserEntity;
+use App\Managers\UserManager;
 
 /**
  * Trait ManagerRelationshipTrait
@@ -21,7 +22,7 @@ trait ManagerRelationshipTrait
             return static::repository()->createdBy($model_id);
         });
 
-        return UserEntity::load($createdBy)->toArray();
+        return UserManager::response(UserEntity::load($createdBy));
     }
 
     /**
@@ -35,6 +36,6 @@ trait ManagerRelationshipTrait
             return static::repository()->updatedBy($model_id);
         });
 
-        return UserEntity::load($updatedBy)->toArray();
+        return UserManager::response(UserEntity::load($updatedBy));
     }
 }

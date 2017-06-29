@@ -5,6 +5,7 @@ namespace App\Managers;
 use App\Contracts\Repositories\LoginRepository;
 use App\Entities\UserEntity;
 use App\Models\User;
+use FreddieGar\Base\Constants\JsonApiName;
 use FreddieGar\Base\Contracts\Commons\ManagerContract;
 use Illuminate\Http\Request;
 use Illuminate\Validation\UnauthorizedException;
@@ -48,9 +49,9 @@ class LoginManager extends ManagerContract
      */
     public function login()
     {
-        $user = UserEntity::load($this->loginRepository()->getUserPasswordByUsername($this->requestInput('username')));
+        $user = UserEntity::load($this->loginRepository()->getUserPasswordByUsername($this->requestAttribute('username')));
 
-        if (!passwordIsValid($this->requestInput('password'), $user->password())) {
+        if (!passwordIsValid($this->requestAttribute('password'), $user->password())) {
             throw new UnauthorizedException(trans('exceptions.credentials'));
         }
 
@@ -58,6 +59,7 @@ class LoginManager extends ManagerContract
         $user->lastLoginAt(now());
         $user->apiToken(randomHashing());
 
+        $this->model()->disableUpdatedBy();
         $this->loginRepository()->updateUserLastLogin($user->id(), $user->toArray());
 
         return [
@@ -71,8 +73,13 @@ class LoginManager extends ManagerContract
     protected function rules()
     {
         return [
-            'username' => 'required',
-            'password' => 'required',
+            JsonApiName::DATA => [
+                JsonApiName::TYPE => 'login',
+                JsonApiName::ATTRIBUTES => [
+                    'username' => 'required',
+                    'password' => 'required',
+                ]
+            ]
         ];
     }
 }

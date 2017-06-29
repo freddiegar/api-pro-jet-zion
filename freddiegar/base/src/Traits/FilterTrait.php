@@ -150,7 +150,7 @@ trait FilterTrait
      */
     private function filterBySelect($filter, $whereType = 'where')
     {
-        $value = static::requestInput($filter['field']);
+        $value = static::requestFilter($filter['field']);
 
         if (!is_null($value)) {
             self::setFilterToApply($filter, $value, $whereType);
@@ -163,7 +163,7 @@ trait FilterTrait
      */
     private function filterByText($filter, $whereType = 'where')
     {
-        $value = static::requestInput($filter['field']);
+        $value = static::requestFilter($filter['field']);
 
         if (!empty($value)) {
             self::setFilterToApply($filter, sprintf(Pattern::QUERY_LIKE, $value), $whereType, OperatorType::LIKE);
@@ -188,7 +188,7 @@ trait FilterTrait
      */
     private function filterByNumber($filter, $whereType = 'where')
     {
-        $value = static::requestInput($filter['field']);
+        $value = static::requestFilter($filter['field']);
 
         if (!is_null($value)) {
             self::setFilterToApply($filter, $value, $whereType);
@@ -201,7 +201,7 @@ trait FilterTrait
      */
     private function filterByDate($filter, $whereType = 'where')
     {
-        $value = static::requestInput($filter['field']);
+        $value = static::requestFilter($filter['field']);
 
         if (!empty($value)) {
             $valueMinFormatted = Carbon::parse($value);
@@ -222,8 +222,8 @@ trait FilterTrait
      */
     private function filterByBetween($filter, $whereType = 'where')
     {
-        $valueMin = static::requestInput($filter['field'] . FilterType::BETWEEN_MIN_SUFFIX);
-        $valueMax = static::requestInput($filter['field'] . FilterType::BETWEEN_MAX_SUFFIX);
+        $valueMin = static::requestFilter($filter['field'] . FilterType::BETWEEN_MIN_SUFFIX);
+        $valueMax = static::requestFilter($filter['field'] . FilterType::BETWEEN_MAX_SUFFIX);
 
         $valueMinFormatted = Carbon::parse($valueMin);
         $valueMaxFormatted = Carbon::parse($valueMax)
@@ -259,7 +259,7 @@ trait FilterTrait
      */
     public function filterBySmartSearch($filter)
     {
-        $value = static::requestInput($filter['field']);
+        $value = static::requestFilter($filter['field']);
 
         if (is_null($value)) {
             return;
@@ -290,7 +290,7 @@ trait FilterTrait
             if (!in_array($filter['type'], $smartFilterTypes)) {
                 continue;
             }
-            static::requestAddInput($field, $value);
+            static::requestAddFilter($field, $value);
             self::applyFilter(array_merge(compact('field'), $filter), 'orWhere');
         }
     }

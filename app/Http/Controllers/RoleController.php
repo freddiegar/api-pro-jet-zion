@@ -34,7 +34,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        return responseJson($this->manager()->applyFilters()->show());
+        return responseJsonApi($this->manager()->applyFilters()->show());
     }
 
     /**
@@ -42,7 +42,7 @@ class RoleController extends Controller
      */
     public function store()
     {
-        return responseJson($this->manager()->requestValidate()->create(), Response::HTTP_CREATED);
+        return responseJsonApi($this->manager()->requestValidate()->create(), Response::HTTP_CREATED);
     }
 
     /**
@@ -51,7 +51,7 @@ class RoleController extends Controller
      */
     public function show($id)
     {
-        return responseJson($this->manager()->read($id));
+        return responseJsonApi($this->manager()->read($id));
     }
 
     /**
@@ -60,7 +60,7 @@ class RoleController extends Controller
      */
     public function update($id)
     {
-        return responseJson($this->manager()->requestValidate()->update($id));
+        return responseJsonApi($this->manager()->requestValidate()->update($id));
     }
 
     /**
@@ -69,6 +69,6 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        return responseJson($this->manager()->delete($id));
+        return responseJsonApi($this->manager()->delete($id));
     }
 }
