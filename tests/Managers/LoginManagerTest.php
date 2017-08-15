@@ -91,7 +91,6 @@ class LoginManagerTest extends DBTestCase
     public function testLoginManagerOk()
     {
         $this->json(HttpMethod::POST, $this->_route('login'), $this->request(), $this->supportedMediaType());
-        ff($this->response->getContent());
         $this->assertResponseStatus(Response::HTTP_OK);
         $this->seeJsonStructure([
             UserEntity::KEY_API_TOKEN,
